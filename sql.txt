@@ -1,0 +1,23 @@
+CREATE TABLE `wp_messages` (
+  `message_ID` bigint(20) unsigned NOT NULL auto_increment,
+  `message_from_user_ID` bigint(20) NOT NULL,
+  `message_to_user_ID` bigint(20) NOT NULL,
+  `message_to_all_user_IDs` bigint(20) NOT NULL,
+  `message_subject` TEXT NOT NULL,
+  `message_content` TEXT NOT NULL,
+  `message_status` VARCHAR(255) NOT NULL,
+  `message_stamp`  VARCHAR(255) NOT NULL,
+  `message_official` tinyint(0) NOT NULL default '0',
+  PRIMARY KEY  (`message_ID`)
+) ENGINE=MyISAM;
+
+CREATE TABLE `wp_sent_messages` (
+  `sent_message_ID` bigint(20) unsigned NOT NULL auto_increment,
+  `sent_message_from_user_ID` bigint(20) NOT NULL,
+  `sent_message_to_user_IDs` bigint(20) NOT NULL,
+  `sent_message_subject` TEXT NOT NULL,
+  `sent_message_content` TEXT NOT NULL,
+  `sent_message_stamp`  VARCHAR(255) NOT NULL,
+  `sent_message_official` tinyint(0) NOT NULL default '0',
+  PRIMARY KEY  (`sent_message_ID`)
+) ENGINE=MyISAM;

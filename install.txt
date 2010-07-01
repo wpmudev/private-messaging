@@ -1,0 +1,12 @@
+Plugin Name: Messaging
+Author: Andrew Billits
+
+Files:
+----------------------------------------------------------------------
+inbox.php - goes in /wp-admin
+messaging.php - goes in /wp-content/mu-plugins
+
+Instructions:
+----------------------------------------------------------------------
+1) Place the files in the specified directories
+3) If the auto-install does not add the db tables for you then run the sql code in "sql.txt" on your wpmu
