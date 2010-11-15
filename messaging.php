@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: 
 Description:
 Author: Andrew Billits (Incsub)
-Version: 1.0.2
+Version: 1.0.3
 Author URI:
 WDP ID: 68
 */
@@ -26,7 +26,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.0.2';
+$messaging_current_version = '1.0.3';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -154,12 +154,14 @@ function messaging_global_install() {
 
 function messaging_plug_pages() {
 	global $wpdb, $user_ID;
-	//$tmp_unread_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'unread'");
-	//if ($tmp_unread_message_count > 0){
-		//add_menu_page('Inbox', 'Inbox (' . $tmp_unread_message_count . ')', 0, 'inbox.php');
-	//} else {
-		add_menu_page('Inbox', 'Inbox', 0, 'inbox.php');
-	//}
+	$tmp_unread_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'unread'");
+	if ($tmp_unread_message_count > 0){
+                $count_output = '&nbsp;<span class="update-plugins"><span class="updates-count count-' . $tmp_unread_message_count . '">' . $tmp_unread_message_count . '</span></span>';
+	} else {
+		$count_output = '';
+	}
+	
+	add_menu_page('Inbox', 'Inbox'.$count_output, 0, 'inbox.php');
 	//add_submenu_page('inbox.php', 'Inbox', 'Inbox', '0', 'messaging_inbox', 'messaging_inbox_page_output' );
 	add_submenu_page('inbox.php', 'Inbox', 'New Message', '0', 'new', 'messaging_new_page_output' );
 	add_submenu_page('inbox.php', 'Inbox', 'Sent Messages', '0', 'sent', 'messaging_sent_page_output' );
