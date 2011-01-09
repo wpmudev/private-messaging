@@ -1,12 +1,13 @@
 <?php
 /*
 Plugin Name: Messaging
-Plugin URI: 
-Description:
-Author: Andrew Billits (Incsub)
-Version: 1.0.3
-Author URI:
+Plugin URI: http://premium.wpmudev.org/project/messaging
+Description: An internal email / messaging / inbox solution
+Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
+Version: 1.0.4
+Author URI: http://premium.wpmudev.org
 WDP ID: 68
+Network: true
 */
 
 /* 
@@ -26,7 +27,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.0.3';
+$messaging_current_version = '1.0.4';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -35,13 +36,13 @@ $messaging_max_inbox_messages = 90;
 $messaging_max_reached_message = 'You are currently at or over your inbox message limit. You will not be able to view, reply to, or send new messages until you remove messages from your inbox.';
 $messaging_official_message_bg_color = '#E5F3FF';
 
-$messaging_email_notification_subject = __('[SITE_NAME] New Message'); // SITE_NAME
-$messaging_email_notification_content = __('Dear TO_USER,
+$messaging_email_notification_subject = __('[SITE_NAME] New Message', 'messaging'); // SITE_NAME
+$messaging_email_notification_content = 'Dear TO_USER,
 
 You have receieved a new message from FROM_USER.
 
 Thanks,
-SITE_NAME'); // TO_USER, FROM_USER, SITE_NAME, SITE_URL
+SITE_NAME'; // TO_USER, FROM_USER, SITE_NAME, SITE_URL
 
 //------------------------------------------------------------------------//
 //---Hook-----------------------------------------------------------------//
@@ -70,9 +71,17 @@ if ($_GET['action'] == 'reply' && $_GET['mid'] != ''){
 if ($_GET['action'] == 'reply_process'){
 	add_action('admin_footer', 'messaging_set_focus_js');
 }
+add_action('init', 'messaging_init');
 //------------------------------------------------------------------------//
 //---Functions------------------------------------------------------------//
 //------------------------------------------------------------------------//
+function messaging_init() {
+	if ( !is_multisite() )
+		exit( 'The Messaging plugin is only compatible with WordPress Multisite.' );
+		
+	load_plugin_textdomain('simple_ads', false, dirname(plugin_basename(__FILE__)).'/languages');
+}
+
 function messaging_make_current() {
 	global $wpdb, $messaging_current_version;
 	if (get_site_option( "messaging_version" ) == '') {
@@ -103,8 +112,6 @@ function messaging_make_current() {
 
 function messaging_blog_install() {
 	global $wpdb, $messaging_current_version;
-	//$messaging_table1 = "";
-	//$wpdb->query( $messaging_table1 );
 }
 
 function messaging_global_install() {
@@ -145,9 +152,6 @@ function messaging_global_install() {
 
 		$wpdb->query( $messaging_table1 );
 		$wpdb->query( $messaging_table2 );
-		//$wpdb->query( $messaging_table3 );
-		//$wpdb->query( $messaging_table4 );
-		//$wpdb->query( $messaging_table5 );
 		update_site_option( "messaging_installed", "yes" );
 	}
 }
@@ -161,16 +165,14 @@ function messaging_plug_pages() {
 		$count_output = '';
 	}
 	
-	add_menu_page('Inbox', 'Inbox'.$count_output, 0, 'inbox.php');
-	//add_submenu_page('inbox.php', 'Inbox', 'Inbox', '0', 'messaging_inbox', 'messaging_inbox_page_output' );
-	add_submenu_page('inbox.php', 'Inbox', 'New Message', '0', 'new', 'messaging_new_page_output' );
-	add_submenu_page('inbox.php', 'Inbox', 'Sent Messages', '0', 'sent', 'messaging_sent_page_output' );
-	//add_submenu_page('inbox.php', 'Inbox', 'Export', '0', 'export', 'messaging_export_page_output' );
-	add_submenu_page('inbox.php', 'Inbox', 'Notifications', '0', 'message-notifications', 'messaging_notifications_page_output' );
+	add_menu_page(__('Inbox', 'messaging'), __('Inbox', 'messaging').$count_output, 0, 'messaging', 'messaging_inbox_page_output');
+	add_submenu_page('messaging', __('Inbox', 'messaging'), __('New Message', 'messaging'), '0', 'messaging_new', 'messaging_new_page_output' );
+	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Sent Messages', 'messaging'), '0', 'messaging_sent', 'messaging_sent_page_output' );
+	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Notifications', 'messaging'), '0', 'messaging_message-notifications', 'messaging_notifications_page_output' );
 }
 
 function messaging_admin_bar( $menu ) {
-	unset( $menu['inbox.php'] );
+	unset( $menu['admin.php?page=messaging'] );
 	return $menu;
 }
 
@@ -310,7 +312,7 @@ function messaging_inbox_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_official_message_bg_color, $messaging_max_inbox_messages, $messaging_max_reached_message;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e('' . urldecode($_GET['updatedmsg']) . '') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
 	echo '<div class="wrap">';
 	switch( $_GET[ 'action' ] ) {
@@ -320,14 +322,14 @@ function messaging_inbox_page_output() {
 				messaging_update_message_status($_POST['mid'],'removed');
 				echo "
 				<SCRIPT LANGUAGE='JavaScript'>
-				window.location='inbox.php?updated=true&updatedmsg=" . urlencode('Message removed.') . "';
+				window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode(__('Message removed.', 'messaging')) . "';
 				</script>
 				";
 			}
 			if ( isset($_POST['Reply']) ) {
 				echo "
 				<SCRIPT LANGUAGE='JavaScript'>
-				window.location='inbox.php?action=reply&mid=" . $_POST['mid'] . "';
+				window.location='admin.php?page=messaging&action=reply&mid=" . $_POST['mid'] . "';
 				</script>
 				";
 			}
@@ -335,39 +337,39 @@ function messaging_inbox_page_output() {
 			$tmp_unread_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'unread'");
 			$tmp_read_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'read'");
 			?>
-            <h2><?php _e('Inbox') ?> (<a href="inbox.php?page=new"><?php _e('New Message') ?></a>)</h2>
+            <h2><?php _e('Inbox', 'messaging') ?> (<a href="admin.php?page=messaging_new"><?php _e('New Message', 'messaging') ?></a>)</h2>
             <?php
 			if ($tmp_message_count == 0){
 			?>
-            <p><?php _e('No messages to display') ?></p>
+            <p><?php _e('No messages to display', 'messaging') ?></p>
             <?php
 			} else {
 				?>
-				<h3><?php _e('Usage') ?></h3>
+				<h3><?php _e('Usage', 'messaging') ?></h3>
                 <p>
-				<?php _e('Maximum inbox messages') ?>: <strong><?php echo $messaging_max_inbox_messages; ?></strong>
+				<?php _e('Maximum inbox messages', 'messaging') ?>: <strong><?php echo $messaging_max_inbox_messages; ?></strong>
                 <br />
-                <?php _e('Current inbox messages') ?>: <strong><?php echo $tmp_message_count; ?></strong>
+                <?php _e('Current inbox messages', 'messaging') ?>: <strong><?php echo $tmp_message_count; ?></strong>
                 </p>
                 <?php
 				if ($tmp_message_count >= $messaging_max_inbox_messages){
 				?>
-                <p><strong><center><?php _e($messaging_max_reached_message) ?></center></strong></p>
+                <p><strong><center><?php _e($messaging_max_reached_message, 'messaging') ?></center></strong></p>
 				<?php
 				}
 				if ($tmp_unread_message_count > 0){
 				?>
-				<h3><?php _e('Unread') ?></h3>
+				<h3><?php _e('Unread', 'messaging') ?></h3>
 				<?php
 				$query = "SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'unread' ORDER BY message_ID DESC";
 				$tmp_messages = $wpdb->get_results( $query, ARRAY_A );
 				echo "
 				<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
 				<thead><tr>
-				<th scope='col'>" . __("From") . "</th>
-				<th scope='col'>" . __("Subject") . "</th>
-				<th scope='col'>" . __("Recieved") . "</th>
-				<th scope='col'>" . __("Actions") . "</th>
+				<th scope='col'>" . __("From", 'messaging') . "</th>
+				<th scope='col'>" . __("Subject", 'messaging') . "</th>
+				<th scope='col'>" . __("Recieved", 'messaging') . "</th>
+				<th scope='col'>" . __("Actions", 'messaging') . "</th>
 				<th scope='col'></th>
 				<th scope='col'></th>
 				</tr></thead>
@@ -413,13 +415,13 @@ function messaging_inbox_page_output() {
 						echo "<td valign='top'>" . date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</td>";
 					}
 					if ($tmp_message_count >= $messaging_max_inbox_messages){
-						echo "<td valign='top'><a class='edit'>" . __('View') . "</a></td>";
-						echo "<td valign='top'><a class='edit'>" . __('Reply') . "</a></td>";
+						echo "<td valign='top'><a class='edit'>" . __('View', 'messaging') . "</a></td>";
+						echo "<td valign='top'><a class='edit'>" . __('Reply', 'messaging') . "</a></td>";
 					} else {
-						echo "<td valign='top'><a href='inbox.php?action=view&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='edit'>" . __('View') . "</a></td>";
-						echo "<td valign='top'><a href='inbox.php?action=reply&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='edit'>" . __('Reply') . "</a></td>";
+						echo "<td valign='top'><a href='admin.php?page=messaging&action=view&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='edit'>" . __('View', 'messaging') . "</a></td>";
+						echo "<td valign='top'><a href='admin.php?page=messaging&action=reply&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='edit'>" . __('Reply', 'messaging') . "</a></td>";
 					}
-					echo "<td valign='top'><a href='inbox.php?action=remove&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='delete'>" . __('Remove') . "</a></td>";
+					echo "<td valign='top'><a href='admin.php?page=messaging&action=remove&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='delete'>" . __('Remove', 'messaging') . "</a></td>";
 					echo "</tr>";
 					$class = ('alternate' == $class) ? '' : 'alternate';
 					//=========================================================//
@@ -432,17 +434,17 @@ function messaging_inbox_page_output() {
 				//=========================================================//
 				if ($tmp_read_message_count > 0){
 				?>
-				<h3><?php _e('Read') ?></h3>
+				<h3><?php _e('Read', 'messaging') ?></h3>
 				<?php
 				$query = "SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'read' ORDER BY message_ID DESC";
 				$tmp_messages = $wpdb->get_results( $query, ARRAY_A );
 				echo "
 				<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
 				<thead><tr>
-				<th scope='col'>" . __("From") . "</th>
-				<th scope='col'>" . __("Subject") . "</th>
-				<th scope='col'>" . __("Recieved") . "</th>
-				<th scope='col'>" . __("Actions") . "</th>
+				<th scope='col'>" . __("From", 'messaging') . "</th>
+				<th scope='col'>" . __("Subject", 'messaging') . "</th>
+				<th scope='col'>" . __("Recieved", 'messaging') . "</th>
+				<th scope='col'>" . __("Actions", 'messaging') . "</th>
 				<th scope='col'></th>
 				<th scope='col'></th>
 				</tr></thead>
@@ -488,13 +490,13 @@ function messaging_inbox_page_output() {
 						echo "<td valign='top'>" . date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</td>";
 					}
 					if ($tmp_message_count >= $messaging_max_inbox_messages){
-						echo "<td valign='top'><a class='edit'>" . __('View') . "</a></td>";
-						echo "<td valign='top'><a class='edit'>" . __('Reply') . "</a></td>";
+						echo "<td valign='top'><a class='edit'>" . __('View', 'messaging') . "</a></td>";
+						echo "<td valign='top'><a class='edit'>" . __('Reply', 'messaging') . "</a></td>";
 					} else {
-						echo "<td valign='top'><a href='inbox.php?action=view&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='edit'>" . __('View') . "</a></td>";
-						echo "<td valign='top'><a href='inbox.php?action=reply&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='edit'>" . __('Reply') . "</a></td>";
+						echo "<td valign='top'><a href='admin.php?page=messaging&action=view&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='edit'>" . __('View', 'messaging') . "</a></td>";
+						echo "<td valign='top'><a href='admin.php?page=messaging&action=reply&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='edit'>" . __('Reply', 'messaging') . "</a></td>";
 					}
-					echo "<td valign='top'><a href='inbox.php?action=remove&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='delete'>" . __('Remove') . "</a></td>";
+					echo "<td valign='top'><a href='admin.php?page=messaging&action=remove&mid=" . $tmp_message['message_ID'] . "' rel='permalink' class='delete'>" . __('Remove', 'messaging') . "</a></td>";
 					echo "</tr>";
 					$class = ('alternate' == $class) ? '' : 'alternate';
 					//=========================================================//
@@ -513,7 +515,7 @@ function messaging_inbox_page_output() {
 			if ($tmp_message_count > 0){
 				if ($tmp_total_message_count >= $messaging_max_inbox_messages){
 					?>
-					<p><strong><center><?php _e($messaging_max_reached_message) ?></center></strong></p>
+					<p><strong><center><?php _e($messaging_max_reached_message, 'messaging') ?></center></strong></p>
 					<?php
 					} else {
 					messaging_update_message_status($_GET['mid'],'read');
@@ -523,34 +525,34 @@ function messaging_inbox_page_output() {
 					$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message_from_user_ID . "'");
 					$tmp_message_status = $wpdb->get_var("SELECT message_status FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'");
 					$tmp_message_status = ucfirst($tmp_message_status);
-					$tmp_message_status = __($tmp_message_status);
+					$tmp_message_status = __($tmp_message_status, 'messaging');
 					$tmp_message_stamp = $wpdb->get_var("SELECT message_stamp FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'");
 					?>
 		
-					<h2><?php _e('View Message: ') ?><?php echo $_GET['mid']; ?></h2>
-					<form name="new_message" method="POST" action="inbox.php">
+					<h2><?php _e('View Message: ', 'messaging') ?><?php echo $_GET['mid']; ?></h2>
+					<form name="new_message" method="POST" action="admin.php?page=messaging">
 					<input type="hidden" name="mid" value="<?php echo $_GET['mid']; ?>" />
-					<h3><?php _e('Sent') ?></h3>
+					<h3><?php _e('Sent', 'messaging') ?></h3>
 					<p><?php echo date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message_stamp); ?></p>
-					<h3><?php _e('Status') ?></h3>
+					<h3><?php _e('Status', 'messaging') ?></h3>
 					<p><?php echo $tmp_message_status; ?></p>
-					<h3><?php _e('From') ?></h3>
+					<h3><?php _e('From', 'messaging') ?></h3>
 					<p><?php echo $tmp_username; ?></p>
-					<h3><?php _e('Subject') ?></h3>
+					<h3><?php _e('Subject', 'messaging') ?></h3>
 					<p><?php echo $tmp_message_subject; ?></p>
-					<h3><?php _e('Content') ?></h3>
+					<h3><?php _e('Content', 'messaging') ?></h3>
 					<p><?php echo $tmp_message_content; ?></p>
                     <p class="submit">
-					<input type="submit" name="Submit" value="<?php _e('Back') ?>" />
-					<input type="submit" name="Remove" value="<?php _e('Remove') ?>" /> 
-					<input type="submit" name="Reply" value="<?php _e('Reply') ?>" /> 
+					<input type="submit" name="Submit" value="<?php _e('Back', 'messaging') ?>" />
+					<input type="submit" name="Remove" value="<?php _e('Remove', 'messaging') ?>" /> 
+					<input type="submit" name="Reply" value="<?php _e('Reply', 'messaging') ?>" /> 
                     </p>
 					</form>
 					<?php
 				}		
 			} else {
 			?>
-            <p><?php _e('You do not have permission to view this message') ?></p>
+            <p><?php _e('You do not have permission to view this message', 'messaging') ?></p>
             <?php
 			}
 		break;
@@ -560,7 +562,7 @@ function messaging_inbox_page_output() {
 			messaging_remove_message($_GET['mid']);
 			echo "
 			<SCRIPT LANGUAGE='JavaScript'>
-			window.location='inbox.php?updated=true&updatedmsg=" . urlencode('Message removed.') . "';
+			window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode('Message removed.') . "';
 			</script>
 			";
 		break;
@@ -571,7 +573,7 @@ function messaging_inbox_page_output() {
 			$tmp_message_from_user_ID = $wpdb->get_var("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'");
 			$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message_from_user_ID . "'");
 			$tmp_message_subject = stripslashes($wpdb->get_var("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'"));
-			$tmp_message_subject = __('RE: ') . $tmp_message_subject;
+			$tmp_message_subject = __('RE: ', 'messaging') . $tmp_message_subject;
 			$tmp_message_content = stripslashes($wpdb->get_var("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'"));
 			//$tmp_message_content = "\n\n" . $tmp_username . __(' wrote:') . '<hr>' . $tmp_message_content;
 
@@ -586,44 +588,44 @@ function messaging_inbox_page_output() {
 			}
 			//	$the_editor_content = apply_filters('the_editor_content', $content);
             ?>
-			<h2><?php _e('Send Reply') ?></h2>
-			<form name="reply_to_message" method="POST" action="inbox.php?action=reply_process">
+			<h2><?php _e('Send Reply', 'messaging') ?></h2>
+			<form name="reply_to_message" method="POST" action="admin.php?page=messaging&action=reply_process">
             <input type="hidden" name="message_to" value="<?php echo $tmp_username; ?>" />
             <input type="hidden" name="message_subject" value="<?php echo $tmp_message_subject; ?>" />
                 <table class="form-table">
                 <tr valign="top">
-                <th scope="row"><?php _e('To') ?></th>
+                <th scope="row"><?php _e('To', 'messaging') ?></th>
                 <td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" maxlength="200" value="<?php echo $tmp_username; ?>" />
                 <br />
                 <?php //_e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td> 
                 </tr>
                 <tr valign="top">
-                <th scope="row"><?php _e('Subject') ?></th>
+                <th scope="row"><?php _e('Subject', 'messaging') ?></th>
                 <td><input disabled="disabled" type="text" name="message_subject" id="message_subject_disabled" style="width: 95%" maxlength="200" value="<?php echo $tmp_message_subject; ?>" />
                 <br />
                 <?php //_e('Required') ?></td> 
                 </tr>
                 <tr valign="top"> 
-                <th scope="row"><?php echo $tmp_username . __(' wrote'); ?></th> 
+                <th scope="row"><?php echo $tmp_username . __(' wrote', 'messaging'); ?></th> 
                 <td><?php echo $tmp_message_content; ?>
                 <br />
-                <?php _e('Required') ?></td> 
+                <?php _e('Required', 'messaging') ?></td> 
                 </tr>
                 <tr valign="top"> 
-                <th scope="row"><?php _e('Content') ?></th> 
+                <th scope="row"><?php _e('Content', 'messaging') ?></th> 
                 <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php //echo $tmp_message_content; ?></textarea>
                 <br />
-                <?php _e('Required') ?></td> 
+                <?php _e('Required', 'messaging') ?></td> 
                 </tr>
                 </table>
             <p class="submit">
-            <input type="submit" name="Submit" value="<?php _e('Send') ?>" />
+            <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
             </p>
             </form>
             <?php
 			} else {
 			?>
-            <p><?php _e('You do not have permission to view this message') ?></p>
+            <p><?php _e('You do not have permission to view this message', 'messaging') ?></p>
             <?php
 			}
 		break;
@@ -641,33 +643,33 @@ function messaging_inbox_page_output() {
 				}
 				//	$the_editor_content = apply_filters('the_editor_content', $content);
 				?>
-				<h2><?php _e('Send Reply') ?></h2>
-                <p><?php _e('Please fill in all required fields') ?></p>
-				<form name="reply_to_message" method="POST" action="inbox.php?action=reply_process">
+				<h2><?php _e('Send Reply', 'messaging') ?></h2>
+                <p><?php _e('Please fill in all required fields', 'messaging') ?></p>
+				<form name="reply_to_message" method="POST" action="admin.php?page=messaging&action=reply_process">
                 <input type="hidden" name="message_to" value="<?php echo $_POST['message_to']; ?>" />
                 <input type="hidden" name="message_subject" value="<?php echo $_POST['message_subject']; ?>" />
 					<table class="form-table">
 					<tr valign="top">
-					<th scope="row"><?php _e('To') ?></th>
+					<th scope="row"><?php _e('To', 'messaging') ?></th>
 					<td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" maxlength="200" value="<?php echo $_POST['message_to']; ?>" />
 					<br />
 					<?php //_e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td> 
 					</tr>
 					<tr valign="top">
-					<th scope="row"><?php _e('Subject') ?></th>
+					<th scope="row"><?php _e('Subject', 'messaging') ?></th>
 					<td><input disabled="disabled" type="text" name="message_subject" id="message_subject_disabled" style="width: 95%" maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
 					<br />
 					<?php //_e('Required') ?></td> 
 					</tr>
 					<tr valign="top"> 
-					<th scope="row"><?php _e('Content') ?></th> 
+					<th scope="row"><?php _e('Content', 'messaging') ?></th> 
 					<td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
 					<br />
-					<?php _e('Required') ?></td> 
+					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
 					</table>
                 <p class="submit">
-                <input type="submit" name="Submit" value="<?php _e('Send') ?>" />
+                <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                 </p>
 				</form>
 				<?php
@@ -705,33 +707,33 @@ function messaging_inbox_page_output() {
 					}
 					$rows = "rows='$rows'";
 					?>
-					<h2><?php _e('Send Reply') ?></h2>
-					<p><?php _e('The following usernames could not be found in the system') ?> <em><?php echo $tmp_error_usernames; ?></em></p>
-                    <form name="new_message" method="POST" action="inbox.php?action=reply_process">
+					<h2><?php _e('Send Reply', 'messaging') ?></h2>
+					<p><?php _e('The following usernames could not be found in the system', 'messaging') ?> <em><?php echo $tmp_error_usernames; ?></em></p>
+                    <form name="new_message" method="POST" action="admin.php?page=messaging&action=reply_process">
                     <input type="hidden" name="message_to" value="<?php echo $_POST['message_to']; ?>" />
                     <input type="hidden" name="message_subject" value="<?php echo $_POST['message_subject']; ?>" />
                         <table class="form-table">
                         <tr valign="top">
-                        <th scope="row"><?php _e('To') ?></th>
+                        <th scope="row"><?php _e('To', 'messaging') ?></th>
                         <td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $_POST['message_to']; ?>" />
                         <br />
                         <?php //_e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td> 
                         </tr>
                         <tr valign="top">
-                        <th scope="row"><?php _e('Subject') ?></th>
+                        <th scope="row"><?php _e('Subject', 'messaging') ?></th>
                         <td><input disabled="disabled" type="text" name="message_subject" id="message_subject_disabled" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
                         <br />
                         <?php //_e('Required') ?></td> 
                         </tr>
                         <tr valign="top"> 
-                        <th scope="row"><?php _e('Content') ?></th> 
+                        <th scope="row"><?php _e('Content', 'messaging') ?></th> 
                         <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
                         <br />
-                        <?php _e('Required') ?></td> 
+                        <?php _e('Required', 'messaging') ?></td> 
                         </tr>
                         </table>
                     <p class="submit">
-                    <input type="submit" name="Submit" value="<?php _e('Send') ?>" />
+                    <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                     </p>
                     </form>
                     <?php
@@ -739,7 +741,7 @@ function messaging_inbox_page_output() {
 				} else {
 					//everything checked out - send the messages
 					?>
-					<p><?php _e('Sending message(s)...') ?></p>
+					<p><?php _e('Sending message(s)...', 'messaging') ?></p>
                     <?php
 					foreach ($tmp_usernames_array as $tmp_username){
 						if ($tmp_username != ''){
@@ -751,7 +753,7 @@ function messaging_inbox_page_output() {
 					messaging_insert_sent_message($tmp_to_all_uids,$user_ID,$_POST['message_subject'],$_POST['message_content'],0);
 					echo "
 					<SCRIPT LANGUAGE='JavaScript'>
-					window.location='inbox.php?updated=true&updatedmsg=" . urlencode('Reply Sent.') . "';
+					window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode('Reply Sent.') . "';
 					</script>
 					";
 				}
@@ -769,7 +771,7 @@ function messaging_new_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_max_inbox_messages, $messaging_max_reached_message;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e('' . urldecode($_GET['updatedmsg']) . '') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
 	echo '<div class="wrap">';
 	switch( $_GET[ 'action' ] ) {
@@ -778,7 +780,7 @@ function messaging_new_page_output() {
 			$tmp_total_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "'");
 			if ($tmp_total_message_count >= $messaging_max_inbox_messages){
 				?>
-				<p><strong><center><?php _e($messaging_max_reached_message) ?></center></strong></p>
+				<p><strong><center><?php _e($messaging_max_reached_message, 'messaging') ?></center></strong></p>
 				<?php
 			} else {
 				$rows = get_option('default_post_edit_rows');
@@ -792,11 +794,11 @@ function messaging_new_page_output() {
 				}
 				//	$the_editor_content = apply_filters('the_editor_content', $content);
 				?>
-				<h2><?php _e('New Message') ?></h2>
-				<form name="new_message" method="POST" action="inbox.php?page=new&action=process">
+				<h2><?php _e('New Message', 'messaging') ?></h2>
+				<form name="new_message" method="POST" action="admin.php?page=messaging_new&action=process">
 					<table class="form-table">
 					<tr valign="top">
-					<th scope="row"><?php _e('To (usernames)') ?></th>
+					<th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
                     <?php
 					$message_to = $_POST['message_to'];
 					if ( empty( $message_to ) ) {
@@ -805,23 +807,23 @@ function messaging_new_page_output() {
 					?>
 					<td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $message_to; ?>" />
 					<br />
-					<?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td> 
+					<?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2', 'messaging') ?></td> 
 					</tr>
 					<tr valign="top">
-					<th scope="row"><?php _e('Subject') ?></th>
+					<th scope="row"><?php _e('Subject', 'messaging') ?></th>
 					<td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
 					<br />
-					<?php _e('Required') ?></td> 
+					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
 					<tr valign="top"> 
-					<th scope="row"><?php _e('Content') ?></th> 
+					<th scope="row"><?php _e('Content', 'messaging') ?></th> 
 					<td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
 					<br />
-					<?php _e('Required') ?></td> 
+					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
 					</table>
                 <p class="submit">
-                <input type="submit" name="Submit" value="<?php _e('Send') ?>" />
+                <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                 </p>
 				</form>
 				<?php
@@ -836,31 +838,31 @@ function messaging_new_page_output() {
 				}
 				$rows = "rows='$rows'";
 				?>
-				<h2><?php _e('New Message') ?></h2>
-                <p><?php _e('Please fill in all required fields') ?></p>
-				<form name="new_message" method="POST" action="inbox.php?page=new&action=process">
+				<h2><?php _e('New Message', 'messaging') ?></h2>
+                <p><?php _e('Please fill in all required fields', 'messaging') ?></p>
+				<form name="new_message" method="POST" action="admin.php?page=messaging_new&action=process">
 					<table class="form-table">
 					<tr valign="top">
-					<th scope="row"><?php _e('To (usernames)') ?></th>
+					<th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
 					<td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $_POST['message_to']; ?>" />
 					<br />
-					<?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td> 
+					<?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2', 'messaging') ?></td> 
 					</tr>
 					<tr valign="top">
-					<th scope="row"><?php _e('Subject') ?></th>
+					<th scope="row"><?php _e('Subject', 'messaging') ?></th>
 					<td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
 					<br />
-					<?php _e('Required') ?></td> 
+					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
 					<tr valign="top"> 
-					<th scope="row"><?php _e('Content') ?></th> 
+					<th scope="row"><?php _e('Content', 'messaging') ?></th> 
 					<td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
 					<br />
-					<?php _e('Required') ?></td> 
+					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
 					</table>
                 <p class="submit">
-                <input type="submit" name="Submit" value="<?php _e('Send') ?>" />
+                <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                 </p>
                 </form>
 				<?php
@@ -898,31 +900,31 @@ function messaging_new_page_output() {
 					}
 					$rows = "rows='$rows'";
 					?>
-					<h2><?php _e('New Message') ?></h2>
-					<p><?php _e('The following usernames could not be found in the system') ?> <em><?php echo $tmp_error_usernames; ?></em></p>
-					<form name="new_message" method="POST" action="inbox.php?page=new&action=process">
+					<h2><?php _e('New Message', 'messaging') ?></h2>
+					<p><?php _e('The following usernames could not be found in the system', 'messaging') ?> <em><?php echo $tmp_error_usernames; ?></em></p>
+					<form name="new_message" method="POST" action="admin.php?page=messaging_new&action=process">
 						<table class="form-table">
                             <tr valign="top">
-                                <th scope="row"><?php _e('To (usernames)') ?></th>
+                                <th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
                                 <td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $_POST['message_to']; ?>" />
                                 <br />
-                                <?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td> 
+                                <?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2', 'messaging') ?></td> 
                             </tr>
                             <tr valign="top">
-                                <th scope="row"><?php _e('Subject') ?></th>
+                                <th scope="row"><?php _e('Subject', 'messaging') ?></th>
                                 <td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
                                 <br />
-                                <?php _e('Required') ?></td> 
+                                <?php _e('Required', 'messaging') ?></td> 
                             </tr>
                             <tr valign="top"> 
-                                <th scope="row"><?php _e('Content') ?></th> 
+                                <th scope="row"><?php _e('Content', 'messaging') ?></th> 
                                 <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
                                 <br />
-                                <?php _e('Required') ?></td> 
+                                <?php _e('Required', 'messaging') ?></td> 
                             </tr>
 						</table>
                     <p class="submit">
-                    <input type="submit" name="Submit" value="<?php _e('Send') ?>" />
+                    <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                     </p>
                     </form>
 					<?php
@@ -930,7 +932,7 @@ function messaging_new_page_output() {
 				} else {
 					//everything checked out - send the messages
 					?>
-					<p><?php _e('Sending message(s)...') ?></p>
+					<p><?php _e('Sending message(s)...', 'messaging') ?></p>
                     <?php
 					foreach ($tmp_usernames_array as $tmp_username){
 						if ($tmp_username != ''){
@@ -942,7 +944,7 @@ function messaging_new_page_output() {
 					messaging_insert_sent_message($tmp_to_all_uids,$user_ID,$_POST['message_subject'],$_POST['message_content'],0);
 					echo "
 					<SCRIPT LANGUAGE='JavaScript'>
-					window.location='inbox.php?updated=true&updatedmsg=" . urlencode('Message(s) Sent.') . "';
+					window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode('Message(s) Sent.') . "';
 					</script>
 					";
 				}
@@ -957,7 +959,7 @@ function messaging_sent_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_official_message_bg_color, $messaging_max_inbox_messages, $messaging_max_reached_message;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e('' . urldecode($_GET['updatedmsg']) . '') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
 	echo '<div class="wrap">';
 	switch( $_GET[ 'action' ] ) {
@@ -965,11 +967,11 @@ function messaging_sent_page_output() {
 		default:
 		$tmp_sent_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '" . $user_ID . "'");
 			?>
-            <h2><?php _e('Sent Messages') ?></h2>
+            <h2><?php _e('Sent Messages', 'messaging') ?></h2>
             <?php
 			if ($tmp_sent_message_count == 0){
 			?>
-            <p><?php _e('No messages to display') ?></p>
+            <p><?php _e('No messages to display', 'messaging') ?></p>
             <?php
 			} else {
 			$query = "SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '" . $user_ID . "' ORDER BY sent_message_ID DESC LIMIT 50";
@@ -977,10 +979,10 @@ function messaging_sent_page_output() {
 			echo "
 			<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
 			<thead><tr>
-			<th scope='col'>" . __("To") . "</th>
-			<th scope='col'>" . __("Subject") . "</th>
-			<th scope='col'>" . __("Sent") . "</th>
-			<th scope='col'>" . __("Actions") . "</th>
+			<th scope='col'>" . __("To", 'messaging') . "</th>
+			<th scope='col'>" . __("Subject", 'messaging') . "</th>
+			<th scope='col'>" . __("Sent", 'messaging') . "</th>
+			<th scope='col'>" . __("Actions", 'messaging') . "</th>
 			</tr></thead>
 			<tbody id='the-list'>
 			";
@@ -1022,7 +1024,7 @@ function messaging_sent_page_output() {
 					echo "<td valign='top'>" . stripslashes($tmp_sent_message['sent_message_subject']) . "</td>";
 					echo "<td valign='top'>" . date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "</td>";
 				}
-				echo "<td valign='top'><a href='inbox.php?page=sent&action=view&mid=" . $tmp_sent_message['sent_message_ID'] . "' rel='permalink' class='edit'>" . __('View') . "</a></td>";
+				echo "<td valign='top'><a href='admin.php?page=messaging_sent&action=view&mid=" . $tmp_sent_message['sent_message_ID'] . "' rel='permalink' class='edit'>" . __('View', 'messaging') . "</a></td>";
 				echo "</tr>";
 				$class = ('alternate' == $class) ? '' : 'alternate';
 				//=========================================================//
@@ -1059,24 +1061,24 @@ function messaging_sent_page_output() {
 			//=========================================================//
 			?>
 
-            <h2><?php _e('View Message: ') ?><?php echo $_GET['mid']; ?></h2>
-			<form name="new_message" method="POST" action="inbox.php?page=sent">
-            <h3><?php _e('To') ?></h3>
+            <h2><?php _e('View Message: ', 'messaging') ?><?php echo $_GET['mid']; ?></h2>
+			<form name="new_message" method="POST" action="admin.php?page=messaging_sent">
+            <h3><?php _e('To', 'messaging') ?></h3>
             <p><?php echo $tmp_usernames; ?></p>
-            <h3><?php _e('Subject') ?></h3>
+            <h3><?php _e('Subject', 'messaging') ?></h3>
             <p><?php echo $tmp_message_subject; ?></p>
-            <h3><?php _e('Date') ?></h3>
+            <h3><?php _e('Date', 'messaging') ?></h3>
             <p><?php echo date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message_stamp); ?></p>
-            <h3><?php _e('Content') ?></h3>
+            <h3><?php _e('Content', 'messaging') ?></h3>
             <p><?php echo $tmp_message_content; ?></p>
             <p class="submit">
-            <input type="submit" name="Submit" value="<?php _e('Back') ?>" />
+            <input type="submit" name="Submit" value="<?php _e('Back', 'messaging') ?>" />
             </p>
             </form>
             <?php
 			} else {
 			?>
-            <p><?php _e('You do not have permission to view this message') ?></p>
+            <p><?php _e('You do not have permission to view this message', 'messaging') ?></p>
             <?php
 			}
 		break;
@@ -1089,28 +1091,28 @@ function messaging_export_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e('' . urldecode($_GET['updatedmsg']) . '') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
 	echo '<div class="wrap">';
 	switch( $_GET[ 'action' ] ) {
 		//---------------------------------------------------//
 		default:
 			?>
-			<h2><?php _e('Export Messages') ?></h2>
-                <form method="post" action="inbox.php?page=export&action=process"> 
+			<h2><?php _e('Export Messages', 'messaging') ?></h2>
+                <form method="post" action="admin.php?page=messaging_export&action=process"> 
                 <table class="form-table"> 
                 <tr valign="top"> 
-                <th scope="row"><?php _e('Generate export data for') ?></th> 
+                <th scope="row"><?php _e('Generate export data for', 'messaging') ?></th> 
                 <td>
                 <select name="export_type" id="export_type">
-                <option value="received" ><?php _e('Received Messages') ?></option>
-                <option value="sent" ><?php _e('Sent Messages') ?></option>
+                <option value="received" ><?php _e('Received Messages', 'messaging') ?></option>
+                <option value="sent" ><?php _e('Sent Messages', 'messaging') ?></option>
                 </select>
                 </td> 
                 </tr> 
                 </table>
                 <p class="submit">
-                <input type="submit" name="Submit" value="<?php _e('Next') ?>" />
+                <input type="submit" name="Submit" value="<?php _e('Next', 'messaging') ?>" />
                 <input type="hidden" name="action" value="update" />
                 </p>
                 </form>
@@ -1127,10 +1129,10 @@ function messaging_export_page_output() {
 				if (count($tmp_messages) > 0){
 					foreach ($tmp_messages as $tmp_message){
 						$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
-						$export_data = $export_data . __('From'). ': ' . $tmp_username . "\n";
-						$export_data = $export_data . __('Received'). ': ' . date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "\n";
-						$export_data = $export_data . __('Subject'). ': ' . stripslashes($tmp_message['message_subject']) . "\n";
-						$export_data = $export_data . __('Content'). ': ' . stripslashes($tmp_message['message_content']) . "\n";
+						$export_data = $export_data . __('From', 'messaging'). ': ' . $tmp_username . "\n";
+						$export_data = $export_data . __('Received', 'messaging'). ': ' . date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "\n";
+						$export_data = $export_data . __('Subject', 'messaging'). ': ' . stripslashes($tmp_message['message_subject']) . "\n";
+						$export_data = $export_data . __('Content', 'messaging'). ': ' . stripslashes($tmp_message['message_content']) . "\n";
 						$export_data = $export_data . $export_data_divider;	
 					}
 				}
@@ -1152,10 +1154,10 @@ function messaging_export_page_output() {
 						$tmp_usernames = trim($tmp_usernames, ", ");
 						//=========================================================//
 						$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_sent_message['sent_message_from_user_ID'] . "'");
-						$export_data = $export_data . __('To'). ': ' . $tmp_usernames . "\n";
-						$export_data = $export_data . __('Sent'). ': ' . date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "\n";
-						$export_data = $export_data . __('Subject'). ': ' . stripslashes($tmp_sent_message['sent_message_subject']) . "\n";
-						$export_data = $export_data . __('Content'). ': ' . stripslashes($tmp_sent_message['sent_message_content']) . "\n";
+						$export_data = $export_data . __('To', 'messaging'). ': ' . $tmp_usernames . "\n";
+						$export_data = $export_data . __('Sent', 'messaging'). ': ' . date(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "\n";
+						$export_data = $export_data . __('Subject', 'messaging'). ': ' . stripslashes($tmp_sent_message['sent_message_subject']) . "\n";
+						$export_data = $export_data . __('Content', 'messaging'). ': ' . stripslashes($tmp_sent_message['sent_message_content']) . "\n";
 						$export_data = $export_data . $export_data_divider;	
 					}
 				}
@@ -1167,22 +1169,22 @@ function messaging_export_page_output() {
 			//============================================//
 			if ($_POST['export_type'] == 'received'){
 				?>
-	            <h2><?php _e('Export Data') ?> <?php _e('Received Messages') ?></h2>
+	            <h2><?php _e('Export Data', 'messaging') ?> <?php _e('Received Messages', 'messaging') ?></h2>
                 <?php
 			} else if ($_POST['export_type'] == 'sent'){
 				?>
-	            <h2><?php _e('Export Data') ?> <?php _e('Sent Messages') ?></h2>
+	            <h2><?php _e('Export Data', 'messaging') ?> <?php _e('Sent Messages', 'messaging') ?></h2>
                 <?php
 			} else {
 				?>
-	            <h2><?php _e('Export Data') ?></h2>
+	            <h2><?php _e('Export Data', 'messaging') ?></h2>
                 <?php
 			}
 			?>
-			<form name="back" method="POST" action="inbox.php?page=export">
+			<form name="back" method="POST" action="admin.php?page=messaging_export">
             <p style="padding-left:0px;padding-right:10px;"><textarea style="width:100%" rows="35"><?php echo $export_data; ?></textarea></p>
             <p class="submit">
-            <input type="submit" name="Submit" value="<?php _e('Back') ?>" />
+            <input type="submit" name="Submit" value="<?php _e('Back', 'messaging') ?>" />
             </p>
             </form>
             <?php
@@ -1196,7 +1198,7 @@ function messaging_notifications_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e('' . urldecode($_GET['updatedmsg']) . '') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
 	echo '<div class="wrap">';
 	switch( $_GET[ 'action' ] ) {
@@ -1204,21 +1206,21 @@ function messaging_notifications_page_output() {
 		default:
 			$tmp_message_email_notification = get_usermeta($user_ID,'message_email_notification');
 			?>
-			<h2><?php _e('Notification Settings') ?></h2>
-                <form method="post" action="inbox.php?page=message-notifications&action=process">
+			<h2><?php _e('Notification Settings', 'messaging') ?></h2>
+                <form method="post" action="admin.php?page=messaging_message-notifications&action=process">
                 <table class="form-table">
                 <tr valign="top"> 
-                <th scope="row"><?php _e('Receive an email notifying you of new messages') ?></th> 
+                <th scope="row"><?php _e('Receive an email notifying you of new messages', 'messaging') ?></th> 
                 <td>
                 <select name="message_email_notification" id="message_email_notification">
-                <option value="yes" <?php if ($tmp_message_email_notification == 'yes'){ echo 'selected="selected"'; } ?> ><?php _e('Yes') ?></option>
-                <option value="no" <?php if ($tmp_message_email_notification == 'no'){ echo 'selected="selected"'; } ?> ><?php _e('No') ?></option>
+                <option value="yes" <?php if ($tmp_message_email_notification == 'yes'){ echo 'selected="selected"'; } ?> ><?php _e('Yes', 'messaging') ?></option>
+                <option value="no" <?php if ($tmp_message_email_notification == 'no'){ echo 'selected="selected"'; } ?> ><?php _e('No', 'messaging') ?></option>
                 </select>
                 </td> 
                 </tr> 
                 </table>
                 <p class="submit">
-                <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
+                <input type="submit" name="Submit" value="<?php _e('Save Changes', 'messaging') ?>" />
                 </p>
                 </form>
             <?php
@@ -1228,7 +1230,7 @@ function messaging_notifications_page_output() {
 			update_usermeta($user_ID,'message_email_notification',$_POST['message_email_notification']);
 			echo "
 			<SCRIPT LANGUAGE='JavaScript'>
-			window.location='inbox.php?page=notifications&updated=true&updatedmsg=" . urlencode('Settings saved.') . "';
+			window.location='admin.php?page=messaging_message-notifications&updated=true&updatedmsg=" . urlencode('Settings saved.') . "';
 			</script>
 			";
 		break;
@@ -1254,4 +1256,12 @@ function messaging_user_primary_blog_url($tmp_uid){
 	return 'http://' . $tmp_blog_domain . $tmp_blog_path;
 }
 
-?>
+if ( !function_exists( 'wdp_un_check' ) ) {
+	add_action( 'admin_notices', 'wdp_un_check', 5 );
+	add_action( 'network_admin_notices', 'wdp_un_check', 5 );
+
+	function wdp_un_check() {
+		if ( !class_exists( 'WPMUDEV_Update_Notifications' ) && current_user_can( 'edit_users' ) )
+			echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'wpmudev') . '</a></p></div>';
+	}
+}
