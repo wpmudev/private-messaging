@@ -246,10 +246,10 @@ function messaging_header_js(){
 	global $current_site;
 	$valid_elements = 'p/-div[*],-strong/-b[*],-em/-i[*],-font[*],-ul[*],-ol[*],-li[*],*[*]';
 	$valid_elements = apply_filters('mce_valid_elements', $valid_elements);
-	$mce_buttons = apply_filters('mce_buttons', array('bold', 'italic', 'strikethrough', 'separator', 'bullist', 'numlist', 'outdent', 'indent', 'separator', 'justifyleft', 'justifycenter', 'justifyright', 'separator', 'link', 'unlink', 'image', 'wp_more', 'separator', 'spellchecker', 'separator', 'wp_help', 'wp_adv', 'wp_adv_start', 'formatselect', 'underline', 'justifyfull', 'forecolor', 'separator', 'pastetext', 'pasteword', 'separator', 'removeformat', 'cleanup', 'separator', 'charmap', 'separator', 'undo', 'redo', 'wp_adv_end'));
+	$mce_buttons = apply_filters('mce_buttons', array('bold', 'italic', 'underline', 'strikethrough', 'separator', 'bullist', 'numlist', 'outdent', 'indent', 'separator', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'separator', 'link', 'unlink', 'image', 'wp_more', 'separator', 'spellchecker', 'separator', 'wp_help', 'wp_adv'));
 	$mce_buttons = implode($mce_buttons, ',');
 
-	$mce_buttons_2 = apply_filters('mce_buttons_2', array());
+	$mce_buttons_2 = apply_filters('mce_buttons_2', array('wp_adv_start', 'forecolor', 'separator', 'pastetext', 'pasteword', 'separator', 'removeformat', 'cleanup', 'separator', 'charmap', 'separator', 'undo', 'redo', 'wp_adv_end'));
 	$mce_buttons_2 = implode($mce_buttons_2, ',');
 
 	$mce_buttons_3 = apply_filters('mce_buttons_3', array());
@@ -267,39 +267,80 @@ function messaging_header_js(){
 	}
 
 	$mce_locale = ( '' == get_locale() ) ? 'en' : strtolower(get_locale());
+	if (preg_match('/_/gi', $mce_locale)) {
+		$mce_locale_parts = split('_', $mce_locale);
+		$mce_locale = $mce_locale_parts[0];
+	}
 	?>
+<script type="text/javascript">
+/* <![CDATA[ */
+tinyMCEPreInit = {
+	base : "http://<?php echo $current_site->domain . $current_site->path; ?>wp-includes/js/tinymce",
+	suffix : "",
+	query : "ver=3393a",
+	mceInit : {
+		mode:"specific_textareas",
+		editor_selector:"mceEditor",
+		width:"100%",
+		theme:"advanced",
+		skin:"wp_theme",
+		theme_advanced_buttons1:"<?php echo $mce_buttons; ?>",
+		theme_advanced_buttons2:"<?php echo $mce_buttons_2; ?>",
+		theme_advanced_buttons3:"<?php echo $mce_buttons_3; ?>",
+		theme_advanced_buttons4:"",
+		language:"<?php print $mce_locale; ?>",
+		spellchecker_languages:"+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,Portuguese=pt,Spanish=es,Swedish=sv",
+		theme_advanced_toolbar_location:"top",
+		theme_advanced_toolbar_align:"left",
+		theme_advanced_statusbar_location:"bottom",
+		browsers : "<?php echo $mce_browsers; ?>",
+		theme_advanced_resizing:true,
+		theme_advanced_resize_horizontal:false,
+		dialog_type:"modal",
+		content_css : "<?php echo $mce_css; ?>",
+		valid_elements : "<?php echo $valid_elements; ?>",
+		formats:{
+			alignleft : [
+				{selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li', styles : {textAlign : 'left'}},
+				{selector : 'img,table', classes : 'alignleft'}
+			],
+			aligncenter : [
+				{selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li', styles : {textAlign : 'center'}},
+				{selector : 'img,table', classes : 'aligncenter'}
+			],
+			alignright : [
+				{selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li', styles : {textAlign : 'right'}},
+				{selector : 'img,table', classes : 'alignright'}
+			],
+			strikethrough : {inline : 'del'}
+		},
+		relative_urls:false,
+		remove_script_host:false,
+		convert_urls:false,
+		apply_source_formatting:false,
+		remove_linebreaks:true,
+		gecko_spellcheck:true,
+		entities:"38,amp,60,lt,62,gt",
+		accessibility_focus:true,
+		tabfocus_elements:"major-publishing-actions",
+		media_strict:false,
+		paste_remove_styles:true,
+		paste_remove_spans:true,
+		paste_strip_class_attributes:"all",
+		paste_text_use_dialog:true,
+		wpeditimage_disable_captions:false,
+		plugins:"inlinepopups,spellchecker,paste,wordpress,fullscreen,wpeditimage,wpgallery,tabfocus,wplink,wpdialogs"},
+		load_ext : function(url,lang){var sl=tinymce.ScriptLoader;sl.markDone(url+'/langs/'+lang+'.js');sl.markDone(url+'/langs/'+lang+'_dlg.js');}
+};
+/* ]]> */
+</script>
 <script type='text/javascript' src='http://<?php echo $current_site->domain . $current_site->path; ?>wp-includes/js/tinymce/tiny_mce.js?ver=20070528'></script>
-<script language="javascript" type="text/javascript">
-tinyMCE.init({
-	mode : "specific_textareas",
-	editor_selector : "mceEditor",
-	width : "10%",
-	theme : "advanced",
-	theme_advanced_buttons1 : "<?php echo $mce_buttons; ?>",
-	theme_advanced_buttons2 : "<?php echo $mce_buttons_2; ?>",
-	theme_advanced_buttons3 : "<?php echo $mce_buttons_3; ?>",
-	language : "<?php echo $mce_locale; ?>",
-	theme_advanced_toolbar_location : "top",
-	theme_advanced_toolbar_align : "left",
-	theme_advanced_path_location : "bottom",
-	theme_advanced_resizing : true,
-	browsers : "<?php echo $mce_browsers; ?>",
-	dialog_type : "modal",
-	theme_advanced_resize_horizontal : false,
-	convert_urls : false,
-	relative_urls : false,
-	remove_script_host : false,
-	force_p_newlines : true,
-	force_br_newlines : false,
-	convert_newlines_to_brs : false,
-	remove_linebreaks : false,
-	fix_list_elements : true,
-	gecko_spellcheck : true,
-	entities : "38,amp,60,lt,62,gt",
-	button_tile_map : true,
-	content_css : "<?php echo $mce_css; ?>",
-	valid_elements : "<?php echo $valid_elements; ?>"
-});
+<script type='text/javascript' src='http://<?php echo $current_site->domain . $current_site->path; ?>wp-includes/js/tinymce/langs/wp-langs-en.js?ver=3393a'></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+(function(){var t=tinyMCEPreInit,sl=tinymce.ScriptLoader,ln=t.mceInit.language,th=t.mceInit.theme,pl=t.mceInit.plugins;sl.markDone(t.base+'/langs/'+ln+'.js');sl.markDone(t.base+'/themes/'+th+'/langs/'+ln+'.js');sl.markDone(t.base+'/themes/'+th+'/langs/'+ln+'_dlg.js');tinymce.each(pl.split(','),function(n){if(n&&n.charAt(0)!='-'){sl.markDone(t.base+'/plugins/'+n+'/langs/'+ln+'.js');sl.markDone(t.base+'/plugins/'+n+'/langs/'+ln+'_dlg.js');}});})();
+tinyMCE.init(tinyMCEPreInit.mceInit);
+/* ]]> */
 </script>
 	<?php
 }
