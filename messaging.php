@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.0.5
+Version: 1.0.6
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -27,7 +27,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.0.5';
+$messaging_current_version = '1.0.6';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -51,7 +51,7 @@ SITE_NAME'; // TO_USER, FROM_USER, SITE_NAME, SITE_URL
 if ($_GET['key'] == '' || $_GET['key'] === ''){
 	add_action('admin_head', 'messaging_make_current');
 }
-if($_GET['page'] == 'new'){
+if($_GET['page'] == 'messaging_new'){
 	add_action('admin_head', 'messaging_header_js');
 }
 if($_GET['action'] == 'reply' && $_GET['mid'] != ''){
@@ -267,7 +267,7 @@ function messaging_header_js(){
 	}
 
 	$mce_locale = ( '' == get_locale() ) ? 'en' : strtolower(get_locale());
-	if (preg_match('/_/gi', $mce_locale)) {
+	if (preg_match('/_/i', $mce_locale)) {
 		$mce_locale_parts = split('_', $mce_locale);
 		$mce_locale = $mce_locale_parts[0];
 	}
