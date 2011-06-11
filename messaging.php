@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.0.6
+Version: 1.0.7
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -79,7 +79,7 @@ function messaging_init() {
 	if ( !is_multisite() )
 		exit( 'The Messaging plugin is only compatible with WordPress Multisite.' );
 		
-	load_plugin_textdomain('simple_ads', false, dirname(plugin_basename(__FILE__)).'/languages');
+	load_plugin_textdomain('messaging', false, dirname(plugin_basename(__FILE__)).'/languages');
 }
 
 function messaging_make_current() {
