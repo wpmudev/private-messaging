@@ -655,15 +655,24 @@ function messaging_inbox_page_output() {
                 <tr valign="top"> 
                 <th scope="row"><?php _e('Content', 'messaging') ?></th> 
                 <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php //echo $tmp_message_content; ?></textarea>
-                <br />
+		<br />
                 <?php _e('Required', 'messaging') ?></td> 
                 </tr>
                 </table>
             <p class="submit">
             <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
             </p>
-            </form>
-            <?php
+            </form>                <?php
+		if ( user_can_richedit() ){
+			wp_print_scripts( array( 'wpdialogs-popup' ) );
+			wp_print_styles('wp-jquery-ui-dialog');
+			
+			require_once ABSPATH . 'wp-admin/includes/template.php';
+			require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
+			?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
+			wp_print_scripts('wplink');
+			wp_print_styles('wplink');
+		}
 			} else {
 			?>
             <p><?php _e('You do not have permission to view this message', 'messaging') ?></p>
@@ -713,7 +722,17 @@ function messaging_inbox_page_output() {
                 <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                 </p>
 				</form>
-				<?php
+		<?php
+					if ( user_can_richedit() ){
+						wp_print_scripts( array( 'wpdialogs-popup' ) );
+						wp_print_styles('wp-jquery-ui-dialog');
+						
+						require_once ABSPATH . 'wp-admin/includes/template.php';
+						require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
+						?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
+						wp_print_scripts('wplink');
+						wp_print_styles('wplink');
+					}
 			} else {
 				//==========================================================//
 				$tmp_usernames = $_POST['message_to'];
@@ -769,7 +788,7 @@ function messaging_inbox_page_output() {
                         <tr valign="top"> 
                         <th scope="row"><?php _e('Content', 'messaging') ?></th> 
                         <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
-                        <br />
+			<br />
                         <?php _e('Required', 'messaging') ?></td> 
                         </tr>
                         </table>
@@ -777,8 +796,17 @@ function messaging_inbox_page_output() {
                     <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                     </p>
                     </form>
-                    <?php
-
+		    <?php
+					if ( user_can_richedit() ){
+						wp_print_scripts( array( 'wpdialogs-popup' ) );
+						wp_print_styles('wp-jquery-ui-dialog');
+						
+						require_once ABSPATH . 'wp-admin/includes/template.php';
+						require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
+						?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
+						wp_print_scripts('wplink');
+						wp_print_styles('wplink');
+					}
 				} else {
 					//everything checked out - send the messages
 					?>
@@ -868,6 +896,16 @@ function messaging_new_page_output() {
                 </p>
 				</form>
 				<?php
+					if ( user_can_richedit() ){
+						wp_print_scripts( array( 'wpdialogs-popup' ) );
+						wp_print_styles('wp-jquery-ui-dialog');
+						
+						require_once ABSPATH . 'wp-admin/includes/template.php';
+						require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
+						?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
+						wp_print_scripts('wplink');
+						wp_print_styles('wplink');
+					}
 			}
 		break;
 		//---------------------------------------------------//
@@ -906,7 +944,17 @@ function messaging_new_page_output() {
                 <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                 </p>
                 </form>
-				<?php
+			<?php
+				if ( user_can_richedit() ){
+					wp_print_scripts( array( 'wpdialogs-popup' ) );
+					wp_print_styles('wp-jquery-ui-dialog');
+					
+					require_once ABSPATH . 'wp-admin/includes/template.php';
+					require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
+					?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
+					wp_print_scripts('wplink');
+					wp_print_styles('wplink');
+				}
 			} else {
 				//==========================================================//
 				$tmp_usernames = $_POST['message_to'];
@@ -960,7 +1008,7 @@ function messaging_new_page_output() {
                             <tr valign="top"> 
                                 <th scope="row"><?php _e('Content', 'messaging') ?></th> 
                                 <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
-                                <br />
+				<br />
                                 <?php _e('Required', 'messaging') ?></td> 
                             </tr>
 						</table>
@@ -968,8 +1016,17 @@ function messaging_new_page_output() {
                     <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
                     </p>
                     </form>
-					<?php
-
+			<?php
+					if ( user_can_richedit() ){
+						wp_print_scripts( array( 'wpdialogs-popup' ) );
+						wp_print_styles('wp-jquery-ui-dialog');
+						
+						require_once ABSPATH . 'wp-admin/includes/template.php';
+						require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
+						?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
+						wp_print_scripts('wplink');
+						wp_print_styles('wplink');
+					}
 				} else {
 					//everything checked out - send the messages
 					?>
