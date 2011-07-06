@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.0.7
+Version: 1.0.8
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -27,7 +27,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.0.6';
+$messaging_current_version = '1.0.8';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
