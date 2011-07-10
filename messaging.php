@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.0.9
+Version: 1.1.0
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -27,7 +27,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.0.9';
+$messaging_current_version = '1.1.0';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -1091,7 +1091,7 @@ function messaging_new_page_output() {
 					messaging_insert_sent_message($tmp_to_all_uids,$user_ID,$_POST['message_subject'],$_POST['message_content'],0);
 					echo "
 					<SCRIPT LANGUAGE='JavaScript'>
-					window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode('Message(s) Sent.') . "';
+					window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode(__('Message(s) Sent.', 'messaging')) . "';
 					</script>
 					";
 				}
@@ -1377,7 +1377,7 @@ function messaging_notifications_page_output() {
 			update_usermeta($user_ID,'message_email_notification',$_POST['message_email_notification']);
 			echo "
 			<SCRIPT LANGUAGE='JavaScript'>
-			window.location='admin.php?page=messaging_message-notifications&updated=true&updatedmsg=" . urlencode('Settings saved.') . "';
+			window.location='admin.php?page=messaging_message-notifications&updated=true&updatedmsg=" . urlencode(__('Settings saved.', 'messaging')) . "';
 			</script>
 			";
 		break;
@@ -1409,6 +1409,6 @@ if ( !function_exists( 'wdp_un_check' ) ) {
 
 	function wdp_un_check() {
 		if ( !class_exists( 'WPMUDEV_Update_Notifications' ) && current_user_can( 'edit_users' ) )
-			echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'wpmudev') . '</a></p></div>';
+			echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'messaging') . '</a></p></div>';
 	}
 }
