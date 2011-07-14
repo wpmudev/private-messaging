@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.0
+Version: 1.1.1
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -27,16 +27,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.0';
+$messaging_current_version = '1.1.1';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
 
 $messaging_max_inbox_messages = 90;
-$messaging_max_reached_message = __('You are currently at or over your inbox message limit. You will not be able to view, reply to, or send new messages until you remove messages from your inbox.', 'messaging');
 $messaging_official_message_bg_color = '#E5F3FF';
 
-$messaging_email_notification_subject = __('[SITE_NAME] New Message', 'messaging'); // SITE_NAME
+$messaging_email_notification_subject = '[SITE_NAME] New Message'; // SITE_NAME
 $messaging_email_notification_content = 'Dear TO_USER,
 
 You have receieved a new message from FROM_USER.
@@ -77,10 +76,15 @@ add_action('init', 'messaging_init');
 //---Functions------------------------------------------------------------//
 //------------------------------------------------------------------------//
 function messaging_init() {
+	global $messaging_max_reached_message,$messaging_email_notification_subject;
+	
 	if ( !is_multisite() )
 		exit( 'The Messaging plugin is only compatible with WordPress Multisite.' );
 		
 	load_plugin_textdomain('messaging', false, dirname(plugin_basename(__FILE__)).'/languages');
+	
+	$messaging_max_reached_message = __('You are currently at or over your inbox message limit. You will not be able to view, reply to, or send new messages until you remove messages from your inbox.', 'messaging');
+	$messaging_email_notification_subject = __('[SITE_NAME] New Message', 'messaging'); // SITE_NAME
 }
 
 function messaging_make_current() {
@@ -177,7 +181,7 @@ function messaging_network_plug_pages() {
 }
 
 function messaging_network_settings() {
-	global $messaging_email_notification_content;
+	global $messaging_email_notification_content, $messaging_email_notification_subject;
 	
 	if (isset($_GET['updated'])) {
 		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
@@ -191,14 +195,22 @@ function messaging_network_settings() {
 			<h2><?php _e('Messaging Settings', 'messaging') ?></h2>
                 <form method="post" action="settings.php?page=messaging_settings&action=process">
                 <table class="form-table">
-                <tr valign="top"> 
-                <th scope="row"><?php _e('Notification e-mail contents', 'messaging') ?></th> 
-                <td>
-                <textarea id="messaging_email_notification_content" name="messaging_email_notification_content"
-		rows="6" cols="40"><?php echo get_site_option('messaging_email_notification_content', $messaging_email_notification_content); ?></textarea>
-                <br/>
-		<?php _e('Variables', 'messaging'); ?> TO_USER, FROM_USER, SITE_NAME, SITE_URL .</td>
-                </tr> 
+			<tr valign="top"> 
+				<th scope="row"><?php _e('Notification e-mail subject', 'messaging') ?></th> 
+				<td>
+				<input id="messaging_email_notification_subject" name="messaging_email_notification_subject"
+				value="<?php echo get_site_option('messaging_email_notification_subject', $messaging_email_notification_subject); ?>" />
+				<br/>
+				<?php _e('Variables:', 'messaging'); ?> SITE_NAME</td>
+			</tr> 
+			<tr valign="top"> 
+				<th scope="row"><?php _e('Notification e-mail contents', 'messaging') ?></th> 
+				<td>
+				<textarea id="messaging_email_notification_content" name="messaging_email_notification_content"
+				rows="6" cols="40"><?php echo get_site_option('messaging_email_notification_content', $messaging_email_notification_content); ?></textarea>
+				<br/>
+				<?php _e('Variables:', 'messaging'); ?> TO_USER, FROM_USER, SITE_NAME, SITE_URL</td>
+			</tr> 
                 </table>
                 <p class="submit">
                 <input type="submit" name="Submit" value="<?php _e('Save Changes', 'messaging') ?>" />
@@ -208,6 +220,7 @@ function messaging_network_settings() {
 		break;
 		//---------------------------------------------------//
 		case "process":
+			update_site_option('messaging_email_notification_subject',$_POST['messaging_email_notification_subject']);
 			update_site_option('messaging_email_notification_content',$_POST['messaging_email_notification_content']);
 			echo "
 			<SCRIPT LANGUAGE='JavaScript'>
@@ -265,7 +278,7 @@ function messaging_new_message_notification($tmp_to_uid,$tmp_from_uid,$tmp_subje
 		$message_content = str_replace( "FROM_USER", $tmp_from_username, $message_content );
 		$message_content = str_replace( "\'", "'", $message_content );
 		
-		$subject_content = $messaging_email_notification_subject;
+		$subject_content = get_site_option('messaging_email_notification_subject', $messaging_email_notification_content);
 		$subject_content = str_replace( "SITE_NAME", $current_site->site_name, $subject_content );
 		
 		$admin_email = get_site_option('admin_email');
@@ -787,13 +800,14 @@ function messaging_inbox_page_output() {
 				$tmp_usernames = $_POST['message_to'];
 				$tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
 				$tmp_usernames = ',,' . $tmp_usernames . ',,';
-				$tmp_usernames = str_replace( " ", '', $tmp_usernames );
+				//$tmp_usernames = str_replace( " ", '', $tmp_usernames );
 				$tmp_usernames_array = explode(",", $tmp_usernames);
 				$tmp_usernames_array = array_unique($tmp_usernames_array);
 				
 				$tmp_username_error = 0;
 				$tmp_error_usernames = '';
 				$tmp_to_all_uids = '|';
+				
 				foreach ($tmp_usernames_array as $tmp_username){
 					if ($tmp_username != ''){
 						$tmp_username_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
@@ -1009,7 +1023,7 @@ function messaging_new_page_output() {
 				$tmp_usernames = $_POST['message_to'];
 				$tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
 				$tmp_usernames = ',,' . $tmp_usernames . ',,';
-				$tmp_usernames = str_replace( " ", '', $tmp_usernames );
+				// $tmp_usernames = str_replace( " ", '', $tmp_usernames );
 				$tmp_usernames_array = explode(",", $tmp_usernames);
 				$tmp_usernames_array = array_unique($tmp_usernames_array);
 
