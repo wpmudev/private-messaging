@@ -321,7 +321,7 @@ function messaging_header_js(){
 	$mce_browsers = implode($mce_browsers, ',');
 
 	$mce_popups_css = get_option('siteurl') . '/wp-includes/js/tinymce/plugins/wordpress/popups.css';
-	$mce_css = get_option('siteurl') . '/wp-includes/js/tinymce/plugins/wordpress/wordpress.css';
+	$mce_css = get_option('siteurl') . '/wp-includes/js/tinymce/plugins/wordpress/css/content.css';
 	$mce_css = apply_filters('mce_css', $mce_css);
 	if ( $_SERVER['HTTPS'] == 'on' ) {
 		$mce_css = str_replace('http://', 'https://', $mce_css);
@@ -404,6 +404,11 @@ tinyMCEPreInit = {
 tinyMCE.init(tinyMCEPreInit.mceInit);
 /* ]]> */
 </script>
+<style type="text/css">
+#message_content_tbl {
+	border: 1px solid #DFDFDF;
+}
+</style>
 	<?php
 }
 
