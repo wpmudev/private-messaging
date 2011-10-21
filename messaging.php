@@ -278,7 +278,7 @@ function messaging_new_message_notification($tmp_to_uid,$tmp_from_uid,$tmp_subje
 		$message_content = str_replace( "FROM_USER", $tmp_from_username, $message_content );
 		$message_content = str_replace( "\'", "'", $message_content );
 		
-		$subject_content = get_site_option('messaging_email_notification_subject', $messaging_email_notification_content);
+		$subject_content = get_site_option('messaging_email_notification_subject', $messaging_email_notification_subject);
 		$subject_content = str_replace( "SITE_NAME", $current_site->site_name, $subject_content );
 		
 		$admin_email = get_site_option('admin_email');
