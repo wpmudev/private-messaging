@@ -8,6 +8,7 @@ Version: 1.1.1
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
+Text Domain: messaging
 */
 
 /* 
