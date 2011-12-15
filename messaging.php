@@ -184,13 +184,14 @@ function messaging_network_plug_pages() {
 }
 
 function messaging_network_settings() {
-	global $messaging_email_notification_content, $messaging_email_notification_subject;
+	global $messaging_email_notification_content, $messaging_email_notification_subject,$user_ID;
 	
 	if (isset($_GET['updated'])) {
 		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
+	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
 	echo '<div class="wrap">';
-	switch( $_GET[ 'action' ] ) {
+	switch( $action ) {
 		//---------------------------------------------------//
 		default:
 			$tmp_message_email_notification = get_user_meta($user_ID,'message_email_notification');
