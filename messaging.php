@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.1
+Version: 1.1.3
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.1';
+$messaging_current_version = '1.1.3';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -48,28 +48,30 @@ SITE_NAME'; // TO_USER, FROM_USER, SITE_NAME, SITE_URL
 //---Hook-----------------------------------------------------------------//
 //------------------------------------------------------------------------//
 //check for activating
-if ($_GET['key'] == '' || $_GET['key'] === ''){
+if (!isset($_GET['key']) || $_GET['key'] == '' || $_GET['key'] === ''){
 	add_action('admin_head', 'messaging_make_current');
 }
-if($_GET['page'] == 'messaging_new'){
+if(isset($_GET['page']) && $_GET['page'] == 'messaging_new'){
 	add_action('admin_head', 'messaging_header_js');
 }
-if($_GET['action'] == 'reply' && $_GET['mid'] != ''){
+if(isset($_GET['action']) && $_GET['action'] == 'reply' && isset($_GET['mid']) && $_GET['mid'] != ''){
 	add_action('admin_head', 'messaging_header_js');
 }
-if($_GET['action'] == 'reply_process' && $_POST['message_to'] != ''){
+if(isset($_GET['action']) && $_GET['action'] == 'reply_process' && isset($_POST['message_to']) && $_POST['message_to'] != ''){
 	add_action('admin_head', 'messaging_header_js');
 }
+
 add_action('admin_menu', 'messaging_plug_pages');
 add_action('network_admin_menu', 'messaging_network_plug_pages');
 add_action('wpabar_menuitems', 'messaging_admin_bar');
-if ($_GET['action'] == 'view' && $_GET['mid'] != ''){
+
+if (isset($_GET['action']) && $_GET['action'] == 'view' && isset($_GET['mid']) && $_GET['mid'] != ''){
 	messaging_update_message_status($_GET['mid'],'read');
 }
-if ($_GET['action'] == 'reply' && $_GET['mid'] != ''){
+if (isset($_GET['action']) && $_GET['action'] == 'reply' && isset($_GET['mid']) && $_GET['mid'] != ''){
 	add_action('admin_footer', 'messaging_set_focus_js');
 }
-if ($_GET['action'] == 'reply_process'){
+if (isset($_GET['action']) && $_GET['action'] == 'reply_process'){
 	add_action('admin_footer', 'messaging_set_focus_js');
 }
 add_action('init', 'messaging_init');
@@ -171,10 +173,10 @@ function messaging_plug_pages() {
 		$count_output = '';
 	}
 	
-	add_menu_page(__('Inbox', 'messaging'), __('Inbox', 'messaging').$count_output, 0, 'messaging', 'messaging_inbox_page_output');
-	add_submenu_page('messaging', __('Inbox', 'messaging'), __('New Message', 'messaging'), '0', 'messaging_new', 'messaging_new_page_output' );
-	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Sent Messages', 'messaging'), '0', 'messaging_sent', 'messaging_sent_page_output' );
-	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Notifications', 'messaging'), '0', 'messaging_message-notifications', 'messaging_notifications_page_output' );
+	add_menu_page(__('Inbox', 'messaging'), __('Inbox', 'messaging').$count_output, 'read', 'messaging', 'messaging_inbox_page_output');
+	add_submenu_page('messaging', __('Inbox', 'messaging'), __('New Message', 'messaging'), 'read', 'messaging_new', 'messaging_new_page_output' );
+	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Sent Messages', 'messaging'), 'read', 'messaging_sent', 'messaging_sent_page_output' );
+	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Notifications', 'messaging'), 'read', 'messaging_message-notifications', 'messaging_notifications_page_output' );
 }
 
 function messaging_network_plug_pages() {
@@ -191,7 +193,7 @@ function messaging_network_settings() {
 	switch( $_GET[ 'action' ] ) {
 		//---------------------------------------------------//
 		default:
-			$tmp_message_email_notification = get_usermeta($user_ID,'message_email_notification');
+			$tmp_message_email_notification = get_user_meta($user_ID,'message_email_notification');
 			?>
 			<h2><?php _e('Messaging Settings', 'messaging') ?></h2>
                 <form method="post" action="settings.php?page=messaging_settings&action=process">
@@ -266,7 +268,7 @@ function messaging_remove_sent_message($tmp_mid) {
 
 function messaging_new_message_notification($tmp_to_uid,$tmp_from_uid,$tmp_subject,$tmp_content) {
 	global $wpdb, $current_site, $user_ID, $messaging_email_notification_subject, $messaging_email_notification_content;
-	if (get_usermeta($tmp_to_uid,'message_email_notification') != 'no'){
+	if (get_user_meta($tmp_to_uid,'message_email_notification') != 'no'){
 		$tmp_to_username =  $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_to_uid . "'");
 		$tmp_to_email =  $wpdb->get_var("SELECT user_email FROM " . $wpdb->users . " WHERE ID = '" . $tmp_to_uid . "'");
 		$tmp_from_username =  $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_from_uid . "'");
@@ -324,7 +326,7 @@ function messaging_header_js(){
 	$mce_popups_css = get_option('siteurl') . '/wp-includes/js/tinymce/plugins/wordpress/popups.css';
 	$mce_css = get_option('siteurl') . '/wp-includes/js/tinymce/plugins/wordpress/css/content.css';
 	$mce_css = apply_filters('mce_css', $mce_css);
-	if ( $_SERVER['HTTPS'] == 'on' ) {
+	if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ) {
 		$mce_css = str_replace('http://', 'https://', $mce_css);
 		$mce_popups_css = str_replace('http://', 'https://', $mce_popups_css);
 	}
@@ -418,13 +420,16 @@ tinyMCE.init(tinyMCEPreInit.mceInit);
 //------------------------------------------------------------------------//
 
 function messaging_inbox_page_output() {
-	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_official_message_bg_color, $messaging_max_inbox_messages, $messaging_max_reached_message;
+	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_official_message_bg_color, $messaging_max_inbox_messages, $messaging_max_reached_message, $wp_version;
 
 	if (isset($_GET['updated'])) {
 		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
+	
+	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
+	
 	echo '<div class="wrap">';
-	switch( $_GET[ 'action' ] ) {
+	switch( $action ) {
 		//---------------------------------------------------//
 		default:
 			if ( isset($_POST['Remove']) ) {
@@ -484,6 +489,7 @@ function messaging_inbox_page_output() {
 				</tr></thead>
 				<tbody id='the-list'>
 				";
+				$class = '';
 				if (count($tmp_messages) > 0){
 					$class = ('alternate' == $class) ? '' : 'alternate';
 					foreach ($tmp_messages as $tmp_message){
@@ -559,6 +565,7 @@ function messaging_inbox_page_output() {
 				</tr></thead>
 				<tbody id='the-list'>
 				";
+				$class = '';
 				if (count($tmp_messages) > 0){
 					$class = ('alternate' == $class) ? '' : 'alternate';
 					foreach ($tmp_messages as $tmp_message){
@@ -722,7 +729,13 @@ function messaging_inbox_page_output() {
                 </tr>
                 <tr valign="top"> 
                 <th scope="row"><?php _e('Content', 'messaging') ?></th> 
-                <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php //echo $tmp_message_content; ?></textarea>
+                <td>
+			<?php if (version_compare($wp_version, "3.3") >= 0 && user_can_richedit()) { ?>
+				<?php wp_editor('', 'message_content'); ?>
+			<?php } else { ?>
+				<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'></textarea>
+			<?php } ?>
+
 		<br />
                 <?php _e('Required', 'messaging') ?></td> 
                 </tr>
@@ -731,20 +744,10 @@ function messaging_inbox_page_output() {
             <input type="submit" name="Submit" value="<?php _e('Send', 'messaging') ?>" />
             </p>
             </form>                <?php
-		if ( user_can_richedit() ){
-			wp_print_scripts( array( 'wpdialogs-popup' ) );
-			wp_print_styles('wp-jquery-ui-dialog');
-			
-			require_once ABSPATH . 'wp-admin/includes/template.php';
-			require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
-			?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
-			wp_print_scripts('wplink');
-			wp_print_styles('wplink');
-		}
 			} else {
 			?>
-            <p><?php _e('You do not have permission to view this message', 'messaging') ?></p>
-            <?php
+			<p><?php _e('You do not have permission to view this message', 'messaging') ?></p>
+			<?php
 			}
 		break;
 		//---------------------------------------------------//
@@ -906,13 +909,14 @@ function messaging_inbox_page_output() {
 }
 
 function messaging_new_page_output() {
-	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_max_inbox_messages, $messaging_max_reached_message;
+	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_max_inbox_messages, $messaging_max_reached_message, $wp_version;
 
 	if (isset($_GET['updated'])) {
 		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
+	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
 	echo '<div class="wrap">';
-	switch( $_GET[ 'action' ] ) {
+	switch( $action ) {
 		//---------------------------------------------------//
 		default:
 			$tmp_total_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "'");
@@ -938,9 +942,9 @@ function messaging_new_page_output() {
 					<tr valign="top">
 					<th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
                     <?php
-					$message_to = $_POST['message_to'];
+					$message_to = isset($_POST['message_to'])?$_POST['message_to']:'';
 					if ( empty( $message_to ) ) {
-						$message_to = $_GET['message_to'];
+						$message_to = isset($_GET['message_to'])?$_GET['message_to']:'';
 					}
 					?>
 					<td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $message_to; ?>" />
@@ -949,14 +953,19 @@ function messaging_new_page_output() {
 					</tr>
 					<tr valign="top">
 					<th scope="row"><?php _e('Subject', 'messaging') ?></th>
-					<td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
+					<td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo isset($_POST['message_subject'])?$_POST['message_subject'] 	:''; ?>" />
 					<br />
 					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
 					<tr valign="top"> 
 					<th scope="row"><?php _e('Content', 'messaging') ?></th> 
-					<td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
-					<br />
+					<td>
+						<?php if (version_compare($wp_version, "3.3") >= 0 && user_can_richedit()) { ?>
+							<?php wp_editor(isset($_POST['message_content'])?$_POST['message_content']:'', 'message_content'); ?>
+						<?php } else { ?>
+							<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php echo isset($_POST['message_content'])?$_POST['message_content']:''; ?></textarea>
+						<?php } ?>
+						<br />
 					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
 					</table>
@@ -965,16 +974,6 @@ function messaging_new_page_output() {
                 </p>
 				</form>
 				<?php
-					if ( user_can_richedit() ){
-						wp_print_scripts( array( 'wpdialogs-popup' ) );
-						wp_print_styles('wp-jquery-ui-dialog');
-						
-						require_once ABSPATH . 'wp-admin/includes/template.php';
-						require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
-						?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
-						wp_print_scripts('wplink');
-						wp_print_styles('wplink');
-					}
 			}
 		break;
 		//---------------------------------------------------//
@@ -1026,7 +1025,7 @@ function messaging_new_page_output() {
 				}
 			} else {
 				//==========================================================//
-				$tmp_usernames = $_POST['message_to'];
+				$tmp_usernames = isset($_POST['message_to'])?$_POST['message_to']:'';
 				$tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
 				$tmp_usernames = ',,' . $tmp_usernames . ',,';
 				// $tmp_usernames = str_replace( " ", '', $tmp_usernames );
@@ -1128,8 +1127,10 @@ function messaging_sent_page_output() {
 	if (isset($_GET['updated'])) {
 		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
+	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
+	
 	echo '<div class="wrap">';
-	switch( $_GET[ 'action' ] ) {
+	switch( $action ) {
 		//---------------------------------------------------//
 		default:
 		$tmp_sent_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '" . $user_ID . "'");
@@ -1153,10 +1154,11 @@ function messaging_sent_page_output() {
 			</tr></thead>
 			<tbody id='the-list'>
 			";
+			$class = '';
 			if (count($tmp_sent_messages) > 0){
 				$class = ('alternate' == $class) ? '' : 'alternate';
 				foreach ($tmp_sent_messages as $tmp_sent_message){
-				if ($tmp_message['message_official'] == 1){
+				if (isset($tmp_sent_message['message_official']) && $tmp_sent_message['message_official'] == 1){
 					$style = "'style=background-color:" . $messaging_official_message_bg_color . ";'";
 				} else {
 					$style = "";
@@ -1164,7 +1166,7 @@ function messaging_sent_page_output() {
 				//=========================================================//
 				$tmp_user_ids = $tmp_sent_message['sent_message_to_user_IDs'];
 				$tmp_user_ids_array = explode("|", $tmp_user_ids);
-
+				
 				$tmp_usernames = '';
 				foreach ($tmp_user_ids_array as $tmp_user_id){
 					$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_user_id . "'");
@@ -1182,7 +1184,7 @@ function messaging_sent_page_output() {
 				$tmp_usernames = trim($tmp_usernames, ", ");
 				//=========================================================//
 				echo "<tr class='" . $class . "' " . $style . ">";
-				if ($tmp_message['message_official'] == 1){
+				if (isset($tmp_sent_message['message_official']) && $tmp_sent_message['message_official'] == 1){
 					echo "<td valign='top'><strong>" . $tmp_usernames . "</strong></td>";
 					echo "<td valign='top'><strong>" . stripslashes($tmp_sent_message['sent_message_subject']) . "</strong></td>";
 					echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "</strong></td>";
@@ -1367,11 +1369,12 @@ function messaging_notifications_page_output() {
 	if (isset($_GET['updated'])) {
 		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
 	}
+	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
 	echo '<div class="wrap">';
-	switch( $_GET[ 'action' ] ) {
+	switch( $action ) {
 		//---------------------------------------------------//
 		default:
-			$tmp_message_email_notification = get_usermeta($user_ID,'message_email_notification');
+			$tmp_message_email_notification = get_user_meta($user_ID,'message_email_notification');
 			?>
 			<h2><?php _e('Notification Settings', 'messaging') ?></h2>
                 <form method="post" action="admin.php?page=messaging_message-notifications&action=process">
