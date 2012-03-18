@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.3
+Version: 1.1.4
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.3';
+$messaging_current_version = '1.1.4';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -130,27 +130,27 @@ function messaging_global_install() {
 	
 	if (get_site_option( "messaging_installed" ) == "yes") {
 		// do nothing
-	} else {
+	//} else {
 	
 		$messaging_table1 = "CREATE TABLE `" . $wpdb->base_prefix . "messages` (
   `message_ID` bigint(20) unsigned NOT NULL auto_increment,
   `message_from_user_ID` bigint(20) NOT NULL,
   `message_to_user_ID` bigint(20) NOT NULL,
-  `message_to_all_user_IDs` TEXT NOT NULL,
-  `message_subject` TEXT NOT NULL,
-  `message_content` TEXT NOT NULL,
-  `message_status` VARCHAR(255) NOT NULL,
-  `message_stamp`  VARCHAR(255) NOT NULL,
+  `message_to_all_user_IDs` TEXT CHARACTER SET utf8 NOT NULL,
+  `message_subject` TEXT CHARACTER SET utf8 NOT NULL,
+  `message_content` TEXT CHARACTER SET utf8 NOT NULL,
+  `message_status` VARCHAR(255) CHARACTER SET utf8 NOT NULL,
+  `message_stamp`  VARCHAR(255) CHARACTER SET utf8 NOT NULL,
   `message_official` tinyint(0) NOT NULL default '0',
   PRIMARY KEY  (`message_ID`)
 ) ENGINE=MyISAM;";
 		$messaging_table2 = "CREATE TABLE `" . $wpdb->base_prefix . "sent_messages` (
   `sent_message_ID` bigint(20) unsigned NOT NULL auto_increment,
   `sent_message_from_user_ID` bigint(20) NOT NULL,
-  `sent_message_to_user_IDs` TEXT NOT NULL,
-  `sent_message_subject` TEXT NOT NULL,
-  `sent_message_content` TEXT NOT NULL,
-  `sent_message_stamp`  VARCHAR(255) NOT NULL,
+  `sent_message_to_user_IDs` TEXT CHARACTER SET utf8 NOT NULL,
+  `sent_message_subject` TEXT CHARACTER SET utf8 NOT NULL,
+  `sent_message_content` TEXT CHARACTER SET utf8 NOT NULL,
+  `sent_message_stamp`  VARCHAR(255) CHARACTER SET utf8 NOT NULL,
   `sent_message_official` tinyint(0) NOT NULL default '0',
   PRIMARY KEY  (`sent_message_ID`)
 ) ENGINE=MyISAM;";
