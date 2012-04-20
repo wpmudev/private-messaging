@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.4
+Version: 1.1.5
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.4';
+$messaging_current_version = '1.1.5';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -808,8 +808,8 @@ function messaging_inbox_page_output() {
 			} else {
 				//==========================================================//
 				$tmp_usernames = $_POST['message_to'];
-				$tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
-				$tmp_usernames = ',,' . $tmp_usernames . ',,';
+				//$tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
+				//$tmp_usernames = ',,' . $tmp_usernames . ',,';
 				//$tmp_usernames = str_replace( " ", '', $tmp_usernames );
 				$tmp_usernames_array = explode(",", $tmp_usernames);
 				$tmp_usernames_array = array_unique($tmp_usernames_array);
@@ -823,7 +823,7 @@ function messaging_inbox_page_output() {
 						$tmp_username_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
 						if ($tmp_username_count > 0){
 							$tmp_user_id = $wpdb->get_var("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
-							$tmp_to_all_uids = $tmp_to_all_uids . $tmp_uid . '|';
+							$tmp_to_all_uids = $tmp_to_all_uids . $tmp_user_id . '|';
 							//found
 						} else {
 							$tmp_username_error = $tmp_username_error + 1;
@@ -1027,8 +1027,8 @@ function messaging_new_page_output() {
 			} else {
 				//==========================================================//
 				$tmp_usernames = isset($_POST['message_to'])?$_POST['message_to']:'';
-				$tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
-				$tmp_usernames = ',,' . $tmp_usernames . ',,';
+				// $tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
+				// $tmp_usernames = ',,' . $tmp_usernames . ',,';
 				// $tmp_usernames = str_replace( " ", '', $tmp_usernames );
 				$tmp_usernames_array = explode(",", $tmp_usernames);
 				$tmp_usernames_array = array_unique($tmp_usernames_array);
