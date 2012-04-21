@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.5
+Version: 1.1.6
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.5';
+$messaging_current_version = '1.1.6';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -100,10 +100,11 @@ function messaging_make_current() {
 		// do nothing
 	} else {
 		//up to current version
+		messaging_global_install();
 		update_site_option( "messaging_installed", "no" );
 		update_site_option( "messaging_version", $messaging_current_version );
 	}
-	messaging_global_install();
+	
 	//--------------------------------------------------//
 	if (get_option( "messaging_version" ) == '') {
 		add_option( 'messaging_version', '0.0.0' );
@@ -128,10 +129,9 @@ function messaging_global_install() {
 		add_site_option( 'messaging_installed', 'no' );
 	}
 	
-	if (get_site_option( "messaging_installed" ) == "yes") {
+	//if (get_site_option( "messaging_installed" ) == "yes") {
 		// do nothing
 	//} else {
-	
 		$messaging_table1 = "CREATE TABLE `" . $wpdb->base_prefix . "messages` (
   `message_ID` bigint(20) unsigned NOT NULL auto_increment,
   `message_from_user_ID` bigint(20) NOT NULL,
@@ -157,11 +157,11 @@ function messaging_global_install() {
 		$messaging_table3 = "";
 		$messaging_table4 = "";
 		$messaging_table5 = "";
-
+		
 		$wpdb->query( $messaging_table1 );
 		$wpdb->query( $messaging_table2 );
 		update_site_option( "messaging_installed", "yes" );
-	}
+	//}
 }
 
 function messaging_plug_pages() {
