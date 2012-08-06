@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.6
+Version: 1.1.6.1
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Network: true
@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.6';
+$messaging_current_version = '1.1.6.1';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -935,7 +935,6 @@ function messaging_new_page_output() {
 				if ( user_can_richedit() ){
 					add_filter('the_editor_content', 'wp_richedit_pre');
 				}
-				//	$the_editor_content = apply_filters('the_editor_content', $content);
 				?>
 				<h2><?php _e('New Message', 'messaging') ?></h2>
 				<form name="new_message" method="POST" action="admin.php?page=messaging_new&action=process">
@@ -985,6 +984,9 @@ function messaging_new_page_output() {
 					$rows = 12;
 				}
 				$rows = "rows='$rows'";
+				if ( user_can_richedit() ){
+					add_filter('the_editor_content', 'wp_richedit_pre');
+				}
 				?>
 				<h2><?php _e('New Message', 'messaging') ?></h2>
                 <p><?php _e('Please fill in all required fields', 'messaging') ?></p>
@@ -1004,7 +1006,12 @@ function messaging_new_page_output() {
 					</tr>
 					<tr valign="top"> 
 					<th scope="row"><?php _e('Content', 'messaging') ?></th> 
-					<td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
+					<td>
+						<?php if (version_compare($wp_version, "3.3") >= 0 && user_can_richedit()) { ?>
+							<?php wp_editor(isset($_POST['message_content'])?$_POST['message_content']:'', 'message_content'); ?>
+						<?php } else { ?>
+							<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
+						<?php } ?>
 					<br />
 					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
@@ -1014,16 +1021,6 @@ function messaging_new_page_output() {
                 </p>
                 </form>
 			<?php
-				if ( user_can_richedit() ){
-					wp_print_scripts( array( 'wpdialogs-popup' ) );
-					wp_print_styles('wp-jquery-ui-dialog');
-					
-					require_once ABSPATH . 'wp-admin/includes/template.php';
-					require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
-					?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
-					wp_print_scripts('wplink');
-					wp_print_styles('wplink');
-				}
 			} else {
 				//==========================================================//
 				$tmp_usernames = isset($_POST['message_to'])?$_POST['message_to']:'';
@@ -1051,6 +1048,9 @@ function messaging_new_page_output() {
 				}
 				$tmp_error_usernames = trim($tmp_error_usernames, ", ");
 				//==========================================================//
+				if ( user_can_richedit() ){
+					add_filter('the_editor_content', 'wp_richedit_pre');
+				}
 				if ($tmp_username_error > 0){
 					$rows = get_option('default_post_edit_rows');
 					if (($rows < 3) || ($rows > 100)){
@@ -1076,7 +1076,12 @@ function messaging_new_page_output() {
                             </tr>
                             <tr valign="top"> 
                                 <th scope="row"><?php _e('Content', 'messaging') ?></th> 
-                                <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
+                                <td>
+					<?php if (version_compare($wp_version, "3.3") >= 0 && user_can_richedit()) { ?>
+						<?php wp_editor(isset($_POST['message_content'])?$_POST['message_content']:'', 'message_content'); ?>
+					<?php } else { ?>
+						<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
+					<?php } ?>
 				<br />
                                 <?php _e('Required', 'messaging') ?></td> 
                             </tr>
@@ -1086,16 +1091,6 @@ function messaging_new_page_output() {
                     </p>
                     </form>
 			<?php
-					if ( user_can_richedit() ){
-						wp_print_scripts( array( 'wpdialogs-popup' ) );
-						wp_print_styles('wp-jquery-ui-dialog');
-						
-						require_once ABSPATH . 'wp-admin/includes/template.php';
-						require_once ABSPATH . 'wp-admin/includes/internal-linking.php';
-						?><div style="display:none;"><?php wp_link_dialog(); ?></div><?php
-						wp_print_scripts('wplink');
-						wp_print_styles('wplink');
-					}
 				} else {
 					//everything checked out - send the messages
 					?>
