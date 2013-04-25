@@ -4,10 +4,9 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.6.1
+Version: 1.1.6.2
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
-Network: true
 Text Domain: messaging
 */
 
@@ -28,7 +27,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.6.1';
+include_once( dirname(__FILE__) . '/lib/dash-notices/wpmudev-dash-notification.php');
+
+$messaging_current_version = '1.1.6.2';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -39,7 +40,7 @@ $messaging_official_message_bg_color = '#E5F3FF';
 $messaging_email_notification_subject = '[SITE_NAME] New Message'; // SITE_NAME
 $messaging_email_notification_content = 'Dear TO_USER,
 
-You have receieved a new message from FROM_USER.
+You have received a new message from FROM_USER.
 
 Thanks,
 SITE_NAME'; // TO_USER, FROM_USER, SITE_NAME, SITE_URL
@@ -51,13 +52,13 @@ SITE_NAME'; // TO_USER, FROM_USER, SITE_NAME, SITE_URL
 if (!isset($_GET['key']) || $_GET['key'] == '' || $_GET['key'] === ''){
 	add_action('admin_head', 'messaging_make_current');
 }
-if(isset($_GET['page']) && $_GET['page'] == 'messaging_new'){
+if(isset($_GET['page']) && sanitize_text_field($_GET['page']) == 'messaging_new'){
 	add_action('admin_head', 'messaging_header_js');
 }
-if(isset($_GET['action']) && $_GET['action'] == 'reply' && isset($_GET['mid']) && $_GET['mid'] != ''){
+if(isset($_GET['action']) && sanitize_text_field($_GET['action']) == 'reply' && isset($_GET['mid']) && $_GET['mid'] != ''){
 	add_action('admin_head', 'messaging_header_js');
 }
-if(isset($_GET['action']) && $_GET['action'] == 'reply_process' && isset($_POST['message_to']) && $_POST['message_to'] != ''){
+if(isset($_GET['action']) && sanitize_text_field($_GET['action']) == 'reply_process' && isset($_POST['message_to']) && $_POST['message_to'] != ''){
 	add_action('admin_head', 'messaging_header_js');
 }
 
@@ -65,13 +66,13 @@ add_action('admin_menu', 'messaging_plug_pages');
 add_action('network_admin_menu', 'messaging_network_plug_pages');
 add_action('wpabar_menuitems', 'messaging_admin_bar');
 
-if (isset($_GET['action']) && $_GET['action'] == 'view' && isset($_GET['mid']) && $_GET['mid'] != ''){
-	messaging_update_message_status($_GET['mid'],'read');
+if (isset($_GET['action']) && sanitize_text_field($_GET['action']) == 'view' && isset($_GET['mid']) && $_GET['mid'] != ''){
+	messaging_update_message_status(intval($_GET['mid']),'read');
 }
-if (isset($_GET['action']) && $_GET['action'] == 'reply' && isset($_GET['mid']) && $_GET['mid'] != ''){
+if (isset($_GET['action']) && sanitize_text_field($_GET['action']) == 'reply' && isset($_GET['mid']) && $_GET['mid'] != ''){
 	add_action('admin_footer', 'messaging_set_focus_js');
 }
-if (isset($_GET['action']) && $_GET['action'] == 'reply_process'){
+if (isset($_GET['action']) && sanitize_text_field($_GET['action']) == 'reply_process'){
 	add_action('admin_footer', 'messaging_set_focus_js');
 }
 add_action('init', 'messaging_init');
@@ -81,8 +82,8 @@ add_action('init', 'messaging_init');
 function messaging_init() {
 	global $messaging_max_reached_message,$messaging_email_notification_subject;
 	
-	if ( !is_multisite() )
-		exit( 'The Messaging plugin is only compatible with WordPress Multisite.' );
+//	if ( !is_multisite() )
+//		exit( 'The Messaging plugin is only compatible with WordPress Multisite.' );
 		
 	load_plugin_textdomain('messaging', false, dirname(plugin_basename(__FILE__)).'/languages');
 	
@@ -166,7 +167,7 @@ function messaging_global_install() {
 
 function messaging_plug_pages() {
 	global $wpdb, $user_ID;
-	$tmp_unread_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'unread'");
+	$tmp_unread_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status = '%s'", $user_ID, 'unread'));
 	if ($tmp_unread_message_count > 0){
                 $count_output = '&nbsp;<span class="update-plugins"><span class="updates-count count-' . $tmp_unread_message_count . '">' . $tmp_unread_message_count . '</span></span>';
 	} else {
@@ -177,6 +178,10 @@ function messaging_plug_pages() {
 	add_submenu_page('messaging', __('Inbox', 'messaging'), __('New Message', 'messaging'), 'read', 'messaging_new', 'messaging_new_page_output' );
 	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Sent Messages', 'messaging'), 'read', 'messaging_sent', 'messaging_sent_page_output' );
 	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Notifications', 'messaging'), 'read', 'messaging_message-notifications', 'messaging_notifications_page_output' );
+	
+	if (!is_multisite()) {
+		add_submenu_page('messaging', __('Messaging Settings', 'messaging'), __('Messaging Settings', 'messaging'), 'manage_options', 'messaging_settings', 'messaging_network_settings' );
+	}
 }
 
 function messaging_network_plug_pages() {
@@ -187,9 +192,9 @@ function messaging_network_settings() {
 	global $messaging_email_notification_content, $messaging_email_notification_subject,$user_ID;
 	
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php echo stripslashes(sanitize_text_field($_GET['updatedmsg'])) ?></p></div><?php
 	}
-	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
+	$action = isset($_GET[ 'action' ]) ? sanitize_text_field($_GET[ 'action' ]) : '';
 	echo '<div class="wrap">';
 	switch( $action ) {
 		//---------------------------------------------------//
@@ -197,7 +202,13 @@ function messaging_network_settings() {
 			$tmp_message_email_notification = get_user_meta($user_ID,'message_email_notification');
 			?>
 			<h2><?php _e('Messaging Settings', 'messaging') ?></h2>
-                <form method="post" action="settings.php?page=messaging_settings&action=process">
+				<?php
+				if (is_multisite()) {
+                	?><form method="post" action="settings.php?page=messaging_settings&action=process"><?php
+				} else {
+					?><form method="post" action="admin.php?page=messaging_settings&action=process"><?php
+				}
+				?>
                 <table class="form-table">
 			<tr valign="top"> 
 				<th scope="row"><?php _e('Notification e-mail subject', 'messaging') ?></th> 
@@ -224,13 +235,23 @@ function messaging_network_settings() {
 		break;
 		//---------------------------------------------------//
 		case "process":
-			update_site_option('messaging_email_notification_subject',$_POST['messaging_email_notification_subject']);
-			update_site_option('messaging_email_notification_content',$_POST['messaging_email_notification_content']);
-			echo "
-			<SCRIPT LANGUAGE='JavaScript'>
-			window.location='settings.php?page=messaging_settings&updated=true&updatedmsg=" . urlencode('Settings saved.') . "';
-			</script>
-			";
+			update_site_option('messaging_email_notification_subject',stripslashes(sanitize_text_field($_POST['messaging_email_notification_subject'])));
+			update_site_option('messaging_email_notification_content',wp_kses_post($_POST['messaging_email_notification_content']));
+
+			if (is_multisite()) {
+				echo "
+				<SCRIPT LANGUAGE='JavaScript'>
+				window.location='settings.php?page=messaging_settings&updated=true&updatedmsg=" . urlencode(_e('Settings saved.', 'messaging')) . "';
+				</script>
+				";
+			} else {
+				echo "
+				<SCRIPT LANGUAGE='JavaScript'>
+				window.location='admin.php?page=messaging_settings&updated=true&updatedmsg=" . urlencode(_e('Settings saved.', 'messaging')) . "';
+				</script>
+				";
+				
+			}
 		break;
 		//---------------------------------------------------//
 	}
@@ -244,46 +265,87 @@ function messaging_admin_bar( $menu ) {
 
 function messaging_insert_message($tmp_to_uid,$tmp_to_all_uids,$tmp_from_uid,$tmp_subject,$tmp_content,$tmp_status,$tmp_official = 0) {
 	global $wpdb;
+	/*
 	$wpdb->query( "INSERT INTO " . $wpdb->base_prefix . "messages (message_from_user_ID,message_to_user_ID,message_to_all_user_IDs,message_subject,message_content,message_status,message_stamp,message_official) VALUES ( '" . $tmp_from_uid . "','" . $tmp_to_uid . "','" . $tmp_to_all_uids . "','" . addslashes($tmp_subject) . "','" . addslashes($tmp_content) . "','" . $tmp_status . "','" . time() . "','" . $tmp_official . "' )" );
+	*/
+	$wpdb->insert($wpdb->base_prefix . "messages",
+		array(
+			'message_from_user_ID'		=>	$tmp_from_uid,
+			'message_to_user_ID'		=>	$tmp_to_uid,
+			'message_to_all_user_IDs'	=>	$tmp_to_all_uids,
+			'message_subject'			=>	$tmp_subject,
+			'message_content'			=>	$tmp_content,
+			'message_status'			=>	$tmp_status,
+			'message_stamp'				=>	time(),
+			'message_official'			=>	$tmp_official
+		), array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d')
+	);
 }
 
 function messaging_update_message_status($tmp_mid,$tmp_status) {
 	global $wpdb;
-	$wpdb->query( "UPDATE " . $wpdb->base_prefix . "messages SET message_status = '" . $tmp_status . "' WHERE message_ID = '" . $tmp_mid . "' " );
+	//$wpdb->query( "UPDATE " . $wpdb->base_prefix . "messages SET message_status = '" . $tmp_status . "' WHERE message_ID = '" . $tmp_mid . "' " );
+	$wpdb->update($wpdb->base_prefix . "messages",
+		array('message_status' 	=> 	$tmp_status),
+		array('message_ID' 		=>	$tmp_mid),
+		array('%s'), array('%d')
+	);
 }
 
 function messaging_remove_message($tmp_mid) {
 	global $wpdb;
-	$wpdb->query( "DELETE FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $tmp_mid . "' " );
+	$wpdb->query( $wpdb->prepare("DELETE FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d' ", $tmp_mid ));
 }
 
 function messaging_insert_sent_message($tmp_to_all_uids,$tmp_from_uid,$tmp_subject,$tmp_content,$tmp_official = 0) {
 	global $wpdb;
+/*
 	$wpdb->query( "INSERT INTO " . $wpdb->base_prefix . "sent_messages (sent_message_from_user_ID,sent_message_to_user_IDs,sent_message_subject,sent_message_content,sent_message_stamp,sent_message_official) VALUES ( '" . $tmp_from_uid . "','" . $tmp_to_all_uids . "','" . addslashes($tmp_subject) . "','" . addslashes($tmp_content) . "','" . time() . "','" . $tmp_official . "' )" );
+*/
+	$wpdb->insert($wpdb->base_prefix . "sent_messages",
+		array(
+			'sent_message_from_user_ID'		=>	$tmp_from_uid,
+			'sent_message_to_user_IDs'		=>	$tmp_to_all_uids,
+			'sent_message_subject'			=>	$tmp_subject,
+			'sent_message_content'			=>	$tmp_content,
+			'sent_message_stamp'			=>	time(),
+			'sent_message_official'			=>	$tmp_official
+		), array('%d', '%s', '%s', '%s', '%s', '%d')
+	);
 }
 
 function messaging_remove_sent_message($tmp_mid) {
 	global $wpdb;
-	$wpdb->query( "DELETE FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '" . $tmp_mid . "' " );
+	$wpdb->query( $wpdb->prepare("DELETE FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d' ", $tmp_mid));
 }
 
 function messaging_new_message_notification($tmp_to_uid,$tmp_from_uid,$tmp_subject,$tmp_content) {
 	global $wpdb, $current_site, $user_ID, $messaging_email_notification_subject, $messaging_email_notification_content;
+
+	if (is_multisite()) {
+		$SITE_NAME 	= $current_site->site_name;
+		$SITE_URL	= 'http://'. $current_site->domain;
+	} else {
+		$SITE_NAME 	= get_option('blogname');
+		$SITE_URL	= get_option('siteurl');
+	}
+
 	if (get_user_meta($tmp_to_uid,'message_email_notification') != 'no'){
-		$tmp_to_username =  $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_to_uid . "'");
-		$tmp_to_email =  $wpdb->get_var("SELECT user_email FROM " . $wpdb->users . " WHERE ID = '" . $tmp_to_uid . "'");
-		$tmp_from_username =  $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_from_uid . "'");
+		$tmp_to_username =  $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_to_uid));
+		$tmp_to_email =  $wpdb->get_var($wpdb->prepare("SELECT user_email FROM " . $wpdb->users . " WHERE ID = '%s'", $tmp_to_uid));
+		$tmp_from_username =  $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_from_uid));
 		
 		$message_content = get_site_option('messaging_email_notification_content', $messaging_email_notification_content);
-		$message_content = str_replace( "SITE_NAME", $current_site->site_name, $message_content );
-		$message_content = str_replace( "SITE_URL", 'http://' . $current_site->domain . '', $message_content );
+
+		$message_content = str_replace( "SITE_NAME", $SITE_NAME, $message_content );
+		$message_content = str_replace( "SITE_URL", $SITE_URL, $message_content );
 
 		$message_content = str_replace( "TO_USER", $tmp_to_username, $message_content );
 		$message_content = str_replace( "FROM_USER", $tmp_from_username, $message_content );
 		$message_content = str_replace( "\'", "'", $message_content );
 		
 		$subject_content = get_site_option('messaging_email_notification_subject', $messaging_email_notification_subject);
-		$subject_content = str_replace( "SITE_NAME", $current_site->site_name, $subject_content );
+		$subject_content = str_replace( "SITE_NAME", $SITE_NAME, $subject_content );
 		
 		$admin_email = get_site_option('admin_email');
 		if ($admin_email == ''){
@@ -291,7 +353,7 @@ function messaging_new_message_notification($tmp_to_uid,$tmp_from_uid,$tmp_subje
 		}
 		$from_email = $admin_email;
 		
-		$message_headers = "MIME-Version: 1.0\n" . "From: " . $current_site->site_name .  " <{$from_email}>\n" . "Content-Type: text/plain; charset=\"" . get_option('blog_charset') . "\"\n";
+		$message_headers = "MIME-Version: 1.0\n" . "From: " . $SITE_NAME .  " <{$from_email}>\n" . "Content-Type: text/plain; charset=\"" . get_option('blog_charset') . "\"\n";
 		wp_mail($tmp_to_email, $subject_content, $message_content, $message_headers);
 	}
 }
@@ -341,7 +403,7 @@ function messaging_header_js(){
 <script type="text/javascript">
 /* <![CDATA[ */
 tinyMCEPreInit = {
-	base : "http://<?php echo $current_site->domain . $current_site->path; ?>wp-includes/js/tinymce",
+	base : "<?php echo get_option('siteurl'); ?>/wp-includes/js/tinymce",
 	suffix : "",
 	query : "ver=3393a",
 	mceInit : {
@@ -400,8 +462,8 @@ tinyMCEPreInit = {
 };
 /* ]]> */
 </script>
-<script type='text/javascript' src='http://<?php echo $current_site->domain . $current_site->path; ?>wp-includes/js/tinymce/tiny_mce.js?ver=20070528'></script>
-<script type='text/javascript' src='http://<?php echo $current_site->domain . $current_site->path; ?>wp-includes/js/tinymce/langs/wp-langs-en.js?ver=3393a'></script>
+<script type='text/javascript' src='<?php echo get_option('siteurl'); ?>/wp-includes/js/tinymce/tiny_mce.js?ver=20070528'></script>
+<script type='text/javascript' src='<?php echo get_option('siteurl'); ?>/wp-includes/js/tinymce/langs/wp-langs-en.js?ver=3393a'></script>
 <script type="text/javascript">
 /* <![CDATA[ */
 (function(){var t=tinyMCEPreInit,sl=tinymce.ScriptLoader,ln=t.mceInit.language,th=t.mceInit.theme,pl=t.mceInit.plugins;sl.markDone(t.base+'/langs/'+ln+'.js');sl.markDone(t.base+'/themes/'+th+'/langs/'+ln+'.js');sl.markDone(t.base+'/themes/'+th+'/langs/'+ln+'_dlg.js');tinymce.each(pl.split(','),function(n){if(n&&n.charAt(0)!='-'){sl.markDone(t.base+'/plugins/'+n+'/langs/'+ln+'.js');sl.markDone(t.base+'/plugins/'+n+'/langs/'+ln+'_dlg.js');}});})();
@@ -424,17 +486,17 @@ function messaging_inbox_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_official_message_bg_color, $messaging_max_inbox_messages, $messaging_max_reached_message, $wp_version;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php echo stripslashes(sanitize_text_field($_GET['updatedmsg'])) ?></p></div><?php
 	}
 	
-	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
+	$action = isset($_GET[ 'action' ]) ? $_GET[ 'action' ] : '';
 	
 	echo '<div class="wrap">';
 	switch( $action ) {
 		//---------------------------------------------------//
 		default:
 			if ( isset($_POST['Remove']) ) {
-				messaging_update_message_status($_POST['mid'],'removed');
+				messaging_update_message_status(intval($_POST['mid']),'removed');
 				echo "
 				<SCRIPT LANGUAGE='JavaScript'>
 				window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode(__('Message removed.', 'messaging')) . "';
@@ -444,13 +506,13 @@ function messaging_inbox_page_output() {
 			if ( isset($_POST['Reply']) ) {
 				echo "
 				<SCRIPT LANGUAGE='JavaScript'>
-				window.location='admin.php?page=messaging&action=reply&mid=" . $_POST['mid'] . "';
+				window.location='admin.php?page=messaging&action=reply&mid=" . intval($_POST['mid']) . "';
 				</script>
 				";
 			}
-			$tmp_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status != 'removed'");
-			$tmp_unread_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'unread'");
-			$tmp_read_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'read'");
+			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status != '%s'", $user_ID, 'removed'));
+			$tmp_unread_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status = '%s'", $user_ID, 'unread'));
+			$tmp_read_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status = '%s'", $user_ID, 'read'));
 			?>
             <h2><?php _e('Inbox', 'messaging') ?> (<a href="admin.php?page=messaging_new"><?php _e('New Message', 'messaging') ?></a>)</h2>
             <?php
@@ -476,7 +538,7 @@ function messaging_inbox_page_output() {
 				?>
 				<h3><?php _e('Unread', 'messaging') ?></h3>
 				<?php
-				$query = "SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'unread' ORDER BY message_ID DESC";
+				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%s' AND message_status = '%s' ORDER BY message_ID DESC", $user_ID, 'unread');
 				$tmp_messages = $wpdb->get_results( $query, ARRAY_A );
 				echo "
 				<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
@@ -502,8 +564,8 @@ function messaging_inbox_page_output() {
 					//=========================================================//
 					echo "<tr class='" . $class . "' " . $style . ">";
 					if ($tmp_message['message_official'] == 1){
-						$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
-						$tmp_display_name = $wpdb->get_var("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
 						if ( $tmp_display_name == '' ) {
 							$tmp_display_name = $tmp_username;
 						}
@@ -516,8 +578,8 @@ function messaging_inbox_page_output() {
 						echo "<td valign='top'><strong>" . stripslashes($tmp_message['message_subject']) . "</strong></td>";
 						echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</strong></td>";
 					} else {
-						$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
-						$tmp_display_name = $wpdb->get_var("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
 						if ( $tmp_display_name == '' ) {
 							$tmp_display_name = $tmp_username;
 						}
@@ -552,7 +614,7 @@ function messaging_inbox_page_output() {
 				?>
 				<h3><?php _e('Read', 'messaging') ?></h3>
 				<?php
-				$query = "SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' AND message_status = 'read' ORDER BY message_ID DESC";
+				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status = '%s' ORDER BY message_ID DESC", $user_ID, 'read');
 				$tmp_messages = $wpdb->get_results( $query, ARRAY_A );
 				echo "
 				<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
@@ -578,8 +640,8 @@ function messaging_inbox_page_output() {
 					//=========================================================//
 					echo "<tr class='" . $class . "' " . $style . ">";
 					if ($tmp_message['message_official'] == 1){
-						$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
-						$tmp_display_name = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
 						if ( $tmp_display_name == '' ) {
 							$tmp_display_name = $tmp_username;
 						}
@@ -592,8 +654,8 @@ function messaging_inbox_page_output() {
 						echo "<td valign='top'><strong>" . stripslashes($tmp_message['message_subject']) . "</strong></td>";
 						echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</strong></td>";
 					} else {
-						$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
-						$tmp_display_name = $wpdb->get_var("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
 						if ( $tmp_display_name == '' ) {
 							$tmp_display_name = $tmp_username;
 						}
@@ -627,28 +689,28 @@ function messaging_inbox_page_output() {
 		break;
 		//---------------------------------------------------//
 		case "view":
-			$tmp_total_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "'");
-			$tmp_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "' AND message_to_user_ID = '" . $user_ID . "'");
+			$tmp_total_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d'", $user_ID));
+			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d' AND message_to_user_ID = '%d'", $_GET['mid'], $user_ID));
 			if ($tmp_message_count > 0){
 				if ($tmp_total_message_count >= $messaging_max_inbox_messages){
 					?>
 					<p><strong><center><?php _e($messaging_max_reached_message, 'messaging') ?></center></strong></p>
 					<?php
 					} else {
-					messaging_update_message_status($_GET['mid'],'read');
-					$tmp_message_subject = stripslashes($wpdb->get_var("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'"));
-					$tmp_message_content = stripslashes($wpdb->get_var("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'"));
-					$tmp_message_from_user_ID = $wpdb->get_var("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'");
-					$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message_from_user_ID . "'");
-					$tmp_message_status = $wpdb->get_var("SELECT message_status FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'");
+					messaging_update_message_status(intval($_GET['mid']),'read');
+					$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid'])));
+					$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid'])));
+					$tmp_message_from_user_ID = $wpdb->get_var($wpdb->prepare("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid']));
+					$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message_from_user_ID));
+					$tmp_message_status = $wpdb->get_var($wpdb->prepare("SELECT message_status FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid']));
 					$tmp_message_status = ucfirst($tmp_message_status);
 					$tmp_message_status = __($tmp_message_status, 'messaging');
-					$tmp_message_stamp = $wpdb->get_var("SELECT message_stamp FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'");
+					$tmp_message_stamp = $wpdb->get_var($wpdb->prepare("SELECT message_stamp FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid']));
 					?>
 		
-					<h2><?php _e('View Message: ', 'messaging') ?><?php echo $_GET['mid']; ?></h2>
+					<h2><?php _e('View Message: ', 'messaging') ?><?php echo intval($_GET['mid']); ?></h2>
 					<form name="new_message" method="POST" action="admin.php?page=messaging">
-					<input type="hidden" name="mid" value="<?php echo $_GET['mid']; ?>" />
+					<input type="hidden" name="mid" value="<?php echo intval($_GET['mid']); ?>" />
 					<h3><?php _e('Sent', 'messaging') ?></h3>
 					<p><?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message_stamp); ?></p>
 					<h3><?php _e('Status', 'messaging') ?></h3>
@@ -676,7 +738,7 @@ function messaging_inbox_page_output() {
 		//---------------------------------------------------//
 		case "remove":
 			//messaging_update_message_status($_GET['mid'],'removed');
-			messaging_remove_message($_GET['mid']);
+			messaging_remove_message(intval($_GET['mid']));
 			echo "
 			<SCRIPT LANGUAGE='JavaScript'>
 			window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode('Message removed.') . "';
@@ -685,13 +747,13 @@ function messaging_inbox_page_output() {
 		break;
 		//---------------------------------------------------//
 		case "reply":
-			$tmp_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "' AND message_to_user_ID = '" . $user_ID . "'");
+			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d' AND message_to_user_ID = '%d'", $_GET['mid'], $user_ID));
 			if ($tmp_message_count > 0){
-			$tmp_message_from_user_ID = $wpdb->get_var("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'");
-			$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message_from_user_ID . "'");
-			$tmp_message_subject = stripslashes($wpdb->get_var("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'"));
+			$tmp_message_from_user_ID = $wpdb->get_var($wpdb->prepare("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid']));
+			$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message_from_user_ID));
+			$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid'])));
 			$tmp_message_subject = __('RE: ', 'messaging') . $tmp_message_subject;
-			$tmp_message_content = stripslashes($wpdb->get_var("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '" . $_GET['mid'] . "'"));
+			$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid'])));
 			//$tmp_message_content = "\n\n" . $tmp_username . __(' wrote:') . '<hr>' . $tmp_message_content;
 
 			$rows = get_option('default_post_edit_rows');
@@ -768,24 +830,24 @@ function messaging_inbox_page_output() {
 				<h2><?php _e('Send Reply', 'messaging') ?></h2>
                 <p><?php _e('Please fill in all required fields', 'messaging') ?></p>
 				<form name="reply_to_message" method="POST" action="admin.php?page=messaging&action=reply_process">
-                <input type="hidden" name="message_to" value="<?php echo $_POST['message_to']; ?>" />
-                <input type="hidden" name="message_subject" value="<?php echo $_POST['message_subject']; ?>" />
+                <input type="hidden" name="message_to" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
+                <input type="hidden" name="message_subject" value="<?php echo stripslashes(sanitize_text_field($_POST['message_subject'])); ?>" />
 					<table class="form-table">
 					<tr valign="top">
 					<th scope="row"><?php _e('To', 'messaging') ?></th>
-					<td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" maxlength="200" value="<?php echo $_POST['message_to']; ?>" />
+					<td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" maxlength="200" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
 					<br />
 					<?php //_e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td> 
 					</tr>
 					<tr valign="top">
 					<th scope="row"><?php _e('Subject', 'messaging') ?></th>
-					<td><input disabled="disabled" type="text" name="message_subject" id="message_subject_disabled" style="width: 95%" maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
+					<td><input disabled="disabled" type="text" name="message_subject" id="message_subject_disabled" style="width: 95%" maxlength="200" value="<?php echo stripslashes(sanitize_text_field($_POST['message_subject'])); ?>" />
 					<br />
 					<?php //_e('Required') ?></td> 
 					</tr>
 					<tr valign="top"> 
 					<th scope="row"><?php _e('Content', 'messaging') ?></th> 
-					<td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
+					<td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php echo wp_kses_post($_POST['message_content']); ?></textarea>
 					<br />
 					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
@@ -807,7 +869,7 @@ function messaging_inbox_page_output() {
 					}
 			} else {
 				//==========================================================//
-				$tmp_usernames = $_POST['message_to'];
+				$tmp_usernames = sanitize_text_field($_POST['message_to']);
 				//$tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
 				//$tmp_usernames = ',,' . $tmp_usernames . ',,';
 				//$tmp_usernames = str_replace( " ", '', $tmp_usernames );
@@ -820,9 +882,9 @@ function messaging_inbox_page_output() {
 				
 				foreach ($tmp_usernames_array as $tmp_username){
 					if ($tmp_username != ''){
-						$tmp_username_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
+						$tmp_username_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
 						if ($tmp_username_count > 0){
-							$tmp_user_id = $wpdb->get_var("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
+							$tmp_user_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
 							$tmp_to_all_uids = $tmp_to_all_uids . $tmp_user_id . '|';
 							//found
 						} else {
@@ -843,24 +905,24 @@ function messaging_inbox_page_output() {
 					<h2><?php _e('Send Reply', 'messaging') ?></h2>
 					<p><?php _e('The following usernames could not be found in the system', 'messaging') ?> <em><?php echo $tmp_error_usernames; ?></em></p>
                     <form name="new_message" method="POST" action="admin.php?page=messaging&action=reply_process">
-                    <input type="hidden" name="message_to" value="<?php echo $_POST['message_to']; ?>" />
-                    <input type="hidden" name="message_subject" value="<?php echo $_POST['message_subject']; ?>" />
+                    <input type="hidden" name="message_to" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
+                    <input type="hidden" name="message_subject" value="<?php echo stripslashes(sanitize_text_field($_POST['message_subject'])); ?>" />
                         <table class="form-table">
                         <tr valign="top">
                         <th scope="row"><?php _e('To', 'messaging') ?></th>
-                        <td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $_POST['message_to']; ?>" />
+                        <td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
                         <br />
                         <?php //_e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td> 
                         </tr>
                         <tr valign="top">
                         <th scope="row"><?php _e('Subject', 'messaging') ?></th>
-                        <td><input disabled="disabled" type="text" name="message_subject" id="message_subject_disabled" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
+                        <td><input disabled="disabled" type="text" name="message_subject" id="message_subject_disabled" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo stripslashes(sanitize_text_field($_POST['message_subject'])); ?>" />
                         <br />
                         <?php //_e('Required') ?></td> 
                         </tr>
                         <tr valign="top"> 
                         <th scope="row"><?php _e('Content', 'messaging') ?></th> 
-                        <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
+                        <td><textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo wp_kses_post($_POST['message_content']); ?></textarea>
 			<br />
                         <?php _e('Required', 'messaging') ?></td> 
                         </tr>
@@ -887,12 +949,12 @@ function messaging_inbox_page_output() {
                     <?php
 					foreach ($tmp_usernames_array as $tmp_username){
 						if ($tmp_username != ''){
-							$tmp_to_uid = $wpdb->get_var("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
-							messaging_insert_message($tmp_to_uid,$tmp_to_all_uids,$user_ID,$_POST['message_subject'],$_POST['message_content'],'unread',0);
-							messaging_new_message_notification($tmp_to_uid,$user_ID,$_POST['message_subject'],$_POST['message_content']);
+							$tmp_to_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
+							messaging_insert_message($tmp_to_uid,$tmp_to_all_uids,$user_ID, stripslashes(sanitize_text_field($_POST['message_subject'])), wp_kses_post($_POST['message_content']), 'unread', 0);
+							messaging_new_message_notification($tmp_to_uid,$user_ID, stripslashes(sanitize_text_field($_POST['message_subject'])), wp_kses_post($_POST['message_content']));
 						}
 					}
-					messaging_insert_sent_message($tmp_to_all_uids,$user_ID,$_POST['message_subject'],$_POST['message_content'],0);
+					messaging_insert_sent_message($tmp_to_all_uids,$user_ID, sanitize_text_field($_POST['message_subject']),wp_kses_post($_POST['message_content']),0);
 					echo "
 					<SCRIPT LANGUAGE='JavaScript'>
 					window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode('Reply Sent.') . "';
@@ -913,14 +975,14 @@ function messaging_new_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_max_inbox_messages, $messaging_max_reached_message, $wp_version;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php echo stripslashes(sanitize_text_field($_GET['updatedmsg'])) ?></p></div><?php
 	}
-	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
+	$action = isset($_GET[ 'action' ]) ? sanitize_text_field($_GET[ 'action' ]) : '';
 	echo '<div class="wrap">';
 	switch( $action ) {
 		//---------------------------------------------------//
 		default:
-			$tmp_total_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "'");
+			$tmp_total_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d'", $user_ID));
 			if ($tmp_total_message_count >= $messaging_max_inbox_messages){
 				?>
 				<p><strong><center><?php _e($messaging_max_reached_message, 'messaging') ?></center></strong></p>
@@ -942,9 +1004,9 @@ function messaging_new_page_output() {
 					<tr valign="top">
 					<th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
                     <?php
-					$message_to = isset($_POST['message_to'])?$_POST['message_to']:'';
+					$message_to = isset($_POST['message_to']) ? sanitize_text_field($_POST['message_to']) : '';
 					if ( empty( $message_to ) ) {
-						$message_to = isset($_GET['message_to'])?$_GET['message_to']:'';
+						$message_to = isset($_GET['message_to']) ? sanitize_text_field($_GET['message_to']) : '';
 					}
 					?>
 					<td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $message_to; ?>" />
@@ -953,7 +1015,7 @@ function messaging_new_page_output() {
 					</tr>
 					<tr valign="top">
 					<th scope="row"><?php _e('Subject', 'messaging') ?></th>
-					<td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo isset($_POST['message_subject'])?$_POST['message_subject'] 	:''; ?>" />
+					<td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo isset($_POST['message_subject']) ? stripslashes(sanitize_text_field($_POST['message_subject'])) : ''; ?>" />
 					<br />
 					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
@@ -961,9 +1023,9 @@ function messaging_new_page_output() {
 					<th scope="row"><?php _e('Content', 'messaging') ?></th> 
 					<td>
 						<?php if (version_compare($wp_version, "3.3") >= 0 && user_can_richedit()) { ?>
-							<?php wp_editor(isset($_POST['message_content'])?$_POST['message_content']:'', 'message_content'); ?>
+							<?php wp_editor(isset($_POST['message_content'])?wp_kses_post($_POST['message_content']):'', 'message_content'); ?>
 						<?php } else { ?>
-							<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php echo isset($_POST['message_content'])?$_POST['message_content']:''; ?></textarea>
+							<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='1' id='message_content'><?php echo isset($_POST['message_content'])?wp_kses_post($_POST['message_content']):''; ?></textarea>
 						<?php } ?>
 						<br />
 					<?php _e('Required', 'messaging') ?></td> 
@@ -994,13 +1056,13 @@ function messaging_new_page_output() {
 					<table class="form-table">
 					<tr valign="top">
 					<th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
-					<td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $_POST['message_to']; ?>" />
+					<td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
 					<br />
 					<?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2', 'messaging') ?></td> 
 					</tr>
 					<tr valign="top">
 					<th scope="row"><?php _e('Subject', 'messaging') ?></th>
-					<td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
+					<td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo stripslashes(sanitize_text_field($_POST['message_subject'])); ?>" />
 					<br />
 					<?php _e('Required', 'messaging') ?></td> 
 					</tr>
@@ -1008,9 +1070,9 @@ function messaging_new_page_output() {
 					<th scope="row"><?php _e('Content', 'messaging') ?></th> 
 					<td>
 						<?php if (version_compare($wp_version, "3.3") >= 0 && user_can_richedit()) { ?>
-							<?php wp_editor(isset($_POST['message_content'])?$_POST['message_content']:'', 'message_content'); ?>
+							<?php wp_editor(isset($_POST['message_content'])?wp_kses_post($_POST['message_content']):'', 'message_content'); ?>
 						<?php } else { ?>
-							<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
+							<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo wp_kses_post($_POST['message_content']); ?></textarea>
 						<?php } ?>
 					<br />
 					<?php _e('Required', 'messaging') ?></td> 
@@ -1023,7 +1085,7 @@ function messaging_new_page_output() {
 			<?php
 			} else {
 				//==========================================================//
-				$tmp_usernames = isset($_POST['message_to'])?$_POST['message_to']:'';
+				$tmp_usernames = isset($_POST['message_to']) ? sanitize_text_field($_POST['message_to']) : '';
 				// $tmp_usernames = str_replace( ",", ', ', $tmp_usernames );
 				// $tmp_usernames = ',,' . $tmp_usernames . ',,';
 				// $tmp_usernames = str_replace( " ", '', $tmp_usernames );
@@ -1035,9 +1097,9 @@ function messaging_new_page_output() {
 				$tmp_to_all_uids = '|';
 				foreach ($tmp_usernames_array as $tmp_username){
 					if ($tmp_username != ''){
-						$tmp_username_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
+						$tmp_username_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
 						if ($tmp_username_count > 0){
-							$tmp_uid = $wpdb->get_var("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
+							$tmp_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
 							$tmp_to_all_uids = $tmp_to_all_uids . $tmp_uid . '|';
 							//found
 						} else {
@@ -1064,13 +1126,13 @@ function messaging_new_page_output() {
 						<table class="form-table">
                             <tr valign="top">
                                 <th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
-                                <td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $_POST['message_to']; ?>" />
+                                <td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
                                 <br />
                                 <?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2', 'messaging') ?></td> 
                             </tr>
                             <tr valign="top">
                                 <th scope="row"><?php _e('Subject', 'messaging') ?></th>
-                                <td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo $_POST['message_subject']; ?>" />
+                                <td><input type="text" name="message_subject" id="message_subject" style="width: 95%" tabindex='2' maxlength="200" value="<?php echo stripslashes(sanitize_text_field($_POST['message_subject'])); ?>" />
                                 <br />
                                 <?php _e('Required', 'messaging') ?></td> 
                             </tr>
@@ -1078,9 +1140,9 @@ function messaging_new_page_output() {
                                 <th scope="row"><?php _e('Content', 'messaging') ?></th> 
                                 <td>
 					<?php if (version_compare($wp_version, "3.3") >= 0 && user_can_richedit()) { ?>
-						<?php wp_editor(isset($_POST['message_content'])?$_POST['message_content']:'', 'message_content'); ?>
+						<?php wp_editor(isset($_POST['message_content'])?wp_kses_post($_POST['message_content']):'', 'message_content'); ?>
 					<?php } else { ?>
-						<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo $_POST['message_content']; ?></textarea>
+						<textarea <?php if ( user_can_richedit() ){ echo "class='mceEditor'"; } ?> <?php echo $rows; ?> style="width: 95%" name='message_content' tabindex='3' id='message_content'><?php echo wp_kses_post($_POST['message_content']); ?></textarea>
 					<?php } ?>
 				<br />
                                 <?php _e('Required', 'messaging') ?></td> 
@@ -1098,12 +1160,12 @@ function messaging_new_page_output() {
                     <?php
 					foreach ($tmp_usernames_array as $tmp_username){
 						if ($tmp_username != ''){
-							$tmp_to_uid = $wpdb->get_var("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '" . $tmp_username . "'");
-							messaging_insert_message($tmp_to_uid,$tmp_to_all_uids,$user_ID,$_POST['message_subject'],$_POST['message_content'],'unread',0);
-							messaging_new_message_notification($tmp_to_uid,$user_ID,$_POST['message_subject'],$_POST['message_content']);
+							$tmp_to_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
+							messaging_insert_message($tmp_to_uid,$tmp_to_all_uids,$user_ID, stripslashes(sanitize_text_field($_POST['message_subject'])),wp_kses_post($_POST['message_content']),'unread',0);
+							messaging_new_message_notification($tmp_to_uid,$user_ID,stripslashes(sanitize_text_field($_POST['message_subject'])),wp_kses_post($_POST['message_content']));
 						}
 					}
-					messaging_insert_sent_message($tmp_to_all_uids,$user_ID,$_POST['message_subject'],$_POST['message_content'],0);
+					messaging_insert_sent_message($tmp_to_all_uids,$user_ID,stripslashes(sanitize_text_field($_POST['message_subject'])),wp_kses_post($_POST['message_content']),0);
 					echo "
 					<SCRIPT LANGUAGE='JavaScript'>
 					window.location='admin.php?page=messaging&updated=true&updatedmsg=" . urlencode(__('Message(s) Sent.', 'messaging')) . "';
@@ -1121,15 +1183,15 @@ function messaging_sent_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site, $messaging_official_message_bg_color, $messaging_max_inbox_messages, $messaging_max_reached_message;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php echo stripslashes(sanitize_text_field($_GET['updatedmsg'])) ?></p></div><?php
 	}
-	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
+	$action = isset($_GET[ 'action' ]) ? sanitize_text_field($_GET[ 'action' ]) : '';
 	
 	echo '<div class="wrap">';
 	switch( $action ) {
 		//---------------------------------------------------//
 		default:
-		$tmp_sent_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '" . $user_ID . "'");
+		$tmp_sent_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '%d'", $user_ID));
 			?>
             <h2><?php _e('Sent Messages', 'messaging') ?></h2>
             <?php
@@ -1138,7 +1200,7 @@ function messaging_sent_page_output() {
             <p><?php _e('No messages to display', 'messaging') ?></p>
             <?php
 			} else {
-			$query = "SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '" . $user_ID . "' ORDER BY sent_message_ID DESC LIMIT 50";
+			$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '%d' ORDER BY sent_message_ID DESC LIMIT 50", $user_ID);
 			$tmp_sent_messages = $wpdb->get_results( $query, ARRAY_A );
 			echo "
 			<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
@@ -1164,17 +1226,23 @@ function messaging_sent_page_output() {
 				$tmp_user_ids_array = explode("|", $tmp_user_ids);
 				
 				$tmp_usernames = '';
-				foreach ($tmp_user_ids_array as $tmp_user_id){
-					$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_user_id . "'");
-					$tmp_display_name = $wpdb->get_var("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '" . $tmp_user_id . "'");
+				foreach ($tmp_user_ids_array as $tmp_user_id) {
+					$tmp_user_id = intval($tmp_user_id);
+					if (!$tmp_user_id) continue;
+					
+					$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_user_id));
+					$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_user_id));
 					if ( $tmp_display_name != '' ) {
 						$tmp_username = $tmp_display_name;
 					}
 					$tmp_user_url = messaging_user_primary_blog_url($tmp_user_id);
+					//echo "tmp_user_url=[". $tmp_user_url ."]<br />";
+
+					if (!empty($tmp_usernames)) $tmp_usernames .= ", ";
 					if ($tmp_user_url == ''){
-						$tmp_usernames = $tmp_usernames . $tmp_username . ", ";
+						$tmp_usernames .= $tmp_username;
 					} else {
-						$tmp_usernames = $tmp_usernames . "<a href='" . $tmp_user_url . "'>" . $tmp_username . "</a>, ";
+						$tmp_usernames .= "<a href='" . $tmp_user_url . "'>" . $tmp_username . "</a>";
 					}
 				}
 				$tmp_usernames = trim($tmp_usernames, ", ");
@@ -1202,18 +1270,18 @@ function messaging_sent_page_output() {
 		break;
 		//---------------------------------------------------//
 		case "view":
-			$tmp_message_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '" . $_GET['mid'] . "' AND sent_message_from_user_ID = '" . $user_ID . "'");
+			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d' AND sent_message_from_user_ID = '%d'", $_GET['mid'], $user_ID));
 			if ($tmp_message_count > 0){
-			$tmp_message_subject = stripslashes($wpdb->get_var("SELECT sent_message_subject FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '" . $_GET['mid'] . "'"));
-			$tmp_message_content = stripslashes($wpdb->get_var("SELECT sent_message_content FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '" . $_GET['mid'] . "'"));
-			$tmp_message_to_user_IDs = $wpdb->get_var("SELECT sent_message_to_user_IDs FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '" . $_GET['mid'] . "'");
-			$tmp_message_stamp = $wpdb->get_var("SELECT sent_message_stamp FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '" . $_GET['mid'] . "'");
+			$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT sent_message_subject FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d'", $_GET['mid'])));
+			$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT sent_message_content FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d'", $_GET['mid'])));
+			$tmp_message_to_user_IDs = $wpdb->get_var($wpdb->prepare("SELECT sent_message_to_user_IDs FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%s'", $_GET['mid']));
+			$tmp_message_stamp = $wpdb->get_var($wpdb->prepare("SELECT sent_message_stamp FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d'", $_GET['mid']));
 			//=========================================================//
 			$tmp_user_ids = $tmp_message_to_user_IDs;
 			$tmp_user_ids_array = explode("|", $tmp_user_ids);
 			$tmp_usernames = '';
 			foreach ($tmp_user_ids_array as $tmp_user_id){
-				$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_user_id . "'");
+				$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_user_id));
 				$tmp_user_url = messaging_user_primary_blog_url($tmp_user_id);
 				if ($tmp_user_url == ''){
 					$tmp_usernames = $tmp_usernames . $tmp_username . ", ";
@@ -1226,7 +1294,7 @@ function messaging_sent_page_output() {
 			//=========================================================//
 			?>
 
-            <h2><?php _e('View Message: ', 'messaging') ?><?php echo $_GET['mid']; ?></h2>
+            <h2><?php _e('View Message: ', 'messaging') ?><?php echo intval($_GET['mid']); ?></h2>
 			<form name="new_message" method="POST" action="admin.php?page=messaging_sent">
             <h3><?php _e('To', 'messaging') ?></h3>
             <p><?php echo $tmp_usernames; ?></p>
@@ -1256,10 +1324,10 @@ function messaging_export_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php echo stripslashes(sanitize_text_field($_GET['updatedmsg'])) ?></p></div><?php
 	}
 	echo '<div class="wrap">';
-	switch( $_GET[ 'action' ] ) {
+	switch( sanitize_text_field($_GET[ 'action' ]) ) {
 		//---------------------------------------------------//
 		default:
 			?>
@@ -1288,12 +1356,12 @@ function messaging_export_page_output() {
 			$export_data_divider = "==============================================================================\n";
 			$export_data = $export_data_divider;
 			//============================================//
-			if ($_POST['export_type'] == 'received'){
-				$query = "SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '" . $user_ID . "' ORDER BY message_ID DESC";
+			if (sanitize_text_field($_POST['export_type']) == 'received'){
+				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' ORDER BY message_ID DESC", $user_ID);
 				$tmp_messages = $wpdb->get_results( $query, ARRAY_A );
 				if (count($tmp_messages) > 0){
 					foreach ($tmp_messages as $tmp_message){
-						$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_message['message_from_user_ID'] . "'");
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
 						$export_data = $export_data . __('From', 'messaging'). ': ' . $tmp_username . "\n";
 						$export_data = $export_data . __('Received', 'messaging'). ': ' . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "\n";
 						$export_data = $export_data . __('Subject', 'messaging'). ': ' . stripslashes($tmp_message['message_subject']) . "\n";
@@ -1303,8 +1371,8 @@ function messaging_export_page_output() {
 				}
 			}
 			//============================================//
-			if ($_POST['export_type'] == 'sent'){
-				$query = "SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '" . $user_ID . "' ORDER BY sent_message_ID DESC";
+			if (sanitize_text_field($_POST['export_type']) == 'sent'){
+				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '%d' ORDER BY sent_message_ID DESC", $user_ID);
 				$tmp_sent_messages = $wpdb->get_results( $query, ARRAY_A );
 				if (count($tmp_sent_messages) > 0){
 					foreach ($tmp_sent_messages as $tmp_sent_message){
@@ -1313,12 +1381,12 @@ function messaging_export_page_output() {
 						$tmp_user_ids_array = explode("|", $tmp_user_ids);
 						$tmp_usernames = '';
 						foreach ($tmp_user_ids_array as $tmp_user_id){
-							$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_user_id . "'");
+							$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_user_id));
 							$tmp_usernames = $tmp_usernames . $tmp_username . ", ";
 						}
 						$tmp_usernames = trim($tmp_usernames, ", ");
 						//=========================================================//
-						$tmp_username = $wpdb->get_var("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '" . $tmp_sent_message['sent_message_from_user_ID'] . "'");
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_sent_message['sent_message_from_user_ID']));
 						$export_data = $export_data . __('To', 'messaging'). ': ' . $tmp_usernames . "\n";
 						$export_data = $export_data . __('Sent', 'messaging'). ': ' . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "\n";
 						$export_data = $export_data . __('Subject', 'messaging'). ': ' . stripslashes($tmp_sent_message['sent_message_subject']) . "\n";
@@ -1332,11 +1400,11 @@ function messaging_export_page_output() {
 				$export_data = '';
 			}
 			//============================================//
-			if ($_POST['export_type'] == 'received'){
+			if (sanitize_text_field($_POST['export_type']) == 'received'){
 				?>
 	            <h2><?php _e('Export Data', 'messaging') ?> <?php _e('Received Messages', 'messaging') ?></h2>
                 <?php
-			} else if ($_POST['export_type'] == 'sent'){
+			} else if (sanitize_text_field($_POST['export_type']) == 'sent'){
 				?>
 	            <h2><?php _e('Export Data', 'messaging') ?> <?php _e('Sent Messages', 'messaging') ?></h2>
                 <?php
@@ -1363,14 +1431,15 @@ function messaging_notifications_page_output() {
 	global $wpdb, $wp_roles, $current_user, $user_ID, $current_site;
 
 	if (isset($_GET['updated'])) {
-		?><div id="message" class="updated fade"><p><?php _e(urldecode($_GET['updatedmsg']), 'messaging') ?></p></div><?php
+		?><div id="message" class="updated fade"><p><?php echo stripslashes(sanitize_text_field($_GET['updatedmsg'])) ?></p></div><?php
 	}
-	$action = isset($_GET[ 'action' ])?$_GET[ 'action' ]:'';
+	$action = isset($_GET[ 'action' ]) ? sanitize_text_field($_GET[ 'action' ]) : '';
 	echo '<div class="wrap">';
 	switch( $action ) {
 		//---------------------------------------------------//
 		default:
-			$tmp_message_email_notification = get_user_meta($user_ID,'message_email_notification');
+			$tmp_message_email_notification = get_user_meta($user_ID, 'message_email_notification', true);
+			
 			?>
 			<h2><?php _e('Notification Settings', 'messaging') ?></h2>
                 <form method="post" action="admin.php?page=messaging_message-notifications&action=process">
@@ -1393,7 +1462,7 @@ function messaging_notifications_page_output() {
 		break;
 		//---------------------------------------------------//
 		case "process":
-			update_usermeta($user_ID,'message_email_notification',$_POST['message_email_notification']);
+			update_usermeta($user_ID,'message_email_notification', sanitize_text_field($_POST['message_email_notification']));
 			echo "
 			<SCRIPT LANGUAGE='JavaScript'>
 			window.location='admin.php?page=messaging_message-notifications&updated=true&updatedmsg=" . urlencode(__('Settings saved.', 'messaging')) . "';
@@ -1413,21 +1482,16 @@ function messaging_notifications_page_output() {
 
 function messaging_user_primary_blog_url($tmp_uid){
 	global $wpdb;
-	$tmp_blog_id = $wpdb->get_var("SELECT meta_value FROM " . $wpdb->base_prefix . "usermeta WHERE meta_key = 'primary_blog' AND user_id = '" . $tmp_uid . "'");
-	if ($tmp_blog_id == ''){
-		return;
-	}
-	$tmp_blog_domain = $wpdb->get_var("SELECT domain FROM " . $wpdb->base_prefix . "blogs WHERE blog_id = '" . $tmp_blog_id . "'");
-	$tmp_blog_path = $wpdb->get_var("SELECT path FROM " . $wpdb->base_prefix . "blogs WHERE blog_id = '" . $tmp_blog_id . "'");
-	return 'http://' . $tmp_blog_domain . $tmp_blog_path;
-}
-
-if ( !function_exists( 'wdp_un_check' ) ) {
-	add_action( 'admin_notices', 'wdp_un_check', 5 );
-	add_action( 'network_admin_notices', 'wdp_un_check', 5 );
-
-	function wdp_un_check() {
-		if ( !class_exists( 'WPMUDEV_Update_Notifications' ) && current_user_can( 'edit_users' ) )
-			echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'messaging') . '</a></p></div>';
+	
+	if (is_multisite()) {
+		$tmp_blog_id = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM " . $wpdb->base_prefix . "usermeta WHERE meta_key = 'primary_blog' AND user_id = '%d'", $tmp_uid));
+		if ($tmp_blog_id == ''){
+			return;
+		}
+		$tmp_blog_domain = $wpdb->get_var($wpdb->prepare("SELECT domain FROM " . $wpdb->base_prefix . "blogs WHERE blog_id = '%d'", $tmp_blog_id));
+		$tmp_blog_path = $wpdb->get_var($wpdb->prepare("SELECT path FROM " . $wpdb->base_prefix . "blogs WHERE blog_id = '%d'", $tmp_blog_id));
+		return 'http://' . $tmp_blog_domain . $tmp_blog_path;
+	} else {
+		return get_option('siteurl');
 	}
 }
