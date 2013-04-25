@@ -167,7 +167,7 @@ function messaging_global_install() {
 
 function messaging_plug_pages() {
 	global $wpdb, $user_ID;
-	$tmp_unread_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status = '%s'", $user_ID, 'unread'));
+	$tmp_unread_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d AND message_status = %s", $user_ID, 'unread'));
 	if ($tmp_unread_message_count > 0){
                 $count_output = '&nbsp;<span class="update-plugins"><span class="updates-count count-' . $tmp_unread_message_count . '">' . $tmp_unread_message_count . '</span></span>';
 	} else {
@@ -294,7 +294,7 @@ function messaging_update_message_status($tmp_mid,$tmp_status) {
 
 function messaging_remove_message($tmp_mid) {
 	global $wpdb;
-	$wpdb->query( $wpdb->prepare("DELETE FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d' ", $tmp_mid ));
+	$wpdb->query( $wpdb->prepare("DELETE FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $tmp_mid ));
 }
 
 function messaging_insert_sent_message($tmp_to_all_uids,$tmp_from_uid,$tmp_subject,$tmp_content,$tmp_official = 0) {
@@ -316,7 +316,7 @@ function messaging_insert_sent_message($tmp_to_all_uids,$tmp_from_uid,$tmp_subje
 
 function messaging_remove_sent_message($tmp_mid) {
 	global $wpdb;
-	$wpdb->query( $wpdb->prepare("DELETE FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d' ", $tmp_mid));
+	$wpdb->query( $wpdb->prepare("DELETE FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = %d", $tmp_mid));
 }
 
 function messaging_new_message_notification($tmp_to_uid,$tmp_from_uid,$tmp_subject,$tmp_content) {
@@ -331,9 +331,9 @@ function messaging_new_message_notification($tmp_to_uid,$tmp_from_uid,$tmp_subje
 	}
 
 	if (get_user_meta($tmp_to_uid,'message_email_notification') != 'no'){
-		$tmp_to_username =  $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_to_uid));
-		$tmp_to_email =  $wpdb->get_var($wpdb->prepare("SELECT user_email FROM " . $wpdb->users . " WHERE ID = '%s'", $tmp_to_uid));
-		$tmp_from_username =  $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_from_uid));
+		$tmp_to_username =  $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_to_uid));
+		$tmp_to_email =  $wpdb->get_var($wpdb->prepare("SELECT user_email FROM " . $wpdb->users . " WHERE ID = %s", $tmp_to_uid));
+		$tmp_from_username =  $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_from_uid));
 		
 		$message_content = get_site_option('messaging_email_notification_content', $messaging_email_notification_content);
 
@@ -510,9 +510,9 @@ function messaging_inbox_page_output() {
 				</script>
 				";
 			}
-			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status != '%s'", $user_ID, 'removed'));
-			$tmp_unread_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status = '%s'", $user_ID, 'unread'));
-			$tmp_read_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status = '%s'", $user_ID, 'read'));
+			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d AND message_status != %s", $user_ID, 'removed'));
+			$tmp_unread_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d AND message_status = %s", $user_ID, 'unread'));
+			$tmp_read_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d AND message_status = %s", $user_ID, 'read'));
 			?>
             <h2><?php _e('Inbox', 'messaging') ?> (<a href="admin.php?page=messaging_new"><?php _e('New Message', 'messaging') ?></a>)</h2>
             <?php
@@ -538,7 +538,7 @@ function messaging_inbox_page_output() {
 				?>
 				<h3><?php _e('Unread', 'messaging') ?></h3>
 				<?php
-				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%s' AND message_status = '%s' ORDER BY message_ID DESC", $user_ID, 'unread');
+				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %s AND message_status = %s ORDER BY message_ID DESC", $user_ID, 'unread');
 				$tmp_messages = $wpdb->get_results( $query, ARRAY_A );
 				echo "
 				<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
@@ -564,8 +564,8 @@ function messaging_inbox_page_output() {
 					//=========================================================//
 					echo "<tr class='" . $class . "' " . $style . ">";
 					if ($tmp_message['message_official'] == 1){
-						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
-						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
+						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
 						if ( $tmp_display_name == '' ) {
 							$tmp_display_name = $tmp_username;
 						}
@@ -578,8 +578,8 @@ function messaging_inbox_page_output() {
 						echo "<td valign='top'><strong>" . stripslashes($tmp_message['message_subject']) . "</strong></td>";
 						echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</strong></td>";
 					} else {
-						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
-						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
+						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
 						if ( $tmp_display_name == '' ) {
 							$tmp_display_name = $tmp_username;
 						}
@@ -614,7 +614,7 @@ function messaging_inbox_page_output() {
 				?>
 				<h3><?php _e('Read', 'messaging') ?></h3>
 				<?php
-				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' AND message_status = '%s' ORDER BY message_ID DESC", $user_ID, 'read');
+				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d AND message_status = %s ORDER BY message_ID DESC", $user_ID, 'read');
 				$tmp_messages = $wpdb->get_results( $query, ARRAY_A );
 				echo "
 				<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
@@ -640,8 +640,8 @@ function messaging_inbox_page_output() {
 					//=========================================================//
 					echo "<tr class='" . $class . "' " . $style . ">";
 					if ($tmp_message['message_official'] == 1){
-						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
-						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
+						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
 						if ( $tmp_display_name == '' ) {
 							$tmp_display_name = $tmp_username;
 						}
@@ -654,8 +654,8 @@ function messaging_inbox_page_output() {
 						echo "<td valign='top'><strong>" . stripslashes($tmp_message['message_subject']) . "</strong></td>";
 						echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</strong></td>";
 					} else {
-						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
-						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
+						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
 						if ( $tmp_display_name == '' ) {
 							$tmp_display_name = $tmp_username;
 						}
@@ -689,8 +689,8 @@ function messaging_inbox_page_output() {
 		break;
 		//---------------------------------------------------//
 		case "view":
-			$tmp_total_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d'", $user_ID));
-			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d' AND message_to_user_ID = '%d'", $_GET['mid'], $user_ID));
+			$tmp_total_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d", $user_ID));
+			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d AND message_to_user_ID = %d", $_GET['mid'], $user_ID));
 			if ($tmp_message_count > 0){
 				if ($tmp_total_message_count >= $messaging_max_inbox_messages){
 					?>
@@ -698,14 +698,14 @@ function messaging_inbox_page_output() {
 					<?php
 					} else {
 					messaging_update_message_status(intval($_GET['mid']),'read');
-					$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid'])));
-					$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid'])));
-					$tmp_message_from_user_ID = $wpdb->get_var($wpdb->prepare("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid']));
-					$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message_from_user_ID));
-					$tmp_message_status = $wpdb->get_var($wpdb->prepare("SELECT message_status FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid']));
+					$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $_GET['mid'])));
+					$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $_GET['mid'])));
+					$tmp_message_from_user_ID = $wpdb->get_var($wpdb->prepare("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $_GET['mid']));
+					$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message_from_user_ID));
+					$tmp_message_status = $wpdb->get_var($wpdb->prepare("SELECT message_status FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $_GET['mid']));
 					$tmp_message_status = ucfirst($tmp_message_status);
 					$tmp_message_status = __($tmp_message_status, 'messaging');
-					$tmp_message_stamp = $wpdb->get_var($wpdb->prepare("SELECT message_stamp FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid']));
+					$tmp_message_stamp = $wpdb->get_var($wpdb->prepare("SELECT message_stamp FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $_GET['mid']));
 					?>
 		
 					<h2><?php _e('View Message: ', 'messaging') ?><?php echo intval($_GET['mid']); ?></h2>
@@ -747,13 +747,13 @@ function messaging_inbox_page_output() {
 		break;
 		//---------------------------------------------------//
 		case "reply":
-			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d' AND message_to_user_ID = '%d'", $_GET['mid'], $user_ID));
+			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d AND message_to_user_ID = %d", $_GET['mid'], $user_ID));
 			if ($tmp_message_count > 0){
-			$tmp_message_from_user_ID = $wpdb->get_var($wpdb->prepare("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid']));
-			$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message_from_user_ID));
-			$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid'])));
+			$tmp_message_from_user_ID = $wpdb->get_var($wpdb->prepare("SELECT message_from_user_ID FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $_GET['mid']));
+			$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message_from_user_ID));
+			$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_subject FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $_GET['mid'])));
 			$tmp_message_subject = __('RE: ', 'messaging') . $tmp_message_subject;
-			$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = '%d'", $_GET['mid'])));
+			$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT message_content FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d", $_GET['mid'])));
 			//$tmp_message_content = "\n\n" . $tmp_username . __(' wrote:') . '<hr>' . $tmp_message_content;
 
 			$rows = get_option('default_post_edit_rows');
@@ -882,9 +882,9 @@ function messaging_inbox_page_output() {
 				
 				foreach ($tmp_usernames_array as $tmp_username){
 					if ($tmp_username != ''){
-						$tmp_username_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
+						$tmp_username_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = %s", $tmp_username));
 						if ($tmp_username_count > 0){
-							$tmp_user_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
+							$tmp_user_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = %s", $tmp_username));
 							$tmp_to_all_uids = $tmp_to_all_uids . $tmp_user_id . '|';
 							//found
 						} else {
@@ -949,7 +949,7 @@ function messaging_inbox_page_output() {
                     <?php
 					foreach ($tmp_usernames_array as $tmp_username){
 						if ($tmp_username != ''){
-							$tmp_to_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
+							$tmp_to_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = %s", $tmp_username));
 							messaging_insert_message($tmp_to_uid,$tmp_to_all_uids,$user_ID, stripslashes(sanitize_text_field($_POST['message_subject'])), wp_kses_post($_POST['message_content']), 'unread', 0);
 							messaging_new_message_notification($tmp_to_uid,$user_ID, stripslashes(sanitize_text_field($_POST['message_subject'])), wp_kses_post($_POST['message_content']));
 						}
@@ -982,7 +982,7 @@ function messaging_new_page_output() {
 	switch( $action ) {
 		//---------------------------------------------------//
 		default:
-			$tmp_total_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d'", $user_ID));
+			$tmp_total_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d", $user_ID));
 			if ($tmp_total_message_count >= $messaging_max_inbox_messages){
 				?>
 				<p><strong><center><?php _e($messaging_max_reached_message, 'messaging') ?></center></strong></p>
@@ -1097,9 +1097,9 @@ function messaging_new_page_output() {
 				$tmp_to_all_uids = '|';
 				foreach ($tmp_usernames_array as $tmp_username){
 					if ($tmp_username != ''){
-						$tmp_username_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
+						$tmp_username_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = %s", $tmp_username));
 						if ($tmp_username_count > 0){
-							$tmp_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
+							$tmp_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = %s", $tmp_username));
 							$tmp_to_all_uids = $tmp_to_all_uids . $tmp_uid . '|';
 							//found
 						} else {
@@ -1160,7 +1160,7 @@ function messaging_new_page_output() {
                     <?php
 					foreach ($tmp_usernames_array as $tmp_username){
 						if ($tmp_username != ''){
-							$tmp_to_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = '%s'", $tmp_username));
+							$tmp_to_uid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM " . $wpdb->users . " WHERE user_login = %s", $tmp_username));
 							messaging_insert_message($tmp_to_uid,$tmp_to_all_uids,$user_ID, stripslashes(sanitize_text_field($_POST['message_subject'])),wp_kses_post($_POST['message_content']),'unread',0);
 							messaging_new_message_notification($tmp_to_uid,$user_ID,stripslashes(sanitize_text_field($_POST['message_subject'])),wp_kses_post($_POST['message_content']));
 						}
@@ -1191,7 +1191,7 @@ function messaging_sent_page_output() {
 	switch( $action ) {
 		//---------------------------------------------------//
 		default:
-		$tmp_sent_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '%d'", $user_ID));
+		$tmp_sent_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = %d", $user_ID));
 			?>
             <h2><?php _e('Sent Messages', 'messaging') ?></h2>
             <?php
@@ -1200,7 +1200,7 @@ function messaging_sent_page_output() {
             <p><?php _e('No messages to display', 'messaging') ?></p>
             <?php
 			} else {
-			$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '%d' ORDER BY sent_message_ID DESC LIMIT 50", $user_ID);
+			$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = %d ORDER BY sent_message_ID DESC LIMIT 50", $user_ID);
 			$tmp_sent_messages = $wpdb->get_results( $query, ARRAY_A );
 			echo "
 			<table cellpadding='3' cellspacing='3' width='100%' class='widefat'> 
@@ -1230,8 +1230,8 @@ function messaging_sent_page_output() {
 					$tmp_user_id = intval($tmp_user_id);
 					if (!$tmp_user_id) continue;
 					
-					$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_user_id));
-					$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_user_id));
+					$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_user_id));
+					$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = %d", $tmp_user_id));
 					if ( $tmp_display_name != '' ) {
 						$tmp_username = $tmp_display_name;
 					}
@@ -1270,18 +1270,18 @@ function messaging_sent_page_output() {
 		break;
 		//---------------------------------------------------//
 		case "view":
-			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d' AND sent_message_from_user_ID = '%d'", $_GET['mid'], $user_ID));
+			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = %d AND sent_message_from_user_ID = %d", $_GET['mid'], $user_ID));
 			if ($tmp_message_count > 0){
-			$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT sent_message_subject FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d'", $_GET['mid'])));
-			$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT sent_message_content FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d'", $_GET['mid'])));
-			$tmp_message_to_user_IDs = $wpdb->get_var($wpdb->prepare("SELECT sent_message_to_user_IDs FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%s'", $_GET['mid']));
-			$tmp_message_stamp = $wpdb->get_var($wpdb->prepare("SELECT sent_message_stamp FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = '%d'", $_GET['mid']));
+			$tmp_message_subject = stripslashes($wpdb->get_var($wpdb->prepare("SELECT sent_message_subject FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = %d", $_GET['mid'])));
+			$tmp_message_content = stripslashes($wpdb->get_var($wpdb->prepare("SELECT sent_message_content FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = %d", $_GET['mid'])));
+			$tmp_message_to_user_IDs = $wpdb->get_var($wpdb->prepare("SELECT sent_message_to_user_IDs FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = %s", $_GET['mid']));
+			$tmp_message_stamp = $wpdb->get_var($wpdb->prepare("SELECT sent_message_stamp FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_ID = %d", $_GET['mid']));
 			//=========================================================//
 			$tmp_user_ids = $tmp_message_to_user_IDs;
 			$tmp_user_ids_array = explode("|", $tmp_user_ids);
 			$tmp_usernames = '';
 			foreach ($tmp_user_ids_array as $tmp_user_id){
-				$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_user_id));
+				$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_user_id));
 				$tmp_user_url = messaging_user_primary_blog_url($tmp_user_id);
 				if ($tmp_user_url == ''){
 					$tmp_usernames = $tmp_usernames . $tmp_username . ", ";
@@ -1357,11 +1357,11 @@ function messaging_export_page_output() {
 			$export_data = $export_data_divider;
 			//============================================//
 			if (sanitize_text_field($_POST['export_type']) == 'received'){
-				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = '%d' ORDER BY message_ID DESC", $user_ID);
+				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d ORDER BY message_ID DESC", $user_ID);
 				$tmp_messages = $wpdb->get_results( $query, ARRAY_A );
 				if (count($tmp_messages) > 0){
 					foreach ($tmp_messages as $tmp_message){
-						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_message['message_from_user_ID']));
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
 						$export_data = $export_data . __('From', 'messaging'). ': ' . $tmp_username . "\n";
 						$export_data = $export_data . __('Received', 'messaging'). ': ' . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "\n";
 						$export_data = $export_data . __('Subject', 'messaging'). ': ' . stripslashes($tmp_message['message_subject']) . "\n";
@@ -1372,7 +1372,7 @@ function messaging_export_page_output() {
 			}
 			//============================================//
 			if (sanitize_text_field($_POST['export_type']) == 'sent'){
-				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = '%d' ORDER BY sent_message_ID DESC", $user_ID);
+				$query = $wpdb->prepare("SELECT * FROM " . $wpdb->base_prefix . "sent_messages WHERE sent_message_from_user_ID = %d ORDER BY sent_message_ID DESC", $user_ID);
 				$tmp_sent_messages = $wpdb->get_results( $query, ARRAY_A );
 				if (count($tmp_sent_messages) > 0){
 					foreach ($tmp_sent_messages as $tmp_sent_message){
@@ -1381,12 +1381,12 @@ function messaging_export_page_output() {
 						$tmp_user_ids_array = explode("|", $tmp_user_ids);
 						$tmp_usernames = '';
 						foreach ($tmp_user_ids_array as $tmp_user_id){
-							$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_user_id));
+							$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_user_id));
 							$tmp_usernames = $tmp_usernames . $tmp_username . ", ";
 						}
 						$tmp_usernames = trim($tmp_usernames, ", ");
 						//=========================================================//
-						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = '%d'", $tmp_sent_message['sent_message_from_user_ID']));
+						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_sent_message['sent_message_from_user_ID']));
 						$export_data = $export_data . __('To', 'messaging'). ': ' . $tmp_usernames . "\n";
 						$export_data = $export_data . __('Sent', 'messaging'). ': ' . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "\n";
 						$export_data = $export_data . __('Subject', 'messaging'). ': ' . stripslashes($tmp_sent_message['sent_message_subject']) . "\n";
@@ -1484,12 +1484,12 @@ function messaging_user_primary_blog_url($tmp_uid){
 	global $wpdb;
 	
 	if (is_multisite()) {
-		$tmp_blog_id = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM " . $wpdb->base_prefix . "usermeta WHERE meta_key = 'primary_blog' AND user_id = '%d'", $tmp_uid));
+		$tmp_blog_id = $wpdb->get_var($wpdb->prepare("SELECT meta_value FROM " . $wpdb->base_prefix . "usermeta WHERE meta_key = 'primary_blog' AND user_id = %d", $tmp_uid));
 		if ($tmp_blog_id == ''){
 			return;
 		}
-		$tmp_blog_domain = $wpdb->get_var($wpdb->prepare("SELECT domain FROM " . $wpdb->base_prefix . "blogs WHERE blog_id = '%d'", $tmp_blog_id));
-		$tmp_blog_path = $wpdb->get_var($wpdb->prepare("SELECT path FROM " . $wpdb->base_prefix . "blogs WHERE blog_id = '%d'", $tmp_blog_id));
+		$tmp_blog_domain = $wpdb->get_var($wpdb->prepare("SELECT domain FROM " . $wpdb->base_prefix . "blogs WHERE blog_id = %d", $tmp_blog_id));
+		$tmp_blog_path = $wpdb->get_var($wpdb->prepare("SELECT path FROM " . $wpdb->base_prefix . "blogs WHERE blog_id = %d", $tmp_blog_id));
 		return 'http://' . $tmp_blog_domain . $tmp_blog_path;
 	} else {
 		return get_option('siteurl');
