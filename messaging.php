@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.6.3
+Version: 1.1.6.4
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Text Domain: messaging
@@ -27,11 +27,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-global $wpmudev_notices;
-$wpmudev_notices[] = array( 'id'=> 68, 'name'=> 'Messaging', 'screens' => array( 'toplevel_page_messaging', 'inbox_page_messaging_new', 'inbox_page_messaging_sent', 'inbox_page_messaging_message-notifications' ) );
-include_once(plugin_dir_path( __FILE__ ).'lib/dash-notices/wpmudev-dash-notification.php');
-
-$messaging_current_version = '1.1.6.3';
+$messaging_current_version = '1.1.6.4';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -67,6 +63,13 @@ if(isset($_GET['action']) && sanitize_text_field($_GET['action']) == 'reply_proc
 add_action('admin_menu', 'messaging_plug_pages');
 add_action('network_admin_menu', 'messaging_network_plug_pages');
 add_action('wpabar_menuitems', 'messaging_admin_bar');
+add_action('wp_ajax_messaging_suggest_user', 'messaging_suggest_user' );
+add_filter('manage_users_columns', 'messaging_add_user_column');
+add_action('manage_users_custom_column', 'messaging_manage_users_column', 10, 3);
+
+// Not yet, may be when we add Messaging Menu to network admin
+// add_filter('wpmu_users_columns', 'messaging_add_user_column');
+// add_action('wpmu_users_custom_column', 'messaging_manage_users_column', 10, 3);
 
 if (isset($_GET['action']) && sanitize_text_field($_GET['action']) == 'view' && isset($_GET['mid']) && $_GET['mid'] != ''){
 	messaging_update_message_status(intval($_GET['mid']),'read');
@@ -84,13 +87,47 @@ add_action('init', 'messaging_init');
 function messaging_init() {
 	global $messaging_max_reached_message,$messaging_email_notification_subject;
 
-//	if ( !is_multisite() )
-//		exit( 'The Messaging plugin is only compatible with WordPress Multisite.' );
-
 	load_plugin_textdomain('messaging', false, dirname(plugin_basename(__FILE__)).'/languages');
 
 	$messaging_max_reached_message = __('You are currently at or over your inbox message limit. You will not be able to view, reply to, or send new messages until you remove messages from your inbox.', 'messaging');
 	$messaging_email_notification_subject = __('[SITE_NAME] New Message', 'messaging'); // SITE_NAME
+}
+
+function messaging_enqueue_scripts() {
+	wp_enqueue_script('script-name', plugins_url() . '/messaging/js/messaging-admin.js', array('jquery', 'jquery-ui-autocomplete'), '1.0.0', true);
+}
+
+function messaging_suggest_user() {
+
+	header('HTTP/1.1 200 OK');
+	header('Content-Type: application/json');
+
+	$user_query = new WP_User_Query(
+		array(
+			'blog_id' => 0,
+			'fields' => array('ID', 'user_login', 'user_nicename', 'user_email', 'user_url'),
+			'orderby' => 'user_login',
+			'order' => 'ASC',
+			'number' => 5,
+			'search' => "*{$_REQUEST['user']}*",
+			'search_columns' => array('user_login', 'user_nicename', 'user_email', 'user_url')
+		)
+	);
+
+	$users = array();
+
+	if ( ! empty( $user_query->results ) ) {
+		foreach ( $user_query->results as $user ) {
+			$users[] = array(
+				'id' => $user->ID,
+				'value' => $user->user_login,
+				'label' => "{$user->user_nicename} ({$user->user_login} / {$user->user_email} {$user->user_url})",
+			);
+		}
+	}
+
+	echo json_encode($users);
+	exit();
 }
 
 function messaging_make_current() {
@@ -176,14 +213,16 @@ function messaging_plug_pages() {
 		$count_output = '';
 	}
 
-	add_menu_page(__('Inbox', 'messaging'), __('Inbox', 'messaging').$count_output, 'read', 'messaging', 'messaging_inbox_page_output');
-	add_submenu_page('messaging', __('Inbox', 'messaging'), __('New Message', 'messaging'), 'read', 'messaging_new', 'messaging_new_page_output' );
-	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Sent Messages', 'messaging'), 'read', 'messaging_sent', 'messaging_sent_page_output' );
-	add_submenu_page('messaging', __('Inbox', 'messaging'), __('Notifications', 'messaging'), 'read', 'messaging_message-notifications', 'messaging_notifications_page_output' );
+	$inbox_page = add_menu_page(__('Inbox', 'messaging'), __('Inbox', 'messaging').$count_output, 'read', 'messaging', 'messaging_inbox_page_output');
+	$new_message_page = add_submenu_page('messaging', __('Inbox', 'messaging'), __('New Message', 'messaging'), 'read', 'messaging_new', 'messaging_new_page_output' );
+	$sent_messages_page = add_submenu_page('messaging', __('Inbox', 'messaging'), __('Sent Messages', 'messaging'), 'read', 'messaging_sent', 'messaging_sent_page_output' );
+	$notification_settings_page = add_submenu_page('messaging', __('Inbox', 'messaging'), __('Notifications', 'messaging'), 'read', 'messaging_message-notifications', 'messaging_notifications_page_output' );
 
 	if (!is_multisite()) {
-		add_submenu_page('messaging', __('Messaging Settings', 'messaging'), __('Messaging Settings', 'messaging'), 'manage_options', 'messaging_settings', 'messaging_network_settings' );
+		$messaging_network_settings_page = add_submenu_page('messaging', __('Messaging Settings', 'messaging'), __('Messaging Settings', 'messaging'), 'manage_options', 'messaging_settings', 'messaging_network_settings' );
 	}
+
+	add_action('admin_print_scripts-' . $new_message_page, 'messaging_enqueue_scripts');
 }
 
 function messaging_network_plug_pages() {
@@ -771,7 +810,7 @@ function messaging_inbox_page_output() {
             ?>
 			<h2><?php _e('Send Reply', 'messaging') ?></h2>
 			<form name="reply_to_message" method="POST" action="admin.php?page=messaging&action=reply_process">
-            <input type="hidden" name="message_to" value="<?php echo $tmp_username; ?>" />
+            <input type="hidden" name="message_to" value="<?php echo $tmp_username; ?>" class="messaging-suggest-user ui-autocomplete-input" autocomplete="off" />
             <input type="hidden" name="message_subject" value="<?php echo $tmp_message_subject; ?>" />
                 <table class="form-table">
                 <tr valign="top">
@@ -837,7 +876,10 @@ function messaging_inbox_page_output() {
 					<table class="form-table">
 					<tr valign="top">
 					<th scope="row"><?php _e('To', 'messaging') ?></th>
-					<td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" maxlength="200" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
+					<td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled"
+						class="messaging-suggest-user ui-autocomplete-input" autocomplete="off"
+						style="width: 95%" maxlength="200" 
+						value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
 					<br />
 					<?php //_e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td>
 					</tr>
@@ -883,6 +925,7 @@ function messaging_inbox_page_output() {
 				$tmp_to_all_uids = '|';
 
 				foreach ($tmp_usernames_array as $tmp_username){
+					$tmp_username = trim($tmp_username);
 					if ($tmp_username != ''){
 						$tmp_username_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = %s", $tmp_username));
 						if ($tmp_username_count > 0){
@@ -912,7 +955,10 @@ function messaging_inbox_page_output() {
                         <table class="form-table">
                         <tr valign="top">
                         <th scope="row"><?php _e('To', 'messaging') ?></th>
-                        <td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
+                        <td><input disabled="disabled" type="text" name="message_to" id="message_to_disabled"
+                        	class="messaging-suggest-user ui-autocomplete-input" autocomplete="off"
+                        	style="width: 95%" tabindex='1' maxlength="200"
+                        	value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
                         <br />
                         <?php //_e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2') ?></td>
                         </tr>
@@ -1011,7 +1057,10 @@ function messaging_new_page_output() {
 						$message_to = isset($_GET['message_to']) ? sanitize_text_field($_GET['message_to']) : '';
 					}
 					?>
-					<td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo $message_to; ?>" />
+					<td><input type="text" name="message_to" id="message_to"
+						class="messaging-suggest-user ui-autocomplete-input" autocomplete="off"
+						style="width: 95%" tabindex='1' maxlength="200"
+						value="<?php echo $message_to; ?>" />
 					<br />
 					<?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2', 'messaging') ?></td>
 					</tr>
@@ -1058,7 +1107,10 @@ function messaging_new_page_output() {
 					<table class="form-table">
 					<tr valign="top">
 					<th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
-					<td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
+					<td><input type="text" name="message_to" id="message_to"
+						class="messaging-suggest-user ui-autocomplete-input" autocomplete="off"
+						style="width: 95%" tabindex='1' maxlength="200"
+						value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
 					<br />
 					<?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2', 'messaging') ?></td>
 					</tr>
@@ -1098,6 +1150,7 @@ function messaging_new_page_output() {
 				$tmp_error_usernames = '';
 				$tmp_to_all_uids = '|';
 				foreach ($tmp_usernames_array as $tmp_username){
+					$tmp_username = trim($tmp_username);
 					if ($tmp_username != ''){
 						$tmp_username_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->users . " WHERE user_login = %s", $tmp_username));
 						if ($tmp_username_count > 0){
@@ -1128,7 +1181,10 @@ function messaging_new_page_output() {
 						<table class="form-table">
                             <tr valign="top">
                                 <th scope="row"><?php _e('To (usernames)', 'messaging') ?></th>
-                                <td><input type="text" name="message_to" id="message_to" style="width: 95%" tabindex='1' maxlength="200" value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
+                                <td><input type="text" name="message_to" id="message_to"
+                                	class="messaging-suggest-user ui-autocomplete-input" autocomplete="off"
+                                	style="width: 95%" tabindex='1' maxlength="200"
+                                	value="<?php echo sanitize_text_field($_POST['message_to']); ?>" />
                                 <br />
                                 <?php _e('Required - seperate multiple usernames by commas Ex: demouser1,demouser2', 'messaging') ?></td>
                             </tr>
@@ -1476,7 +1532,19 @@ function messaging_notifications_page_output() {
 	echo '</div>';
 }
 
+function messaging_add_user_column($columns) {
+	$columns['message'] = __('Contact', 'messaging');
 
+	return $columns;
+}
+
+function messaging_manage_users_column($value, $column_name, $user_id) {
+	if ( 'message' == $column_name ) {
+		$user = get_userdata($user_id);
+		return '<a href="'.get_admin_url(null, 'admin.php?page=messaging_new&message_to='.$user->user_login).'">'.__('Message', 'messaging').'</a>';
+	}
+	return $value;
+}
 
 //------------------------------------------------------------------------//
 //---Support Functions----------------------------------------------------//
@@ -1497,3 +1565,8 @@ function messaging_user_primary_blog_url($tmp_uid){
 		return get_option('siteurl');
 	}
 }
+
+global $wpmudev_notices;
+$wpmudev_notices[] = array( 'id'=> 68, 'name'=> 'Messaging', 'screens' => array( 'toplevel_page_messaging', 'inbox_page_messaging_new', 'inbox_page_messaging_sent', 'inbox_page_messaging_message-notifications' ) );
+include_once(plugin_dir_path( __FILE__ ).'lib/dash-notices/wpmudev-dash-notification.php');
+
