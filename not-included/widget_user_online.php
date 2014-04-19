@@ -11,7 +11,7 @@ function widget_user_online_init() {
 	global $wpdb, $user_ID;
 		
 	// Check for the required API functions
-	if ( !function_exists('register_sidebar_widget') || !function_exists('register_widget_control') )
+	if ( !function_exists('wp_register_sidebar_widget') || !function_exists('wp_register_widget_control') )
 		return;
 
 	// This saves options and prints the widget's config form.
@@ -37,7 +37,7 @@ function widget_user_online_init() {
 				?>
                 <!---
 				<label for="user-online-title" style="line-height:35px;display:block;"><?php _e('Title:', 'widgets'); ?> <input type="text" id="user-online-title" name="user-online-title" value="<?php echo $tmp_user_online_title; ?>" style="width:65%;" /></label>
-                --->
+                -->
                 <?php
 				$tmp_blog_users_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->usermeta . " WHERE meta_key = '" . $wpdb->base_prefix . $wpdb->blogid . "_capabilities'");
 				if ($tmp_blog_users_count > 1){
@@ -202,8 +202,8 @@ function widget_user_online_init() {
 <?php
 	}
 	// Tell Dynamic Sidebar about our new widget and its control
-	register_sidebar_widget(array(__('Online Status'), 'widgets'), 'widget_user_online');
-	register_widget_control(array(__('Online Status'), 'widgets'), 'widget_user_online_control');
+	wp_register_sidebar_widget('Online Status', __('Online Status'), 'widget_user_online');
+	wp_register_widget_control('Online Status', __('Online Status'), 'widget_user_online_control');
 
 }
 

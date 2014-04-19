@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.6.4
+Version: 1.1.6.5
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Text Domain: messaging
@@ -27,7 +27,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.6.4';
+$messaging_current_version = '1.1.6.5';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -617,7 +617,7 @@ function messaging_inbox_page_output() {
 							echo "<td valign='top'><strong><a href='" . $tmp_user_url . "'>" . $tmp_display_name . "</a></strong></td>";
 						}
 						echo "<td valign='top'><strong>" . stripslashes($tmp_message['message_subject']) . "</strong></td>";
-						echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</strong></td>";
+						echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp'] + (get_option( 'gmt_offset' ) * 3600)) . "</strong></td>";
 					} else {
 						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
 						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
@@ -631,7 +631,7 @@ function messaging_inbox_page_output() {
 							echo "<td valign='top'><a href='" . $tmp_user_url . "'>" . $tmp_display_name . "</a></td>";
 						}
 						echo "<td valign='top'>" . stripslashes($tmp_message['message_subject']) . "</td>";
-						echo "<td valign='top'>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</td>";
+						echo "<td valign='top'>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp'] + (get_option( 'gmt_offset' ) * 3600)) . "</td>";
 					}
 					if ($tmp_message_count >= $messaging_max_inbox_messages){
 						echo "<td valign='top'><a class='edit'>" . __('View', 'messaging') . "</a></td>";
@@ -693,7 +693,7 @@ function messaging_inbox_page_output() {
 							echo "<td valign='top'><strong><a href='" . $tmp_user_url . "'>" . $tmp_display_name . "</a></strong></td>";
 						}
 						echo "<td valign='top'><strong>" . stripslashes($tmp_message['message_subject']) . "</strong></td>";
-						echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</strong></td>";
+						echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp'] + (get_option( 'gmt_offset' ) * 3600)) . "</strong></td>";
 					} else {
 						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
 						$tmp_display_name = $wpdb->get_var($wpdb->prepare("SELECT display_name FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
@@ -707,7 +707,7 @@ function messaging_inbox_page_output() {
 							echo "<td valign='top'><a href='" . $tmp_user_url . "'>" . $tmp_display_name . "</a></td>";
 						}
 						echo "<td valign='top'>" . stripslashes($tmp_message['message_subject']) . "</td>";
-						echo "<td valign='top'>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "</td>";
+						echo "<td valign='top'>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $tmp_message['message_stamp'] + (get_option( 'gmt_offset' ) * 3600)) . "</td>";
 					}
 					if ($tmp_message_count >= $messaging_max_inbox_messages){
 						echo "<td valign='top'><a class='edit'>" . __('View', 'messaging') . "</a></td>";
@@ -730,7 +730,7 @@ function messaging_inbox_page_output() {
 		break;
 		//---------------------------------------------------//
 		case "view":
-			$tmp_total_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d", $user_ID));
+			$tmp_total_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_to_user_ID = %d AND message_status != %s", $user_ID, 'removed'));
 			$tmp_message_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "messages WHERE message_ID = %d AND message_to_user_ID = %d", $_GET['mid'], $user_ID));
 			if ($tmp_message_count > 0){
 				if ($tmp_total_message_count >= $messaging_max_inbox_messages){
@@ -753,7 +753,7 @@ function messaging_inbox_page_output() {
 					<form name="new_message" method="POST" action="admin.php?page=messaging">
 					<input type="hidden" name="mid" value="<?php echo intval($_GET['mid']); ?>" />
 					<h3><?php _e('Sent', 'messaging') ?></h3>
-					<p><?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message_stamp); ?></p>
+					<p><?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $tmp_message_stamp + (get_option( 'gmt_offset' ) * 3600), true); ?></p>
 					<h3><?php _e('Status', 'messaging') ?></h3>
 					<p><?php echo $tmp_message_status; ?></p>
 					<h3><?php _e('From', 'messaging') ?></h3>
@@ -1309,11 +1309,11 @@ function messaging_sent_page_output() {
 				if (isset($tmp_sent_message['message_official']) && $tmp_sent_message['message_official'] == 1){
 					echo "<td valign='top'><strong>" . $tmp_usernames . "</strong></td>";
 					echo "<td valign='top'><strong>" . stripslashes($tmp_sent_message['sent_message_subject']) . "</strong></td>";
-					echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "</strong></td>";
+					echo "<td valign='top'><strong>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp'] + (get_option( 'gmt_offset' ) * 3600)) . "</strong></td>";
 				} else {
 					echo "<td valign='top'>" . $tmp_usernames . "</td>";
 					echo "<td valign='top'>" . stripslashes($tmp_sent_message['sent_message_subject']) . "</td>";
-					echo "<td valign='top'>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "</td>";
+					echo "<td valign='top'>" . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp'] + (get_option( 'gmt_offset' ) * 3600)) . "</td>";
 				}
 				echo "<td valign='top'><a href='admin.php?page=messaging_sent&action=view&mid=" . $tmp_sent_message['sent_message_ID'] . "' rel='permalink' class='edit'>" . __('View', 'messaging') . "</a></td>";
 				echo "</tr>";
@@ -1359,7 +1359,7 @@ function messaging_sent_page_output() {
             <h3><?php _e('Subject', 'messaging') ?></h3>
             <p><?php echo $tmp_message_subject; ?></p>
             <h3><?php _e('Date', 'messaging') ?></h3>
-            <p><?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message_stamp); ?></p>
+            <p><?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message_stamp + (get_option( 'gmt_offset' ) * 3600)); ?></p>
             <h3><?php _e('Content', 'messaging') ?></h3>
             <p><?php echo $tmp_message_content; ?></p>
             <p class="submit">
@@ -1421,7 +1421,7 @@ function messaging_export_page_output() {
 					foreach ($tmp_messages as $tmp_message){
 						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_message['message_from_user_ID']));
 						$export_data = $export_data . __('From', 'messaging'). ': ' . $tmp_username . "\n";
-						$export_data = $export_data . __('Received', 'messaging'). ': ' . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp']) . "\n";
+						$export_data = $export_data . __('Received', 'messaging'). ': ' . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message['message_stamp'] + (get_option( 'gmt_offset' ) * 3600)) . "\n";
 						$export_data = $export_data . __('Subject', 'messaging'). ': ' . stripslashes($tmp_message['message_subject']) . "\n";
 						$export_data = $export_data . __('Content', 'messaging'). ': ' . stripslashes($tmp_message['message_content']) . "\n";
 						$export_data = $export_data . $export_data_divider;
@@ -1446,7 +1446,7 @@ function messaging_export_page_output() {
 						//=========================================================//
 						$tmp_username = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM " . $wpdb->users . " WHERE ID = %d", $tmp_sent_message['sent_message_from_user_ID']));
 						$export_data = $export_data . __('To', 'messaging'). ': ' . $tmp_usernames . "\n";
-						$export_data = $export_data . __('Sent', 'messaging'). ': ' . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp']) . "\n";
+						$export_data = $export_data . __('Sent', 'messaging'). ': ' . date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_sent_message['sent_message_stamp'] + (get_option( 'gmt_offset' ) * 3600)) . "\n";
 						$export_data = $export_data . __('Subject', 'messaging'). ': ' . stripslashes($tmp_sent_message['sent_message_subject']) . "\n";
 						$export_data = $export_data . __('Content', 'messaging'). ': ' . stripslashes($tmp_sent_message['sent_message_content']) . "\n";
 						$export_data = $export_data . $export_data_divider;
