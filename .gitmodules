@@ -1,0 +1,4 @@
+[submodule "lib/dash-notices"]
+	path = lib/dash-notices
+	url = git@bitbucket.org:incsub/wpmudev-dashboard-notification.git
+	branch = master
