@@ -3,8 +3,8 @@
 Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
-Author: S H Mohanjith (Incsub), Andrew Billits (Incsub)
-Version: 1.1.6.5
+Author: WPMU DEV
+Version: 1.1.6.6
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Text Domain: messaging
@@ -12,6 +12,8 @@ Text Domain: messaging
 
 /*
 Copyright 2007-2010 Incsub (http://incsub.com)
+Author – S H Mohanjith (Incsub)
+Contributors – Andrew Billits (Incsub)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -27,7 +29,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-$messaging_current_version = '1.1.6.5';
+$messaging_current_version = '1.1.6.6';
 //------------------------------------------------------------------------//
 //---Config---------------------------------------------------------------//
 //------------------------------------------------------------------------//
@@ -437,7 +439,7 @@ function messaging_header_js(){
 
 	$mce_locale = ( '' == get_locale() ) ? 'en' : strtolower(get_locale());
 	if (preg_match('/_/i', $mce_locale)) {
-		$mce_locale_parts = split('_', $mce_locale);
+		$mce_locale_parts = preg_split('/_/', $mce_locale);
 		$mce_locale = $mce_locale_parts[0];
 	}
 	?>
@@ -761,7 +763,7 @@ function messaging_inbox_page_output() {
 					<h3><?php _e('Subject', 'messaging') ?></h3>
 					<p><?php echo $tmp_message_subject; ?></p>
 					<h3><?php _e('Content', 'messaging') ?></h3>
-					<p><?php echo $tmp_message_content; ?></p>
+					<p><?php echo wpautop($tmp_message_content); ?></p>
                     <p class="submit">
 					<input class="button button-secondary" type="submit" name="Submit" value="<?php _e('Back', 'messaging') ?>" />
 					<input class="button button-secondary" type="submit" name="Remove" value="<?php _e('Remove', 'messaging') ?>" />
@@ -1361,7 +1363,7 @@ function messaging_sent_page_output() {
             <h3><?php _e('Date', 'messaging') ?></h3>
             <p><?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'),$tmp_message_stamp + (get_option( 'gmt_offset' ) * 3600)); ?></p>
             <h3><?php _e('Content', 'messaging') ?></h3>
-            <p><?php echo $tmp_message_content; ?></p>
+            <p><?php echo wpautop($tmp_message_content); ?></p>
             <p class="submit">
             <input class="button button-primary" type="submit" name="Submit" value="<?php _e('Back', 'messaging') ?>" />
             </p>
