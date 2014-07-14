@@ -12,8 +12,8 @@ Text Domain: messaging
 
 /*
 Copyright 2007-2010 Incsub (http://incsub.com)
-Author – S H Mohanjith (Incsub)
-Contributors – Andrew Billits (Incsub)
+Author - S H Mohanjith (Incsub)
+Contributors - Andrew Billits (Incsub)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
