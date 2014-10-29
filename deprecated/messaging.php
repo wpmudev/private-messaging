@@ -4,7 +4,7 @@ Plugin Name: Messaging
 Plugin URI: http://premium.wpmudev.org/project/messaging
 Description: An internal email / messaging / inbox solution
 Author: WPMU DEV
-Version: 1.1.6.6
+Version: 1.2
 Author URI: http://premium.wpmudev.org
 WDP ID: 68
 Text Domain: messaging
@@ -14,6 +14,8 @@ Text Domain: messaging
 Copyright 2007-2010 Incsub (http://incsub.com)
 Author - S H Mohanjith (Incsub)
 Contributors - Andrew Billits (Incsub)
+Rewrite - Hoang Ngo
+
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by

@@ -1,0 +1,58 @@
+<?php
+$user_setting = get_user_meta(get_current_user_id(), '_messages_setting', true);
+
+if (!$user_setting) {
+    $user_setting = array(
+        'enable_receipt' => '1',
+        'prevent_receipt' => '0'
+    );
+}
+$setting = new MM_Setting_Model();
+$setting->load();
+if ($setting->user_receipt == false) {
+    _e("This feature has been disabled by admin", JBP_TEXT_DOMAIN);
+    return;
+} else {
+    ?>
+    <br/>
+    <?php if ($this->has_flash('user_setting')): ?>
+        <div class="alert alert-success"><?php echo $this->get_flash('user_setting') ?></div>
+    <?php endif; ?>
+    <form id="message_setting" method="post" class="form-horizontal" role="form">
+        <fieldset>
+            <legend><?php _e("Email Settings", mmg()->domain) ?></legend>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                        <label>
+                            <input type="hidden" name="receipt" value="0">
+                            <input <?php echo checked('1', $user_setting['enable_receipt']) ?>
+                                type="checkbox" name="receipt" value="1"
+                                class="enable_receipt"> <?php _e("Email me when receiver read my message", mmg()->domain) ?>
+                            <span class="help-block"><?php _e("An email will be sent to you when receiver read your message,
+                                                but this function will not work if they turn the tracking off", mmg()->domain) ?></span>
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="hidden" name="prevent" value="0">
+                            <input <?php echo checked('1', $user_setting['prevent_receipt']) ?>
+                                type="checkbox" name="prevent" value="1"
+                                class="prevent_receipt"> <?php _e("Prevent others tracking my message", mmg()->domain) ?>
+                            <span
+                                class="help-block"><?php _e("When you open a message, there won't be an email back to the send to inform them you've read it.", mmg()->domain) ?></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <?php do_action('mm_after_user_setting_form') ?>
+            <div class="row">
+                <?php echo wp_nonce_field('mm_user_setting') ?>
+                <div class="col-md-10 col-md-offset-2">
+                    <button name="mm_user_setting" value="1" class="btn btn-primary"
+                            type="submit"><?php _e("Save Changes", mmg()->domain) ?></button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+<?php } ?>

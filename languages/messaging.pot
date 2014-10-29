@@ -1,0 +1,348 @@
+# Copyright (C) 2013 Messaging
+# This file is distributed under the same license as the Messaging package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Messaging 1.1.6.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/messaging\n"
+"POT-Creation-Date: 2013-10-15 07:38:17+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: messaging.php:89
+msgid ""
+"You are currently at or over your inbox message limit. You will not be able "
+"to view, reply to, or send new messages until you remove messages from your "
+"inbox."
+msgstr ""
+
+#: messaging.php:90
+msgid "[SITE_NAME] New Message"
+msgstr ""
+
+#: messaging.php:176 messaging.php:177 messaging.php:178 messaging.php:179
+#: messaging.php:455
+msgid "Inbox"
+msgstr ""
+
+#: messaging.php:177 messaging.php:455 messaging.php:939 messaging.php:991
+#: messaging.php:1061
+msgid "New Message"
+msgstr ""
+
+#: messaging.php:178 messaging.php:1134 messaging.php:1274 messaging.php:1341
+msgid "Sent Messages"
+msgstr ""
+
+#: messaging.php:179
+msgid "Notifications"
+msgstr ""
+
+#: messaging.php:183 messaging.php:199
+msgid "Messaging Settings"
+msgstr ""
+
+#. #-#-#-#-#  messaging.pot (Messaging 1.1.6.1)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: messaging.php:183
+msgid "Messaging"
+msgstr ""
+
+#: messaging.php:203
+msgid "Notification e-mail subject"
+msgstr ""
+
+#: messaging.php:208 messaging.php:216
+msgid "Variables:"
+msgstr ""
+
+#: messaging.php:211
+msgid "Notification e-mail contents"
+msgstr ""
+
+#: messaging.php:220 messaging.php:1389
+msgid "Save Changes"
+msgstr ""
+
+#: messaging.php:440
+msgid "Message removed."
+msgstr ""
+
+#: messaging.php:459 messaging.php:1138
+msgid "No messages to display"
+msgstr ""
+
+#: messaging.php:463
+msgid "Usage"
+msgstr ""
+
+#: messaging.php:465
+msgid "Maximum inbox messages"
+msgstr ""
+
+#: messaging.php:467
+msgid "Current inbox messages"
+msgstr ""
+
+#: messaging.php:477
+msgid "Unread"
+msgstr ""
+
+#: messaging.php:484 messaging.php:560 messaging.php:656 messaging.php:1297
+msgid "From"
+msgstr ""
+
+#: messaging.php:485 messaging.php:561 messaging.php:658 messaging.php:720
+#: messaging.php:781 messaging.php:856 messaging.php:955 messaging.php:1002
+#: messaging.php:1072 messaging.php:1147 messaging.php:1233 messaging.php:1299
+#: messaging.php:1324
+msgid "Subject"
+msgstr ""
+
+#: messaging.php:486 messaging.php:562
+msgid "Recieved"
+msgstr ""
+
+#: messaging.php:487 messaging.php:563 messaging.php:1149
+msgid "Actions"
+msgstr ""
+
+#: messaging.php:534 messaging.php:537 messaging.php:610 messaging.php:613
+#: messaging.php:1192
+msgid "View"
+msgstr ""
+
+#: messaging.php:535 messaging.php:538 messaging.php:611 messaging.php:614
+#: messaging.php:665
+msgid "Reply"
+msgstr ""
+
+#: messaging.php:540 messaging.php:616 messaging.php:664
+msgid "Remove"
+msgstr ""
+
+#: messaging.php:553
+msgid "Read"
+msgstr ""
+
+#: messaging.php:649 messaging.php:1229
+msgid "View Message: "
+msgstr ""
+
+#: messaging.php:652 messaging.php:1148 messaging.php:1323
+msgid "Sent"
+msgstr ""
+
+#: messaging.php:654 not-included/widget_user_online.php:129
+msgid "Status"
+msgstr ""
+
+#: messaging.php:660 messaging.php:732 messaging.php:787 messaging.php:862
+#: messaging.php:961 messaging.php:1008 messaging.php:1078 messaging.php:1237
+#: messaging.php:1300 messaging.php:1325
+msgid "Content"
+msgstr ""
+
+#: messaging.php:663 messaging.php:1240 messaging.php:1352
+msgid "Back"
+msgstr ""
+
+#: messaging.php:672 messaging.php:750 messaging.php:1246
+msgid "You do not have permission to view this message"
+msgstr ""
+
+#: messaging.php:693
+msgid "RE: "
+msgstr ""
+
+#: messaging.php:708 messaging.php:768 messaging.php:843
+msgid "Send Reply"
+msgstr ""
+
+#: messaging.php:714 messaging.php:775 messaging.php:850 messaging.php:1146
+#: messaging.php:1231 messaging.php:1322
+msgid "To"
+msgstr ""
+
+#: messaging.php:726
+msgid " wrote"
+msgstr ""
+
+#: messaging.php:729 messaging.php:741 messaging.php:790 messaging.php:865
+#: messaging.php:958 messaging.php:969 messaging.php:1005 messaging.php:1016
+#: messaging.php:1075 messaging.php:1086
+msgid "Required"
+msgstr ""
+
+#: messaging.php:745 messaging.php:794 messaging.php:869 messaging.php:973
+#: messaging.php:1020 messaging.php:1090
+#: not-included/widget_user_online.php:152
+msgid "Send"
+msgstr ""
+
+#: messaging.php:769 messaging.php:992
+msgid "Please fill in all required fields"
+msgstr ""
+
+#: messaging.php:844 messaging.php:1062
+msgid "The following usernames could not be found in the system"
+msgstr ""
+
+#: messaging.php:886 messaging.php:1097
+msgid "Sending message(s)..."
+msgstr ""
+
+#: messaging.php:943 messaging.php:996 messaging.php:1066
+msgid "To (usernames)"
+msgstr ""
+
+#: messaging.php:952 messaging.php:999 messaging.php:1069
+msgid ""
+"Required - seperate multiple usernames by commas Ex: demouser1,demouser2"
+msgstr ""
+
+#: messaging.php:1109
+msgid "Message(s) Sent."
+msgstr ""
+
+#: messaging.php:1235
+msgid "Date"
+msgstr ""
+
+#: messaging.php:1266
+msgid "Export Messages"
+msgstr ""
+
+#: messaging.php:1270
+msgid "Generate export data for"
+msgstr ""
+
+#: messaging.php:1273 messaging.php:1337
+msgid "Received Messages"
+msgstr ""
+
+#: messaging.php:1280
+msgid "Next"
+msgstr ""
+
+#: messaging.php:1298
+msgid "Received"
+msgstr ""
+
+#: messaging.php:1337 messaging.php:1341 messaging.php:1345
+msgid "Export Data"
+msgstr ""
+
+#: messaging.php:1375
+msgid "Notification Settings"
+msgstr ""
+
+#: messaging.php:1379
+msgid "Receive an email notifying you of new messages"
+msgstr ""
+
+#: messaging.php:1382
+msgid "Yes"
+msgstr ""
+
+#: messaging.php:1383
+msgid "No"
+msgstr ""
+
+#: messaging.php:1399
+msgid "Settings saved."
+msgstr ""
+
+#: messaging.php:1431
+msgid ""
+"Please install the latest version of <a href=\"http://premium.wpmudev.org/"
+"project/update-notifications/\" title=\"Download Now &raquo;\">our free "
+"Update Notifications plugin</a> which helps you stay up-to-date with the "
+"most stable, secure versions of WPMU DEV themes and plugins. <a href="
+"\"http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-"
+"information/\">More information &raquo;</a>"
+msgstr ""
+
+#: not-included/widget_user_online.php:35
+#: not-included/widget_user_online.php:205
+#: not-included/widget_user_online.php:206
+msgid "Online Status"
+msgstr ""
+
+#: not-included/widget_user_online.php:39
+msgid "Title:"
+msgstr ""
+
+#: not-included/widget_user_online.php:46
+msgid "User:"
+msgstr ""
+
+#: not-included/widget_user_online.php:75
+msgid "Message Form"
+msgstr ""
+
+#: not-included/widget_user_online.php:77
+msgid "Show"
+msgstr ""
+
+#: not-included/widget_user_online.php:78
+msgid "Hide"
+msgstr ""
+
+#: not-included/widget_user_online.php:136
+msgid "Send Message"
+msgstr ""
+
+#: not-included/widget_user_online.php:139
+#: not-included/widget_user_online.php:140
+#: not-included/widget_user_online.php:141
+#: not-included/widget_user_online.php:150
+msgid "Quick Message"
+msgstr ""
+
+#: not-included/widget_user_online.php:143
+msgid "Message Sent!"
+msgstr ""
+
+#: not-included/widget_user_online.php:160
+msgid "Add as friend"
+msgstr ""
+
+#: not-included/widget_user_online.php:168
+msgid "Already A Friend!"
+msgstr ""
+
+#: not-included/widget_user_online.php:172
+msgid "Request Already Sent!"
+msgstr ""
+
+#: not-included/widget_user_online.php:180
+msgid "Friend Request Sent!"
+msgstr ""
+
+#: not-included/widget_user_online.php:186
+msgid "Friend Added!"
+msgstr ""
+
+#: not-included/widget_user_online.php:194
+msgid "Add"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://premium.wpmudev.org/project/messaging"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "An internal email / messaging / inbox solution"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "S H Mohanjith (Incsub), Andrew Billits (Incsub)"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://premium.wpmudev.org"
+msgstr ""
