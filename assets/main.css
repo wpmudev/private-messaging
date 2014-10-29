@@ -142,3 +142,7 @@
     max-height: 300px;
     overflow-y: scroll;
 }
+
+.mmessage-container .mm_setting_menu a{
+    color: #333;
+}
