@@ -1,0 +1,148 @@
+.mmessage-container {
+    font-size: 14px;
+}
+
+.mmessage-container .btn {
+    text-decoration: none;
+}
+
+.mmessage-container ul li {
+    margin-left: 0;
+}
+
+.mmessage-container .no-padding {
+    padding: 0;
+}
+
+.mmessage-container .no-margin {
+    margin: 0
+}
+
+.mmessage-container .mm-search-form {
+    position: relative;
+}
+
+.mmessage-container .mm-search-form .input-group {
+    width: 100%;
+    position: relative;
+}
+
+.mmessage-container .mm-search-form button {
+    position: absolute;
+    right: 0;
+    top: -3px;
+    z-index: 9;
+}
+
+.mmessage-container .mm-search-form button:hover {
+    margin-top: 0;
+}
+
+.mmessage-container .message-content {
+    padding: 10px 10px;
+    /*border-bottom: solid 1px #ddd;*/
+}
+
+.mmessage-container #mmessage-list {
+    height: 480px;
+    overflow: hidden;
+    position: relative;
+}
+
+.mmessage-container #mmessage-content {
+    height: 500px;
+    overflow: hidden;
+    position: relative;
+    border: solid 1px #ddd;
+}
+
+.mmessage-container .page-header {
+    background: none;
+    margin-top: 0
+}
+
+.mmessage-container .message-list {
+    height: 500px;
+    border: solid 1px #ddd;
+    border-top: none;
+    overflow: hidden;
+}
+
+.mmessage-container .list-group-item {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #dddddd;
+    cursor: pointer;
+    margin-bottom: 1px;
+}
+
+.mmessage-container .list-group-item p {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.mmessage-container .message-content .message-footer {
+    padding-bottom: 10px;
+}
+
+.mmessage-container .message-content .message-footer .message-attachment a {
+    color: #222;
+    font-size: 12px;
+    float: left
+}
+
+.mmessage-container .list-group-item .text-muted {
+    line-height: 15px;
+    margin-top: 5px;
+}
+
+.mmessage-container .list-group-item.active .text-muted {
+    color: white;
+}
+
+.mmessage-container .list-group-item.read strong {
+    font-weight: normal;
+}
+
+.mm_login_form, .mm_sign_up {
+    padding: 0 10px;
+}
+
+.mm_login_form .page-header {
+    text-align: center;
+}
+
+.mm_login_form label {
+    font-weight: normal;
+}
+
+.mm_sign_up {
+    border-left: solid 1px #ddd;
+    text-align: center;
+    min-height: 300px;
+}
+
+.mm_signup_btn {
+    display: block;
+    margin: 30px auto;
+    text-align: center;
+}
+
+.mmessage-container .message-body img {
+    border: none;
+    box-shadow: none;
+}
+
+.mmessage-container a.sceditor-button {
+    box-sizing: content-box !important;
+}
+
+.mmessage-container .file-view-port {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+.mmessage-container .mm_setting_menu a{
+    color: #333;
+}
