@@ -157,6 +157,7 @@ class Inbox_Shortcode_Controller extends IG_Request
                         $this->_reply_message($conv_id, $message_id, $user_id, $model);
                     }
                 }
+                $this->set_flash('mm_sent', __("Your message has sent!", mmg()->domain));
                 fJSON::output(array(
                     'status' => 'success'
                 ));
@@ -174,7 +175,7 @@ class Inbox_Shortcode_Controller extends IG_Request
                 } else {
                     //todo update group conversation
                 }
-
+                $this->set_flash('mm_sent', __("Your message has sent!", mmg()->domain));
                 fJSON::output(array(
                     'status' => 'success'
                 ));

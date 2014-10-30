@@ -1,6 +1,14 @@
 <?php if (count($models)): ?>
     <br/>
     <div class="row">
+        <?php if ($this->has_flash("mm_sent")): ?>
+            <div class="col-md-12 no-padding">
+                <div class="alert alert-success">
+                    <?php echo $this->get_flash("mm_sent") ?>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        <?php endif; ?>
         <div class="col-md-5 no-padding">
             <div class="message-list">
                 <form class="mm-search-form" method="get" action="<?php echo fURL::get() ?>">

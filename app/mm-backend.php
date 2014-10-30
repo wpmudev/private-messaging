@@ -22,7 +22,9 @@ class MM_Backend
                         'post_title' => "Inbox",
                         'post_content' => '[message_inbox]',
                         'post_status' => 'publish',
-                        'post_type' => 'page'
+                        'post_type' => 'page',
+                        'ping_status' => 'closed',
+                        'comment_status' => 'closed'
                     )));
 
                     $model->inbox_page = $new_id;

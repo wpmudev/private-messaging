@@ -9,6 +9,23 @@ if (!class_exists('IG_Uploader_Controller')) {
         {
             add_action('wp_loaded', array(&$this, 'handler_upload'));
             add_action('wp_ajax_igu_file_delete', array(&$this, 'delete_file'));
+            add_action('wp_footer', array(&$this, '_extend_form_upload'));
+            add_action('wp_ajax_iup_load_upload_form', array(&$this, 'load_upload_form'));
+        }
+
+        function load_upload_form()
+        {
+            if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'iup_load_upload_form'))
+                return;
+            $id = fRequest::get('id', 'int', 0);
+            $model = IG_Uploader_Model::find($id);
+            if (!is_object($model)) {
+                $model = new IG_Uploader_Model();
+            }
+            $this->render_partial('_uploader_form', array(
+                'model' => $model
+            ));
+            exit;
         }
 
         function delete_file()
@@ -61,11 +78,10 @@ if (!class_exists('IG_Uploader_Controller')) {
             }
         }
 
-        public function upload_form($attribute, $target_model, $form_id)
+        public function upload_form($attribute, $target_model, $container)
         {
             wp_enqueue_style('igu-uploader');
-            wp_enqueue_script('popoverx');
-            wp_enqueue_style('popoverx');
+            wp_enqueue_script('popoverasync');
             wp_enqueue_script('jquery-frame-transport');
 
             $ids = $target_model->$attribute;
@@ -86,7 +102,7 @@ if (!class_exists('IG_Uploader_Controller')) {
             if ($mode == IG_Uploader_Model::MODE_LITE) {
                 $this->_lite_form();
             } else {
-                $this->_extend_form($models, $attribute, $target_model, $form_id);
+                $this->_extend_form($models, $attribute, $target_model, $container);
             }
         }
 
@@ -107,15 +123,30 @@ if (!class_exists('IG_Uploader_Controller')) {
 
         }
 
-        public function _extend_form($models, $attribute, $target_model, $form_id)
+        public function _extend_form($models, $attribute, $target_model, $container)
         {
+            $cid = uniqid();
+
             $this->render('_extend_form', array(
                 'models' => $models,
                 'tmodel' => $target_model,
                 'attribute' => $attribute,
                 'target_id' => $this->build_id($target_model, $attribute),
-                'form_id' => $form_id
+                'container' => $container
             ));
+        }
+
+        function _extend_form_upload()
+        {
+            ?>
+            <div class="mmessage-container hide">
+                <div id="igu_upload_form_container">
+                    <div class="igu-loader" style="text-align: center;;width:100%">
+                        <i class="fa fa-2x fa-circle-o-notch fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        <?php
         }
 
         function rearrange($arr)

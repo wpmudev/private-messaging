@@ -32,8 +32,7 @@ if (!class_exists('ig-uploader')) {
         function scripts()
         {
             wp_register_style('igu-uploader', $this->plugin_url . 'assets/style.css');
-            wp_register_script('popoverx', $this->plugin_url . 'assets/popover/js/bootstrap-popover-x.min.js');
-            wp_register_style('popoverx', $this->plugin_url . 'assets/popover/css/bootstrap-popover-x.min.css');
+            wp_register_script('popoverasync', $this->plugin_url . 'assets/popover/popoverasync.js');
 
             wp_register_script('jquery-frame-transport', $this->plugin_url . 'assets/iframe-transport/jquery.iframe-transport.js');
         }
@@ -59,9 +58,9 @@ if (!class_exists('ig-uploader')) {
             }
         }
 
-        function show_upload_control(IG_Model $p_model, $attribute, $form_id)
+        function show_upload_control(IG_Model $p_model, $attribute, $container)
         {
-            $this->controller->upload_form($attribute, $p_model, $form_id);
+            $this->controller->upload_form($attribute, $p_model, $container);
         }
 
         function loader($class)
