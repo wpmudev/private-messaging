@@ -19,7 +19,7 @@ if (!class_exists('IG_DB_Model')) {
         {
             if (!is_object(R::$toolbox)) {
                 R::setup('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, false);
-                R::freeze(false);
+                R::freeze(true);
                 R::setStrictTyping(false);
                 //$this->toolbox = RedBean_Setup::kickstart('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, false);
             }

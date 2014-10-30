@@ -72,6 +72,7 @@ class MMessage_Backend_Controller extends IG_Request
 
             $this->set_flash('setting_save', __("Your settings has saved!", mmg()->domain));
             wp_redirect(fURL::getWithQueryString());
+            exit;
         }
     }
 
@@ -104,7 +105,8 @@ class MMessage_Backend_Controller extends IG_Request
         ));
     }
 
-    function shortcode_view(){
+    function shortcode_view()
+    {
         $this->render('backend/setting/shortcode');
     }
 

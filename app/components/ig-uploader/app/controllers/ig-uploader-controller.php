@@ -7,7 +7,7 @@ if (!class_exists('IG_Uploader_Controller')) {
     {
         public function __construct()
         {
-            add_action('wp', array(&$this, 'handler_upload'));
+            add_action('wp_loaded', array(&$this, 'handler_upload'));
             add_action('wp_ajax_igu_file_delete', array(&$this, 'delete_file'));
             add_action('wp_footer', array(&$this, '_extend_form_upload'));
             add_action('wp_ajax_iup_load_upload_form', array(&$this, 'load_upload_form'));

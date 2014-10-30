@@ -103,23 +103,23 @@ class MM_User_Capability extends IG_Request
                     <!-- Nav tabs -->
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="row no-margin">
-                                <div class="col-md-3" style="padding: 0">
-                                    <ul class="nav nav-tabs tabs-left" role="tablist">
-                                        <?php
-                                        foreach ($roles as $key => $role):
-                                            ?>
-                                            <li class="<?php echo array_search($key, $index) == 0 ? 'active' : null ?>">
-                                                <a
-                                                    href="#tab_<?php echo $key ?>" role="tab"
-                                                    data-toggle="tab">
-                                                    <?php echo $role['name'] ?>
-                                                </a>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </div>
-                                <form method="post">
+                            <form method="post">
+                                <div class="row">
+                                    <div class="col-md-3" style="padding: 0">
+                                        <ul id="role-list" class="nav nav-tabs tabs-left" role="tablist">
+                                            <?php
+                                            foreach ($roles as $key => $role):
+                                                ?>
+                                                <li class="<?php echo array_search($key, $index) == 0 ? 'active' : null ?>">
+                                                    <a
+                                                        href="#tab_<?php echo $key ?>" role="tab"
+                                                        data-toggle="tab">
+                                                        <?php echo $role['name'] ?>
+                                                    </a>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
                                     <div class="col-md-9" style="padding: 0">
                                         <div id="myTabContent" class="tab-content" style="min-height: 200px">
                                             <?php foreach ($roles as $key => $role): ?>
@@ -155,24 +155,30 @@ class MM_User_Capability extends IG_Request
                                             <?php endforeach; ?>
                                             <div class="clearfix"></div>
                                         </div>
-                                        <br/>
 
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <button name="mm_user_cap" type="submit"
-                                                        class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>
-                                            </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <br/>
+                                    <div class="row">
+                                        <div class="col-md-9 col-md-offset-3">
+                                            <button name="mm_user_cap" type="submit"
+                                                    class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>
                                         </div>
                                     </div>
-                                </form>
-                                <div class="clearfix"></div>
-                            </div>
+                                </div>
+                            </form>
                         </div>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
                 <div class="clearfix"></div>
             </div>
         </div>
+        <script type="text/javascript">
+            jQuery(document).ready(function($){
+                $('#myTabContent').height($('#role-list').height());
+            })
+        </script>
     <?php
     }
 

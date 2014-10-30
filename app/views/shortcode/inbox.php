@@ -1,10 +1,10 @@
 <?php if (count($models)): ?>
     <br/>
     <div class="row">
-        <?php if ($this->has_flash("mm_sent")): ?>
+        <?php if ($this->has_flash("mm_sent_" . get_current_user_id())): ?>
             <div class="col-md-12 no-padding">
                 <div class="alert alert-success">
-                    <?php echo $this->get_flash("mm_sent") ?>
+                    <?php echo $this->get_flash("mm_sent_" . get_current_user_id()) ?>
                 </div>
                 <div class="clearfix"></div>
             </div>

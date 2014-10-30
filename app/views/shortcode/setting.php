@@ -15,8 +15,8 @@ if ($setting->user_receipt == false) {
 } else {
     ?>
     <br/>
-    <?php if ($this->has_flash('user_setting')): ?>
-        <div class="alert alert-success"><?php echo $this->get_flash('user_setting') ?></div>
+    <?php if ($this->has_flash('user_setting_' . get_current_user_id())): ?>
+        <div class="alert alert-success"><?php echo $this->get_flash('user_setting_' . get_current_user_id()) ?></div>
     <?php endif; ?>
     <form id="message_setting" method="post" class="form-horizontal" role="form">
         <fieldset>

@@ -31,7 +31,7 @@ class IG_Active_Form
     public function hidden($field, $args = array())
     {
         $args['name'] = $this->build_name($field);
-        $args['value'] = $this->model->$field;
+        $args['value'] = !isset($args['value']) ? $this->model->$field : $args['value'];
         $args['attributes']['id'] = isset($args['attributes']['id']) ? $args['attributes']['id'] : $this->build_id($field);
 
         echo IG_Form::hidden($args);
@@ -40,7 +40,7 @@ class IG_Active_Form
     public function text($field, $args = array())
     {
         $args['name'] = $this->build_name($field);
-        $args['value'] = $this->model->$field;
+        $args['value'] = !isset($args['value']) ? $this->model->$field : $args['value'];
         $args['attributes']['id'] = isset($args['attributes']['id']) ? $args['attributes']['id'] : $this->build_id($field);
 
         echo IG_Form::text($args);
@@ -49,7 +49,7 @@ class IG_Active_Form
     public function password($field, $args = array())
     {
         $args['name'] = $this->build_name($field);
-        $args['value'] = $this->model->$field;
+        $args['value'] = !isset($args['value']) ? $this->model->$field : $args['value'];
         $args['attributes']['id'] = isset($args['attributes']['id']) ? $args['attributes']['id'] : $this->build_id($field);
 
         echo IG_Form::password($args);
@@ -58,7 +58,7 @@ class IG_Active_Form
     public function text_area($field, $args = array())
     {
         $args['name'] = $this->build_name($field);
-        $args['value'] = $this->model->$field;
+        $args['value'] = !isset($args['value']) ? $this->model->$field : $args['value'];
         $args['attributes']['id'] = isset($args['attributes']['id']) ? $args['attributes']['id'] : $this->build_id($field);
 
         echo IG_Form::text_area($args);
@@ -67,7 +67,7 @@ class IG_Active_Form
     public function email($field, $args = array())
     {
         $args['name'] = $this->build_name($field);
-        $args['value'] = $this->model->$field;
+        $args['value'] = !isset($args['value']) ? $this->model->$field : $args['value'];
         $args['attributes']['id'] = isset($args['attributes']['id']) ? $args['attributes']['id'] : $this->build_id($field);
 
         echo IG_Form::email($args);
@@ -106,7 +106,8 @@ class IG_Active_Form
     public function checkbox($field, $args = array())
     {
         $args['name'] = $this->build_name($field);
-        $args['value'] = array($this->model->$field);
+        $args['checked'] = $args['attributes']['value'] == $this->model->$field;
+        $args['value'] = $args['attributes']['value'];
         $args['attributes']['id'] = isset($args['attributes']['id']) ? $args['attributes']['id'] : $this->build_id($field);
 
         echo IG_Form::checkbox($args);

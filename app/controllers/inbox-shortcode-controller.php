@@ -14,7 +14,6 @@ class Inbox_Shortcode_Controller extends IG_Request
         add_action('wp_ajax_mm_send_message', array(&$this, 'send_message'));
         add_action('wp_ajax_mm_suggest_users', array(&$this, 'suggest_users'));
         add_action('wp_ajax_mm_load_conversation', array(&$this, 'load_conversation'));
-
     }
 
     function process_request()
@@ -36,7 +35,7 @@ class Inbox_Shortcode_Controller extends IG_Request
 
             update_user_meta($user_id, '_messages_setting', $setting);
             do_action('mm_user_setting_saved', $setting);
-            $this->set_flash('user_setting', __("Your settings has saved!", mmg()->domain));
+            $this->set_flash('user_setting_' . $user_id, __("Your settings has saved!", mmg()->domain));
             wp_redirect(fURL::getWithQueryString());
             exit;
         }
@@ -157,7 +156,7 @@ class Inbox_Shortcode_Controller extends IG_Request
                         $this->_reply_message($conv_id, $message_id, $user_id, $model);
                     }
                 }
-                $this->set_flash('mm_sent', __("Your message has sent!", mmg()->domain));
+                $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has sent!", mmg()->domain));
                 fJSON::output(array(
                     'status' => 'success'
                 ));
@@ -175,7 +174,7 @@ class Inbox_Shortcode_Controller extends IG_Request
                 } else {
                     //todo update group conversation
                 }
-                $this->set_flash('mm_sent', __("Your message has sent!", mmg()->domain));
+                $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has sent!", mmg()->domain));
                 fJSON::output(array(
                     'status' => 'success'
                 ));

@@ -12,7 +12,7 @@
                 <label>
                     <?php
                     $form->hidden('enable_receipt', array('value' => 0));
-                    $form->checkbox("enable_receipt", array("attributes" => array("class" => ""))) ?>
+                    $form->checkbox("enable_receipt", array("attributes" => array("class" => "", "value" => 1))) ?>
                     <?php _e("This will enable the receipt globally", mmg()->domain) ?>
                 </label>
             </div>
@@ -26,7 +26,7 @@
                 <label>
                     <?php
                     $form->hidden('user_receipt', array('value' => 0));
-                    $form->checkbox("user_receipt", array("attributes" => array("class" => ""))) ?>
+                    $form->checkbox("user_receipt", array("attributes" => array("class" => "", "value" => 1))) ?>
                     <?php _e("This will let the user turn off or on", mmg()->domain) ?>
                 </label>
             </div>

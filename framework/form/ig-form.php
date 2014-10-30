@@ -190,7 +190,7 @@ class IG_Form
 
         $attrs = self::build_attrs($p['attributes']);
 
-        return sprintf('<input type="checkbox" name="%s" value="%s" checked="%s" %s>', esc_attr($p['name']), esc_attr($p['value']), $p['checked'] == true ? 'checked' : null, $attrs);
+        return sprintf('<input type="checkbox" name="%s" value="%s" %s %s>', esc_attr($p['name']), esc_attr($p['value']), $p['checked'] == true ? 'checked="checked"' : null, $attrs);
     }
 
     public static function number($args = array())
