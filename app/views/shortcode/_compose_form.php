@@ -1,15 +1,14 @@
 <?php $model = new MM_Message_Model();
 ?>
-<div class="modal fade" id="compose-form-container">
+<div class="modal fade" id="compose-form">
     <div class="modal-dialog">
-        <div class="modal-content" id="compose-modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"><?php _e("Compose Message", mmg()->domain) ?></h4>
             </div>
-            <?php $form = new IG_Active_Form($model);
-            $form->open(array("attributes" => array("class" => "form-horizontal cpso-form compose-form", "id" => "compose-form")));?>
             <div class="modal-body">
-
+                <?php $form = new IG_Active_Form($model);
+                $form->open(array("attributes" => array("class" => "form-horizontal cpso-form compose-form", "id" => "compose-form")));?>
                 <div class="form-group <?php echo $model->has_error("send_to") ? "has-error" : null ?>">
                     <?php $form->label("send_to", array("text" => "Send To", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
                     <div class="col-lg-10">
@@ -31,7 +30,7 @@
                 <div class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
                     <?php $form->label("content", array("text" => "Content", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
                     <div class="col-lg-10">
-                        <?php $form->text_area("content", array("attributes" => array("class" => "form-control mm_wsysiwyg", "style" => "height:100px", "id" => "mm_compose_content"))) ?>
+                        <?php $form->text_area("content", array("attributes" => array("class" => "form-control mm_wsysiwyg", "style" => "height:100px","id" => "mm_compose_content"))) ?>
                         <span class="help-block m-b-none error-content"><?php $form->error("content") ?></span>
                     </div>
                     <div class="clearfix"></div>
@@ -39,15 +38,15 @@
                 <?php echo wp_nonce_field('compose_message') ?>
                 <?php echo $form->hidden('attachment') ?>
                 <input type="hidden" name="action" value="mm_send_message">
-
-                <?php ig_uploader()->show_upload_control($model, 'attachment', "compose-modal") ?>
+                <?php $form->close(); ?>
+                <?php ig_uploader()->show_upload_control($model, 'attachment', "compose-form") ?>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default"
                         data-dismiss="modal"><?php _e("Close", mmg()->domain) ?></button>
-                <button type="submit" class="btn btn-primary compose-submit"><?php _e("Send", mmg()->domain) ?></button>
+                <button type="button" class="btn btn-primary compose-submit"><?php _e("Send", mmg()->domain) ?></button>
             </div>
-            <?php $form->close(); ?>
+
         </div>
         <!-- /.modal-content -->
     </div>
@@ -56,6 +55,12 @@
 <!-- /.modal -->
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
+        $('.compose-submit').click(function () {
+            var btn = $('<button type="submit" style="width: 0!important;height:0;display: inline-block;background: none;border: none;padding: 0;margin: 0;position: absolute;"></button>');
+            $('.cpso-form').append(btn);
+            btn.click();
+        });
+
         $('#mm_message_model-send_to').selectize({
             valueField: 'name',
             labelField: 'name',

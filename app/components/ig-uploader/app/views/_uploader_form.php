@@ -4,7 +4,7 @@ if (!isset($model)) {
     $model = new IG_Uploader_Model();
 }
 $form = new IG_Active_Form($model);
-$form->open(array("attributes" => array("class" => "igu-upload-form", "style" => "width:350px")));?>
+$form->open(array("attributes" => array("class" => "igu-upload-form")));?>
 <?php if ($model->exist) {
     $form->hidden('id');
 }?>
@@ -36,9 +36,9 @@ $form->open(array("attributes" => array("class" => "igu-upload-form", "style" =>
 <?php echo wp_nonce_field('igu_uploading') ?>
     <div class="row">
         <div class="col-md-12">
-            <button class="btn btn-default btn-sm igu-close-uploader"
-                    type="button"><?php _e("Cancel", ig_uploader()->domain) ?></button>
             <button class="btn btn-primary btn-sm" type="submit"><?php _e("Submit", ig_uploader()->domain) ?></button>
+            <button class="btn btn-default btn-sm" data-dismiss="popover-x"
+                    type="button"><?php _e("Cancel", ig_uploader()->domain) ?></button>
         </div>
         <div class="clearfix"></div>
     </div>

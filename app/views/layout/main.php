@@ -1,25 +1,27 @@
 <div class="mmessage-container">
     <div class="row">
-        <div class="col-md-8 no-padding mm-toolbar-btn">
+        <div class="col-md-8 no-padding">
             <div class="btn-group btn-group-sm">
                 <a href="<?php echo add_query_arg('box', 'inbox') ?>"
-                   class="mm-tooltip btn btn-default <?php echo fRequest::get('box', 'string', 'inbox') == 'inbox' ? 'active' : null ?>"
-                   data-container=".mm-toolbar-btn"
+                   class="btn btn-default <?php echo fRequest::get('box', 'string', 'inbox') == 'inbox' ? 'active' : null ?>"
+                   data-toggle="tooltip" data-container=".mmessage-container"
                    data-placement="top"
                    title="<?php echo MM_Conversation_Model::count_all() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="fa fa-inbox"></i> <?php _e("Inbox", mmg()->domain) ?>
                 </a>
                 <a href="<?php echo add_query_arg('box', 'unread') ?>"
-                   class="mm-tooltip btn btn-default <?php echo fRequest::get('box') == 'unread' ? 'active' : null ?>"
+                   class="btn btn-default <?php echo fRequest::get('box') == 'unread' ? 'active' : null ?>"
+                   data-toggle="tooltip"
                    data-placement="top"
-                   data-container=".mm-toolbar-btn"
+                   data-container=".mmessage-container"
                    title="<?php echo MM_Conversation_Model::count_unread() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="fa fa-envelope"></i> <?php _e("Unread", mmg()->domain) ?>
                 </a>
                 <a href="<?php echo add_query_arg('box', 'read') ?>"
-                   class="mm-tooltip btn btn-default <?php echo fRequest::get('box') == 'read' ? 'active' : null ?>"
+                   class="btn btn-default <?php echo fRequest::get('box') == 'read' ? 'active' : null ?>"
+                   data-toggle="tooltip"
                    data-placement="top"
-                   data-container=".mm-toolbar-btn"
+                   data-container=".mmessage-container"
                    title="<?php echo MM_Conversation_Model::count_read() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="glyphicon glyphicon-eye-open"></i> <?php _e("Read", mmg()->domain) ?>
                 </a>
@@ -40,7 +42,6 @@
         </div>
         <div class="clearfix"></div>
     </div>
-
     <?php echo $content; ?>
     <?php $this->render_partial('shortcode/_compose_form') ?>
 </div>
@@ -56,11 +57,10 @@
         });
         $('body').on('click', '.mm-compose', function (e) {
             e.preventDefault();
-            $('#compose-form-container').modal({
+            $('#compose-form').modal({
                 keyboard: false
             })
         });
-        $('.mm-tooltip').tooltip();
         $('body').on('submit', '.compose-form', function () {
             var that = $(this);
             $.ajax({

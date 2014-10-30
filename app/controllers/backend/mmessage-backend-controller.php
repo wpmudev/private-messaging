@@ -110,6 +110,7 @@ class MMessage_Backend_Controller extends IG_Request
 
     function general_view($model)
     {
+
         $this->render('backend/setting/general', array(
             'model' => $model
         ));

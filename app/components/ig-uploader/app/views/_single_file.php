@@ -2,10 +2,19 @@
 
     <div class="igu-actions">
         <button data-id="<?php echo $model->id ?>"
+                data-toggle="popover-x" data-placement="left"
                 data-target="#igu-uploader-form-<?php echo $model->id ?>" type="button"
                 class="btn btn-primary btn-xs igu-file-update">
             <i class="glyphicon glyphicon-pencil"></i>
         </button>
+        <div id="igu-uploader-form-<?php echo $model->id ?>" style="min-width: 360px;" class="popover popover-default popover-lg">
+            <div class="arrow"></div>
+            <div class="popover-content">
+                <?php $this->render_partial('_uploader_form', array(
+                    'model' => $model
+                )) ?>
+            </div>
+        </div>
         <button data-id="<?php echo $model->id ?>" type="button" class="btn btn-danger btn-xs igu-file-delete">
             <i class="glyphicon glyphicon-trash"></i>
         </button>
