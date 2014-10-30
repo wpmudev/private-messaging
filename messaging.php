@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Messaging
-Plugin URI: http://premium.wpmudev.org/project/messaging
-Description: An internal email / messaging / inbox solution
+Plugin Name: Private Messaging
+Plugin URI:
+Description:
 Author: WPMU DEV
-Version: 1.2
+Version: 1.0
 Author URI: http://premium.wpmudev.org
-WDP ID: 68
-Text Domain: messaging
+WDP ID: ***
+Text Domain: private_messaging
 */
 
 /*
@@ -45,7 +45,7 @@ class MMessaging
         //variables init
         $this->plugin_url = plugin_dir_url(__FILE__);
         $this->plugin_path = plugin_dir_path(__FILE__);
-        $this->domain = 'messaging';
+        $this->domain = 'private_messaging';
         $this->prefix = 'mm_';
         //load the framework
 
@@ -60,7 +60,7 @@ class MMessaging
             new MM_Upgrade_Controller();
             return;
         }
-        add_action('init', array(&$this, 'dispatch'));
+        add_action('wp_loaded', array(&$this, 'dispatch'));
     }
 
     function check_upgrade()
