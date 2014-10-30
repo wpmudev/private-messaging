@@ -76,7 +76,11 @@ class MMessaging
     {
         wp_enqueue_script('jquery');
         wp_enqueue_script('ig-bootstrap');
-        wp_enqueue_style('ig-bootstrap');
+        if (is_admin()) {
+            wp_enqueue_style('ig-bootstrap');
+        } else {
+            wp_enqueue_style(apply_filters('mm_front_theme', 'ig-bootstrap'));
+        }
         wp_enqueue_style('ig-fontawesome');
 
         wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
