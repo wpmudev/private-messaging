@@ -92,10 +92,9 @@ class MMessage_Backend_Controller extends IG_Request
 
     function setting()
     {
-        wp_enqueue_style('mm_style');
         add_action('mm_setting_general', array(&$this, 'general_view'));
         add_action('mm_setting_email', array(&$this, 'email_view'));
-        add_action('mm_setting_shortcode', array(&$this, 'shortcode_view'));
+
         $model = new MM_Setting_Model();
         $model->load();
 
@@ -104,13 +103,8 @@ class MMessage_Backend_Controller extends IG_Request
         ));
     }
 
-    function shortcode_view(){
-        $this->render('backend/setting/shortcode');
-    }
-
     function general_view($model)
     {
-
         $this->render('backend/setting/general', array(
             'model' => $model
         ));

@@ -22,8 +22,6 @@ class MM_Setting_Model extends IG_Option_Model
 
     public $plugins;
 
-    public $inbox_page;
-
     public function __construct()
     {
         $this->noti_subject = "You've received a new message from FROM_NAME on SITE_NAME";
