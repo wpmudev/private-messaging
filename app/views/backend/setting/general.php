@@ -34,10 +34,10 @@
         <div class="clearfix"></div>
     </div>
     <div class="page-header" style="margin-top: 0">
-        <h4><?php _e('Create Page', JBP_TEXT_DOMAIN) ?></h4>
+        <h4><?php _e('Create Page', mmg()->domain) ?></h4>
     </div>
     <div class="form-group">
-        <label class="col-md-3 control-label"><?php _e('Inbox Page', JBP_TEXT_DOMAIN) ?></label>
+        <label class="col-md-3 control-label"><?php _e('Inbox Page', mmg()->domain) ?></label>
 
         <div class="col-md-9">
             <div class="row">
@@ -46,13 +46,13 @@
                     $form->select('inbox_page', array(
                         'data' => array_combine(wp_list_pluck(get_pages(), 'ID'), wp_list_pluck(get_pages(), 'post_title')),
                         'attributes' => array('class' => 'form-control'),
-                        'nameless' => __('--Choose--', JBP_TEXT_DOMAIN)
+                        'nameless' => __('--Choose--', mmg()->domain)
                     ));
                     ?>
                 </div>
                 <div class="col-md-6">
                     <button type="button" data-id="inbox"
-                            class="button button-primary mm-create-page"><?php _e('Create Page', JBP_TEXT_DOMAIN) ?></button>
+                            class="button button-primary mm-create-page"><?php _e('Create Page', mmg()->domain) ?></button>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -60,7 +60,7 @@
         <div class="clearfix"></div>
     </div>
     <div class="page-header" style="margin-top: 0">
-        <h4><?php _e('Add-ons', JBP_TEXT_DOMAIN) ?></h4>
+        <h4><?php _e('Add-ons', mmg()->domain) ?></h4>
     </div>
     <div class="alert alert-success plugin-status hide">
 
@@ -105,7 +105,7 @@
                 },
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
                 beforeSend: function () {
-                    that.attr('disabled', 'disabled').text('<?php echo esc_js(__('Creating...',JBP_TEXT_DOMAIN)) ?>');
+                    that.attr('disabled', 'disabled').text('<?php echo esc_js(__('Creating...',mmg()->domain)) ?>');
                 },
                 success: function (data) {
                     var element = that.parent().parent().find('select').first();
@@ -114,7 +114,7 @@
                         html = $(html);
                         var clone = html.find('select[name="' + element.attr('name') + '"]');
                         element.replaceWith(clone);
-                        that.removeAttr('disabled').text('<?php echo esc_js(__('Create Page',JBP_TEXT_DOMAIN)) ?>');
+                        that.removeAttr('disabled').text('<?php echo esc_js(__('Create Page',mmg()->domain)) ?>');
                     })
                 }
             })

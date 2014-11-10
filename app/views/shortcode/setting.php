@@ -10,7 +10,7 @@ if (!$user_setting) {
 $setting = new MM_Setting_Model();
 $setting->load();
 if ($setting->user_receipt == false) {
-    _e("This feature has been disabled by admin", JBP_TEXT_DOMAIN);
+    _e("This feature has been disabled by admin", mmg()->domain);
     return;
 } else {
     ?>

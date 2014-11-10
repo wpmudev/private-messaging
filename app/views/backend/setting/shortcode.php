@@ -16,7 +16,7 @@
         </div>
     </div>
     <div class="col-md-6 col-xs-6 col-sm-6 text-center">
-        <p><strong><?php _e("Expert Archive Page", mmg()->domain) ?></strong></p>
+        <p><strong><?php _e("Message Me", mmg()->domain) ?></strong></p>
         <div class="clearfix"></div>
 
         <div class="text-left">

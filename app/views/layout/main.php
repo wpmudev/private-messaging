@@ -32,7 +32,7 @@
         </div>
         <div class="col-md-4 no-padding text-right">
             <a class="btn btn-default btn-sm" href="<?php echo add_query_arg('box', 'setting') ?>">
-                <i class="fa fa-gear"></i> <?php _e("Setting", mmg()->domain) ?>
+                <i class="fa fa-gear"></i> <?php _e("Settings", mmg()->domain) ?>
             </a>
             <a class="btn btn-primary btn-sm mm-compose" href="#">
                 <?php _e("Compose", mmg()->domain) ?>
