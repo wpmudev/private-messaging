@@ -258,13 +258,21 @@ CREATE TABLE `wp_mm_conversation` (
 
         function encrypt($text)
         {
-            return str_replace('fCryptography::symmetric', '', fCryptography::symmetricKeyEncrypt($text, SECURE_AUTH_KEY));
+            if (function_exists('mcrypt_encrypt')) {
+                return str_replace('fCryptography::symmetric', '', fCryptography::symmetricKeyEncrypt($text, SECURE_AUTH_KEY));
+            } else {
+                return $text;
+            }
         }
 
         function decrypt($text)
         {
-            $text = 'fCryptography::symmetric' . $text;
-            return fCryptography::symmetricKeyDecrypt($text, SECURE_AUTH_KEY);
+            if (function_exists('mcrypt_encrypt')) {
+                $text = 'fCryptography::symmetric' . $text;
+                return fCryptography::symmetricKeyDecrypt($text, SECURE_AUTH_KEY);
+            } else {
+                return $text;
+            }
         }
 
         function get_available_addon()

@@ -18,7 +18,7 @@
     );
     $color = $colors[array_rand($colors)];
     ?>
-    <div <?php echo !is_admin() ? 'style="font-size:5em;padding:19px 0 0 0"' : null ?>
+    <div <?php echo !is_admin() ? 'style="font-size:3.5em;padding:22px 0 0 0"' : null ?>
         class="igu-file-icon <?php echo $color ?>">
         <?php echo $model->mime_to_icon() ?>
     </div>

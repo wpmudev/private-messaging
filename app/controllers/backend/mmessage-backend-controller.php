@@ -70,7 +70,7 @@ class MMessage_Backend_Controller extends IG_Request
             $model->import($_POST['MM_Setting_Model']);
             $model->save();
 
-            $this->set_flash('setting_save', __("Your settings has saved!", mmg()->domain));
+            $this->set_flash('setting_save', __("Your settings have been successfully updated.", mmg()->domain));
             wp_redirect(fURL::getWithQueryString());
             exit;
         }

@@ -9,7 +9,6 @@ if (!class_exists('IG_Uploader_Controller')) {
         {
             add_action('wp_loaded', array(&$this, 'handler_upload'));
             add_action('wp_ajax_igu_file_delete', array(&$this, 'delete_file'));
-            add_action('wp_footer', array(&$this, '_extend_form_upload'));
             add_action('wp_ajax_iup_load_upload_form', array(&$this, 'load_upload_form'));
         }
 
@@ -134,19 +133,6 @@ if (!class_exists('IG_Uploader_Controller')) {
                 'target_id' => $this->build_id($target_model, $attribute),
                 'container' => $container
             ));
-        }
-
-        function _extend_form_upload()
-        {
-            ?>
-            <div class="mmessage-container hide">
-                <div id="igu_upload_form_container">
-                    <div class="igu-loader" style="text-align: center;;width:100%">
-                        <i class="fa fa-2x fa-circle-o-notch fa-spin"></i>
-                    </div>
-                </div>
-            </div>
-        <?php
         }
 
         function rearrange($arr)

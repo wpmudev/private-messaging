@@ -70,7 +70,7 @@
     $tbl->display();
     ?>
     <div class="row">
-        <div class="col-md-10 col-md-offset-2">
+        <div class="col-md-12">
             <button type="submit" class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>
         </div>
     </div>

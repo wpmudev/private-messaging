@@ -35,7 +35,7 @@ class Inbox_Shortcode_Controller extends IG_Request
 
             update_user_meta($user_id, '_messages_setting', $setting);
             do_action('mm_user_setting_saved', $setting);
-            $this->set_flash('user_setting_' . $user_id, __("Your settings has saved!", mmg()->domain));
+            $this->set_flash('user_setting_' . $user_id, __("Your settings have been successfully updated", mmg()->domain));
             wp_redirect(fURL::getWithQueryString());
             exit;
         }
