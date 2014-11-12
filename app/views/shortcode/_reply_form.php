@@ -8,7 +8,7 @@
                 <?php $form = new IG_Active_Form($model);
                 ?>
                 <div class="modal-header">
-                    <h4 class="modal-title"><?php _e("Reply Message", mmg()->domain) ?></h4>
+                    <h4 class="modal-title"><?php _e("Reply", mmg()->domain) ?></h4>
                 </div>
                 <?php $form->open(array("attributes" => array("class" => "form-horizontal compose-form", "id" => "reply-form"))); ?>
                 <div class="modal-body">

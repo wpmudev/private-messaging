@@ -22,7 +22,9 @@ class MM_WYSIWYG extends IG_Request
                     $('.mm_wsysiwyg').sceditor({
                         plugins: "xhtml",
                         autoUpdate: true,
-                        width: '100%',
+                        width: '98%',
+                        resizeMinWidth: '-1',
+                        resizeMaxWidth: '100%',
                         emoticonsEnabled: true,
                         toolbar: "bold,italic,underline,strike|left,center,right,justify|font,size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist,indent,outdent|link,unlink|date,time|emoticon",
                         emoticonsRoot: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/'?>',
@@ -37,7 +39,7 @@ class MM_WYSIWYG extends IG_Request
     function scripts()
     {
         wp_enqueue_script('mm_sceditor', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/jquery.sceditor.min.js', array('jquery'));
-        wp_enqueue_script('mm_sceditor_xhtml', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/plugins/xhtml.js', array('jquery','mm_sceditor'));
+        wp_enqueue_script('mm_sceditor_xhtml', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/plugins/xhtml.js', array('jquery', 'mm_sceditor'));
         wp_enqueue_style('mm_sceditor', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/themes/default.min.css');
     }
 }

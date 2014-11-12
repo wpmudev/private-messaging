@@ -3,9 +3,11 @@
  * Author: Hoang Ngo
  */
 
-spl_autoload_register('mmessaging_ig_loader');
-
-function mmessaging_ig_loader($class)
+spl_autoload_register('ig_loader');
+/**
+ * @param $class
+ */
+function ig_loader($class)
 {
     $classes = array(
         'IG_Model' => __DIR__ . '/database/ig-model.php',
@@ -17,6 +19,7 @@ function mmessaging_ig_loader($class)
         'IG_Active_Form' => __DIR__ . '/form/ig-active-form.php',
         'IG_Form_Generator' => __DIR__ . '/generator/ig-form-generator.php',
         'IG_Request' => __DIR__ . '/request/ig-request.php',
+        'IG_Logger' => __DIR__ . '/logger/ig-logger.php',
     );
 
     if (isset($classes[$class])) {
@@ -33,6 +36,8 @@ function mmessaging_ig_loader($class)
         }
     }
 }
+
+include_once __DIR__ . '/vendors/Container.php';
 
 if (!class_exists('RedBean_SimpleModel')) {
     include_once __DIR__ . '/vendors/rb.php';

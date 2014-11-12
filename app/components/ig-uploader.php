@@ -26,6 +26,7 @@ if (!class_exists('ig-uploader')) {
 
             add_action('init', array(&$this, 'custom_content'));
             add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
+            add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
             $this->controller = new IG_Uploader_Controller();
         }
 

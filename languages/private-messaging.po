@@ -1,0 +1,456 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Private Messaging\n"
+"POT-Creation-Date: 2014-11-12 23:42+0700\n"
+"PO-Revision-Date: 2014-11-12 23:43+0700\n"
+"Last-Translator: \n"
+"Language-Team: WPMU DEV\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.9\n"
+"X-Poedit-Basepath: /Users/hoangngo/Work/WPMUDEV/wp-content/plugins/"
+"messaging/\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: app/addons/bbpress-intergration/app/controllers/mm-bbpress-controller.php:36
+msgid "Send New Message"
+msgstr ""
+
+#: app/addons/bbpress-intergration/app/views/_compose_form.php:8
+#: app/views/shortcode/_compose_form.php:7
+#: app/views/shortcode/message_me.php:27
+msgid "Compose Message"
+msgstr ""
+
+#: app/addons/bbpress-intergration/app/views/_compose_form.php:14
+#: app/controllers/inbox-shortcode-controller.php:159
+#: app/controllers/inbox-shortcode-controller.php:177
+msgid "Your message has been sent."
+msgstr ""
+
+#: app/addons/bbpress-intergration/app/views/_compose_form.php:50
+#: app/views/shortcode/_compose_form.php:41
+#: app/views/shortcode/_reply_form.php:31
+#: app/views/shortcode/message_me.php:59
+msgid "Close"
+msgstr ""
+
+#: app/addons/bbpress-intergration/app/views/_compose_form.php:52
+#: app/views/shortcode/_compose_form.php:42
+#: app/views/shortcode/_reply_form.php:33
+#: app/views/shortcode/message_me.php:61
+msgid "Send"
+msgstr ""
+
+#: app/addons/block-list.php:66
+msgid "Block users list, separate by commas"
+msgstr ""
+
+#: app/addons/capatibility.php:77
+msgid "Settings saved!"
+msgstr ""
+
+#: app/addons/capatibility.php:96 app/addons/capatibility.php:190
+msgid "Capability Settings"
+msgstr ""
+
+#: app/addons/capatibility.php:165 app/views/backend/setting/email.php:60
+#: app/views/backend/setting/general.php:74 app/views/shortcode/setting.php:53
+msgid "Save Changes"
+msgstr ""
+
+#: app/components/ig-uploader/app/models/ig-uploader-model.php:123
+#: app/views/shortcode/_inbox_message.php:119
+msgid "Link"
+msgstr ""
+
+#: app/components/ig-uploader/app/models/ig-uploader-model.php:137
+#: app/components/ig-uploader/app/models/ig-uploader-model.php:138
+msgid "Url or File required"
+msgstr ""
+
+#: app/components/ig-uploader/app/models/ig-uploader-model.php:143
+msgid "File type not allow"
+msgstr ""
+
+#: app/components/ig-uploader/app/models/ig-uploader-model.php:145
+msgid "File too large!"
+msgstr ""
+
+#: app/components/ig-uploader/app/models/ig-uploader-model.php:149
+msgid ""
+"Can not upload the <strong>file</strong>, also <strong>url</strong> is empty!"
+msgstr ""
+
+#: app/components/ig-uploader/app/views/_extend_form.php:9
+msgid "Attach images or files for extra information"
+msgstr ""
+
+#: app/components/ig-uploader/app/views/_extend_form.php:12
+msgid "Add"
+msgstr ""
+
+#: app/components/ig-uploader/app/views/_extend_form.php:25
+msgid "No sample file."
+msgstr ""
+
+#: app/components/ig-uploader/app/views/_extend_form.php:35
+#: app/components/ig-uploader/app/views/_extend_form.php:89
+msgid "Upload Attachment"
+msgstr ""
+
+#: app/components/ig-uploader/app/views/_uploader_form.php:16
+msgid "File attached, upload new file will replace the current file."
+msgstr ""
+
+#: app/components/ig-uploader/app/views/_uploader_form.php:40
+msgid "Cancel"
+msgstr ""
+
+#: app/components/ig-uploader/app/views/_uploader_form.php:41
+msgid "Submit"
+msgstr ""
+
+#: app/components/mm-addon-table.php:35
+msgid "Name"
+msgstr ""
+
+#: app/components/mm-addon-table.php:36
+msgid "Description"
+msgstr ""
+
+#: app/components/mm-addon-table.php:61
+#: app/controllers/backend/mmessage-backend-controller.php:37
+#: app/controllers/backend/mmessage-backend-controller.php:46
+msgid "Deactivate"
+msgstr ""
+
+#: app/components/mm-addon-table.php:63
+msgid "Activate"
+msgstr ""
+
+#: app/components/mm-addon-table.php:71
+msgid "Created by: "
+msgstr ""
+
+#: app/components/mm-messages-table.php:35
+msgid "Last Message"
+msgstr ""
+
+#: app/components/mm-messages-table.php:36
+msgid "Users"
+msgstr ""
+
+#: app/components/mm-messages-table.php:37
+msgid "Total Messages"
+msgstr ""
+
+#: app/components/mm-messages-table.php:140 app/views/shortcode/inbox.php:18
+msgid "Search"
+msgstr ""
+
+#: app/controllers/backend/mmessage-backend-controller.php:54
+#: app/controllers/mm-upgrade-controller.php:86
+msgid "Messaging"
+msgstr ""
+
+#: app/controllers/backend/mmessage-backend-controller.php:55
+msgid "View Messages"
+msgstr ""
+
+#: app/controllers/backend/mmessage-backend-controller.php:56
+#: app/views/backend/setting.php:3 app/views/layout/main.php:31
+#: app/views/layout/main.php:44
+msgid "Settings"
+msgstr ""
+
+#: app/controllers/backend/mmessage-backend-controller.php:73
+msgid "Your settings have been successfully updated."
+msgstr ""
+
+#: app/controllers/backend/mmessage-backend-controller.php:92
+msgid "Conversation not found!"
+msgstr ""
+
+#: app/controllers/inbox-shortcode-controller.php:38
+msgid "Your settings have been successfully updated"
+msgstr ""
+
+#: app/controllers/inbox-shortcode-controller.php:204
+msgid "Re:"
+msgstr ""
+
+#: app/controllers/inbox-shortcode-controller.php:273
+msgid "Username"
+msgstr ""
+
+#: app/controllers/inbox-shortcode-controller.php:274
+msgid "Password"
+msgstr ""
+
+#: app/controllers/inbox-shortcode-controller.php:275
+msgid "Remember Me"
+msgstr ""
+
+#: app/controllers/inbox-shortcode-controller.php:276
+msgid "Sign In"
+msgstr ""
+
+#: app/controllers/inbox-shortcode-controller.php:347
+msgid "Forgot password?"
+msgstr ""
+
+#: app/controllers/message-me-shortcode-controller.php:18
+msgid "Message me"
+msgstr ""
+
+#: app/controllers/message-me-shortcode-controller.php:20
+msgid "You have new message!"
+msgstr ""
+
+#: app/views/backend/main.php:7
+msgid "Messages"
+msgstr ""
+
+#: app/views/backend/setting.php:16
+msgid "General Settings"
+msgstr ""
+
+#: app/views/backend/setting.php:20 app/views/backend/setting/email.php:3
+#: app/views/shortcode/setting.php:23
+msgid "Email Settings"
+msgstr ""
+
+#: app/views/backend/setting.php:24
+msgid "Shortcode"
+msgstr ""
+
+#: app/views/backend/setting/general.php:3
+msgid "General Options"
+msgstr ""
+
+#: app/views/backend/setting/general.php:9
+msgid "Enable Receipt"
+msgstr ""
+
+#: app/views/backend/setting/general.php:16
+msgid "This will enable the receipt globally"
+msgstr ""
+
+#: app/views/backend/setting/general.php:23
+msgid "User can on/off receipt"
+msgstr ""
+
+#: app/views/backend/setting/general.php:30
+msgid "This will let the user turn off or on"
+msgstr ""
+
+#: app/views/backend/setting/general.php:37
+#: app/views/backend/setting/general.php:55
+#: app/views/backend/setting/general.php:117
+msgid "Create Page"
+msgstr ""
+
+#: app/views/backend/setting/general.php:40
+#: app/views/backend/setting/shortcode.php:6
+msgid "Inbox Page"
+msgstr ""
+
+#: app/views/backend/setting/general.php:49
+msgid "--Choose--"
+msgstr ""
+
+#: app/views/backend/setting/general.php:63
+msgid "Add-ons"
+msgstr ""
+
+#: app/views/backend/setting/general.php:108
+msgid "Creating..."
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:2
+msgid "Shortcodes"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:13
+msgid "This shortcode will display the inbox page. No parameters for this"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:19
+msgid "Message Me"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:26
+msgid "user_id"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:27
+msgid "This is the id of the user this message form will send email too"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:30
+msgid "text"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:31
+msgid "The text display, default is \"Message me\""
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:34
+msgid "class"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:35
+msgid "Class of the message me button"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:38
+msgid "subject"
+msgstr ""
+
+#: app/views/backend/setting/shortcode.php:39
+msgid "Subject of the email people send to this user via the button"
+msgstr ""
+
+#: app/views/backend/upgrade.php:5
+#, php-format
+msgid "Migrate Tools, found %d conversations"
+msgstr ""
+
+#: app/views/backend/upgrade.php:10
+msgid "Please click here to import the data to new messaging system"
+msgstr ""
+
+#: app/views/backend/upgrade.php:12
+msgid "Import All"
+msgstr ""
+
+#: app/views/backend/upgrade.php:15
+msgid "If the import go wrong, please click here to clean up"
+msgstr ""
+
+#: app/views/backend/upgrade.php:17
+msgid "Clean up"
+msgstr ""
+
+#: app/views/backend/view.php:5
+msgid "Message #"
+msgstr ""
+
+#: app/views/layout/main.php:9 app/views/layout/main.php:16
+#: app/views/layout/main.php:23
+msgid "message(s)"
+msgstr ""
+
+#: app/views/layout/main.php:10
+msgid "Inbox"
+msgstr ""
+
+#: app/views/layout/main.php:17
+msgid "Unread"
+msgstr ""
+
+#: app/views/layout/main.php:24
+msgid "Read"
+msgstr ""
+
+#: app/views/layout/main.php:28
+msgid "Sent"
+msgstr ""
+
+#: app/views/layout/main.php:37 app/views/layout/main.php:47
+msgid "Compose"
+msgstr ""
+
+#: app/views/shortcode/_inbox_message.php:39
+msgid "me"
+msgstr ""
+
+#: app/views/shortcode/_inbox_message.php:101
+msgid "Size"
+msgstr ""
+
+#: app/views/shortcode/_inbox_message.php:109
+msgid "Type"
+msgstr ""
+
+#: app/views/shortcode/_inbox_message.php:131
+msgid "Visit Link"
+msgstr ""
+
+#: app/views/shortcode/_inbox_message.php:136
+msgid "Download File"
+msgstr ""
+
+#: app/views/shortcode/_inbox_message.php:197
+msgid "Reply: "
+msgstr ""
+
+#: app/views/shortcode/_reply_form.php:11
+msgid "Reply"
+msgstr ""
+
+#: app/views/shortcode/inbox.php:109
+msgid "No message found!"
+msgstr ""
+
+#: app/views/shortcode/login.php:6
+msgid "Sign in"
+msgstr ""
+
+#: app/views/shortcode/login.php:14
+msgid "Sign Up"
+msgstr ""
+
+#: app/views/shortcode/login.php:16
+msgid "Sign up to become a registered member of the site"
+msgstr ""
+
+#: app/views/shortcode/login.php:17
+msgid "Create Account"
+msgstr ""
+
+#: app/views/shortcode/message_me.php:31
+msgid "Your message has been sent"
+msgstr ""
+
+#: app/views/shortcode/setting.php:13
+msgid "This feature has been disabled by admin"
+msgstr ""
+
+#: app/views/shortcode/setting.php:31
+msgid "Email me when receiver read my message"
+msgstr ""
+
+#: app/views/shortcode/setting.php:32
+msgid ""
+"An email will be sent to you when receiver read your message,\n"
+"                                                but this function will not "
+"work if they turn the tracking off"
+msgstr ""
+
+#: app/views/shortcode/setting.php:41
+msgid "Prevent others tracking my message"
+msgstr ""
+
+#: app/views/shortcode/setting.php:43
+msgid ""
+"When you open a message, there won't be an email back to the send to inform "
+"them you've read it."
+msgstr ""
+
+#: framework/database/ig-grid.php:42 framework/database/ig-grid.php:116
+msgid "Delete"
+msgstr ""
+
+#: framework/database/ig-grid.php:116
+msgid "Edit"
+msgstr ""
+
+#: framework/request/ig-request.php:61
+msgid "View not found!"
+msgstr ""

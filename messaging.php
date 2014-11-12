@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Private Messaging
-Plugin URI:
+Plugin URI: https://premium.wpmudev.org/project/XXXXXXX/
 Description:
 Author: WPMU DEV
 Version: 1.0
@@ -25,7 +25,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 if (!class_exists('MMessaging')) {
     include_once __DIR__ . '/framework/loader.php';
@@ -313,11 +313,22 @@ CREATE TABLE `wp_mm_conversation` (
             $clean = $x->saveHTMLExact();
             return $clean;
         }
+
+        function get_logger($type = 'file', $location = '')
+        {
+            if (empty($location)) {
+                $location = $this->domain;
+            }
+            $logger = new IG_Logger($type, $location);
+            return $logger;
+        }
     }
 
 //include dashboard
     global $wpmudev_notices;
-    $wpmudev_notices[] = array('id' => 68, 'name' => 'Messaging', 'screens' => array('toplevel_page_messaging', 'inbox_page_messaging_new', 'inbox_page_messaging_sent', 'inbox_page_messaging_message-notifications'));
+    $wpmudev_notices[] = array('id' => '', 'name' => 'Private Messaging', 'screens' => array(
+        'toplevel_page_mm_main', 'messaging_page_mm_setting', 'admin_page_mm_view'
+    ));
     include_once(plugin_dir_path(__FILE__) . 'lib/dash-notices/wpmudev-dash-notification.php');
 
     function mmg()
@@ -327,4 +338,5 @@ CREATE TABLE `wp_mm_conversation` (
 
 //init once
     mmg();
+    include_once mmg()->plugin_path . 'functions.php';
 }

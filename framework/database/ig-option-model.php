@@ -1,25 +1,42 @@
 <?php
 
 /**
- * Author: Hoang Ngo
+ * This class is use for extend only. This is a modal design for a worpdress post type
+ * Support CRUD, validation and a simple load method. Better to use in something like Setting.
+ *
+ * $table variable will use as option_name
+ *
+ * @author: Hoang Ngo
+ * @package: Database
  */
-class IG_Option_Model extends IG_Model
-{
-    public function __construct()
+if (!class_exists('IG_Option_Model')) {
+    class IG_Option_Model extends IG_Model
     {
-        $this->load();
-    }
+        /**
+         * constructor
+         */
+        public function __construct()
+        {
+            $this->load();
+        }
 
-    public function save()
-    {
-        update_option($this->table, $this->export());
-    }
+        /**
+         * This will save all this export() to table name
+         */
+        public function save()
+        {
+            update_option($this->get_table(), $this->export());
+        }
 
-    public function load()
-    {
-        $data = get_option($this->table);
-        if ($data) {
-            $this->import($data);
+        /**
+         * Load the option data and fetch to this model
+         */
+        public function load()
+        {
+            $data = get_option($this->get_table());
+            if ($data) {
+                $this->import($data);
+            }
         }
     }
 }

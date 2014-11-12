@@ -9,7 +9,7 @@
                 <div class="clearfix"></div>
             </div>
         <?php endif; ?>
-        <div class="col-md-5 no-padding">
+        <div class="col-md-5 col-sm-3 col-xs-3 no-padding">
             <div class="message-list">
                 <form class="mm-search-form" method="get" action="<?php echo fURL::get() ?>">
                     <div class="input-group input-group-sm">
@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7 no-padding">
+        <div class="col-md-7 col-xs-9 col-sm-9 no-padding">
             <div id="mmessage-content" class="ps-container ps-active-x ps-active-y">
                 <?php $this->render_inbox_message(reset($models)) ?>
             </div>

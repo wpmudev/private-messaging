@@ -1,36 +1,45 @@
 <div class="mmessage-container">
     <div class="row">
-        <div class="col-md-8 no-padding mm-toolbar-btn">
+        <div class="col-md-8 co-sm-12 col-xs-12 no-padding mm-toolbar-btn">
             <div class="btn-group btn-group-sm">
                 <a href="<?php echo add_query_arg('box', 'inbox') ?>"
-                   class="mm-tooltip btn btn-default <?php echo fRequest::get('box', 'string', 'inbox') == 'inbox' ? 'active' : null ?>"
+                   class="mm-tooltip btn btn-default btn-sm <?php echo fRequest::get('box', 'string', 'inbox') == 'inbox' ? 'active' : null ?>"
                    data-container=".mm-toolbar-btn"
                    data-placement="top"
                    title="<?php echo MM_Conversation_Model::count_all() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="fa fa-inbox"></i> <?php _e("Inbox", mmg()->domain) ?>
                 </a>
                 <a href="<?php echo add_query_arg('box', 'unread') ?>"
-                   class="mm-tooltip btn btn-default <?php echo fRequest::get('box') == 'unread' ? 'active' : null ?>"
+                   class="mm-tooltip btn btn-default btn-sm <?php echo fRequest::get('box') == 'unread' ? 'active' : null ?>"
                    data-placement="top"
                    data-container=".mm-toolbar-btn"
                    title="<?php echo MM_Conversation_Model::count_unread() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="fa fa-envelope"></i> <?php _e("Unread", mmg()->domain) ?>
                 </a>
                 <a href="<?php echo add_query_arg('box', 'read') ?>"
-                   class="mm-tooltip btn btn-default <?php echo fRequest::get('box') == 'read' ? 'active' : null ?>"
+                   class="mm-tooltip btn btn-default btn-sm <?php echo fRequest::get('box') == 'read' ? 'active' : null ?>"
                    data-placement="top"
                    data-container=".mm-toolbar-btn"
                    title="<?php echo MM_Conversation_Model::count_read() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="glyphicon glyphicon-eye-open"></i> <?php _e("Read", mmg()->domain) ?>
                 </a>
                 <a href="<?php echo add_query_arg('box', 'sent') ?>"
-                   class="btn btn-default <?php echo fRequest::get('box') == 'sent' ? 'active' : null ?>">
+                   class="btn btn-default btn-sm <?php echo fRequest::get('box') == 'sent' ? 'active' : null ?>">
                     <i class="glyphicon glyphicon-send"></i> <?php _e("Sent", mmg()->domain) ?>
                 </a>
-
+                <a class="btn btn-default btn-sm" href="<?php echo add_query_arg('box', 'setting') ?>">
+                    <i class="fa fa-gear"></i> <?php _e("Settings", mmg()->domain) ?>
+                </a>
             </div>
         </div>
-        <div class="col-md-4 no-padding text-right">
+        <div class="col-md-4 hidden-xs hidden-sm no-padding text-right">
+            <a class="btn btn-primary btn-sm mm-compose" href="#">
+                <?php _e("Compose", mmg()->domain) ?>
+            </a>
+        </div>
+        <!--For small viewport-->
+        <div class="col-sm-12 col-xs-12 hidden-md hidden-lg no-padding">
+            <br/>
             <a class="btn btn-default btn-sm" href="<?php echo add_query_arg('box', 'setting') ?>">
                 <i class="fa fa-gear"></i> <?php _e("Settings", mmg()->domain) ?>
             </a>

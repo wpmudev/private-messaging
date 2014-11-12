@@ -146,3 +146,6 @@
 .mmessage-container .mm_setting_menu a{
     color: #333;
 }
+.mm-message-subject {
+    color: #000000 !important;
+}
