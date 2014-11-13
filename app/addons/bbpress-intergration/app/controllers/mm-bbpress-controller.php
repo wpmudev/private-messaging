@@ -60,8 +60,8 @@ class MM_BBPress_Controller extends IG_Request
 
         $new_links = implode($r['sep'], $new_links);
 
-        $logger = new IG_Logger('file', 'message_bbpress.txt');
-        $logger->log(var_export($new_links, true), IG_Logger::ERROR_LEVEL_DEBUG);
+        //$logger = new IG_Logger('file', 'message_bbpress.txt');
+        //$logger->log(var_export($new_links, true), IG_Logger::ERROR_LEVEL_DEBUG);
 
         return $new_links;
     }
