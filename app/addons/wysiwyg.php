@@ -10,7 +10,9 @@ class MM_WYSIWYG extends IG_Request
     public function __construct()
     {
         add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
+        add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
         add_action('wp_footer', array(&$this, 'footer_scripts'));
+        add_action('admin_footer', array(&$this, 'footer_scripts'));
     }
 
     function footer_scripts()
