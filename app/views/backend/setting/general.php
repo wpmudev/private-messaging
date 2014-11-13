@@ -109,7 +109,6 @@
                 },
                 success: function (data) {
                     var element = that.parent().parent().find('select').first();
-                    console.log(element);
                     $.get("<?php echo "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>", function (html) {
                         html = $(html);
                         var clone = html.find('select[name="' + element.attr('name') + '"]');

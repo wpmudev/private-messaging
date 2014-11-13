@@ -14,6 +14,7 @@ class MM_BBPress_Controller extends IG_Request
             add_action('admin_enqueue_scripts', array(&$this, 'script'));
             add_action('admin_bar_menu', array(&$this, 'notification_buttons'), 80);
             add_action('wp_footer', array(&$this, 'compose_form_footer'));
+            add_action('admin_footer', array(&$this, 'compose_form_footer'));
         }
     }
 
