@@ -1,6 +1,6 @@
 <div class="mmessage-container">
     <div class="row">
-        <div class="col-md-9 co-sm-12 col-xs-12 no-padding mm-toolbar-btn">
+        <div class="col-md-10 co-sm-12 col-xs-12 no-padding mm-toolbar-btn">
             <div class="btn-group btn-group-sm">
                 <a href="<?php echo add_query_arg('box', 'inbox') ?>"
                    class="mm-tooltip btn btn-default btn-sm <?php echo fRequest::get('box', 'string', 'inbox') == 'inbox' ? 'active' : null ?>"
@@ -32,7 +32,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-md-3 hidden-xs hidden-sm no-padding text-right">
+        <div class="col-md-2 hidden-xs hidden-sm no-padding text-right">
             <a class="btn btn-primary btn-sm mm-compose" href="#">
                 <?php _e("Compose", mmg()->domain) ?>
             </a>
