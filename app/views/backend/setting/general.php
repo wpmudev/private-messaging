@@ -88,7 +88,11 @@
                     action: 'mm_plugin_action',
                     id: $(this).data('id')
                 },
+                beforeSend:function(){
+                    that.find('.loader-ani').removeClass('hide');
+                },
                 success: function (data) {
+                    that.find('.loader-ani').addClass('hide');
                     $('.plugin-status').html(data.noty);
                     $('.plugin-status').removeClass('hide');
                     that.text(data.text);

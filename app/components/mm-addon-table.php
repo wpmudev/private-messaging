@@ -58,9 +58,9 @@ class MM_AddOn_Table extends WP_List_Table
             $components = array();
         }
         if (in_array($item['col_id'], $components)) {
-            $html .= '<br><a class="mm-plugin" data-type="deactive" data-id="' . esc_attr($item['col_id']) . '" href="#">' . __('Deactivate', mmg()->domain) . '</a>';
+            $html .= '<br><a class="mm-plugin" data-type="deactive" data-id="' . esc_attr($item['col_id']) . '" href="#">' . __('Deactivate <i class="fa fa-circle-o-notch fa-spin loader-ani hide"></i>', mmg()->domain) . '</a>';
         } else {
-            $html .= '<br><a class="mm-plugin" data-type="active" data-id="' . esc_attr($item['col_id']) . '"  href="#">' . __('Activate', mmg()->domain) . '</a>';
+            $html .= '<br><a class="mm-plugin" data-type="active" data-id="' . esc_attr($item['col_id']) . '"  href="#">' . __('Activate <i class="fa fa-circle-o-notch fa-spin loader-ani hide"></i>', mmg()->domain) . '</a>';
         }
 
         return $html;

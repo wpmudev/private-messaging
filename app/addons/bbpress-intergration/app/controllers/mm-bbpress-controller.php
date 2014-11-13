@@ -8,41 +8,9 @@ class MM_BBPress_Controller extends IG_Request
     public function __construct()
     {
         add_filter('bbp_get_reply_author_link', array(&$this, 'append_message_trigger'), 10, 2);
-
-        if (is_user_logged_in()) {
-            add_action('wp_enqueue_scripts', array(&$this, 'script'));
-            add_action('admin_enqueue_scripts', array(&$this, 'script'));
-            add_action('admin_bar_menu', array(&$this, 'notification_buttons'), 80);
-            add_action('wp_footer', array(&$this, 'compose_form_footer'));
-            add_action('admin_footer', array(&$this, 'compose_form_footer'));
-        }
     }
 
-    function script()
-    {
-        wp_enqueue_style('selectivejs');
-        wp_enqueue_script('selectivejs');
-    }
 
-    function compose_form_footer()
-    {
-        $this->render('_compose_form');
-    }
-
-    function notification_buttons($wp_admin_bar)
-    {
-
-        $args = array(
-            'id' => 'custom-button',
-            'title' => __("Send New Message", mmg()->domain),
-            'href' => '#',
-            'meta' => array(
-                'class' => 'mm-compose-admin-bar',
-            )
-        );
-        $wp_admin_bar->add_node($args);
-
-    }
 
     function append_message_trigger($author_link, $r)
     {
