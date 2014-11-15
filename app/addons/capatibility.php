@@ -3,7 +3,7 @@
 /**
  * Author: WPMU DEV
  * Name: Capability
- * Description: Limit roles each capability can send too
+ * Description: Limit sending capabilities to specific WordPress roles.
  */
 if (!class_exists('MM_User_Capability')) {
     class MM_User_Capability extends IG_Request

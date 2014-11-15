@@ -28,9 +28,8 @@ if ($setting->user_receipt == false) {
                             <input type="hidden" name="receipt" value="0">
                             <input <?php echo checked('1', $user_setting['enable_receipt']) ?>
                                 type="checkbox" name="receipt" value="1"
-                                class="enable_receipt"> <?php _e("Email me when receiver read my message", mmg()->domain) ?>
-                            <span class="help-block"><?php _e("An email will be sent to you when receiver read your message,
-                                                but this function will not work if they turn the tracking off", mmg()->domain) ?></span>
+                                class="enable_receipt"> <?php _e("Email me when my sent messages are read", mmg()->domain) ?>
+                            <span class="help-block"><?php _e("An email will be sent to you when a user reads your message, this functionality won’t work, if they have disabled tracking within their account.", mmg()->domain) ?></span>
                         </label>
                     </div>
                     <div class="checkbox">
@@ -40,7 +39,7 @@ if ($setting->user_receipt == false) {
                                 type="checkbox" name="prevent" value="1"
                                 class="prevent_receipt"> <?php _e("Prevent others tracking my message", mmg()->domain) ?>
                             <span
-                                class="help-block"><?php _e("When you open a message, there won't be an email back to the send to inform them you've read it.", mmg()->domain) ?></span>
+                                class="help-block"><?php _e("When you open a message, there won't be an email back to the sender to inform them you've read the message.", mmg()->domain) ?></span>
                         </label>
                     </div>
                 </div>

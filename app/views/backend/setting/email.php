@@ -7,7 +7,7 @@
     $form->open(array("attributes" => array("class" => "form-horizontal")));?>
 
     <div class="form-group <?php echo $model->has_error("noti_subject") ? "has-error" : null ?>">
-        <?php $form->label("noti_subject", array("text" => "Noti Subject", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
+        <?php $form->label("noti_subject", array("text" => "Subject", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
         <div class="col-lg-10">
             <?php $form->text_area("noti_subject", array("attributes" => array("class" => "form-control", "style" => "height:50px"))) ?>
             <span
@@ -16,7 +16,7 @@
         <div class="clearfix"></div>
     </div>
     <div class="form-group <?php echo $model->has_error("noti_content") ? "has-error" : null ?>">
-        <?php $form->label("noti_content", array("text" => "Noti Content", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
+        <?php $form->label("noti_content", array("text" => "Content", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
         <div class="col-lg-10">
             <?php $form->text_area("noti_content", array("attributes" => array("class" => "form-control", "style" => "height:50px"))) ?>
             <span

@@ -10,7 +10,7 @@
             <p><code>[message_inbox]</code></p>
             <ul>
                 <li>
-                    <?php _e("This shortcode will display the inbox page. No parameters for this", mmg()->domain) ?>
+                    <?php _e("This shortcode will display the private message interface.There are no parameters for this shortcode.", mmg()->domain) ?>
                 </li>
             </ul>
         </div>

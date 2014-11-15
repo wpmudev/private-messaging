@@ -2,7 +2,7 @@
 /**
  * Author: WPMU DEV
  * Name: BBPress integration
- * Description: Make the Private Message work beautiful with BBPress
+ * Description: Flawless integration with BBpress.
  */
 
 /**

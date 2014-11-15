@@ -3,7 +3,7 @@
 /**
  * Author: WPMU DEV
  * Name: WYISWYG
- * Description: WYISWYG flavor for message content
+ * Description: Adds a WYSIWYG editor to the message composer.
  */
 if(!class_exists('MM_WYSIWYG')) {
     class MM_WYSIWYG extends IG_Request

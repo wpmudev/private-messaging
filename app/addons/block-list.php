@@ -3,7 +3,7 @@
 /**
  * Author: WPMU DEV
  * Name: Block List
- * Description: Add ability for users can block message from another
+ * Description: Allows users to block messages from another user.
  */
 if (!class_exists('MM_Block_List')) {
     class MM_Block_List extends IG_Request

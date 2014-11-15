@@ -13,14 +13,14 @@
                     <?php
                     $form->hidden('enable_receipt', array('value' => 0));
                     $form->checkbox("enable_receipt", array("attributes" => array("class" => "", "value" => 1))) ?>
-                    <?php _e("This will enable the receipt globally", mmg()->domain) ?>
+                    <?php _e("Enable read message receipt? (Users will receive a email to notifying them their messages have been read)", mmg()->domain) ?>
                 </label>
             </div>
         </div>
         <div class="clearfix"></div>
     </div>
     <div class="form-group <?php echo $model->has_error("user_receipt") ? "has-error" : null ?>">
-        <?php $form->label("user_receipt", array("text" => __("User can on/off receipt", mmg()->domain), "attributes" => array("class" => "col-lg-2 control-label"))) ?>
+        <?php $form->label("user_receipt", array("text" => __("Allow the user to disable read message receipts?", mmg()->domain), "attributes" => array("class" => "col-lg-2 control-label"))) ?>
         <div class="col-lg-10">
             <div class="checkbox">
                 <label>
