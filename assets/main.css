@@ -139,13 +139,26 @@
 }
 
 .mmessage-container .file-view-port {
-    max-height: 300px;
+    max-height: 185px;
     overflow-y: scroll;
 }
 
-.mmessage-container .mm_setting_menu a{
+.mmessage-container .mm_setting_menu a {
     color: #333;
 }
+
 .mm-message-subject {
     color: #000000 !important;
+}
+
+.mm-admin-bar .fa {
+    font: normal normal normal 14px/1 FontAwesome !important;
+    margin-right: 5px;
+}
+
+.mm-admin-bar span {
+    padding: 0 4px !important;
+    color: #ffffff;
+    border-radius: 10px !important;
+    background: #d9534f;
 }

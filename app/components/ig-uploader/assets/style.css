@@ -2,7 +2,7 @@
     /*border: 1px solid #e7e7e7;*/
     -webkit-border-radius: 3px 3px 3px 3px;
     border-radius: 3px 3px 3px 3px;
-    width: 182px;
+    width: 170px;
     float: left;
     margin-right: 10px;
     margin-bottom: 10px;
@@ -65,7 +65,7 @@
     color: #428bca;
     margin: 0;
     padding: 0;
-    height: 30px;
+    height: 25px;
     display: block;
     font-size: 13px;
     line-height: 14px;

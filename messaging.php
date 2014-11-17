@@ -139,7 +139,7 @@ CREATE TABLE `wp_mm_conversation` (
             new MAjax();
             $inbox_sc = new Inbox_Shortcode_Controller();
             $messge_me_sc = new Message_Me_Shortcode_Controller();
-
+            $admin_bar_notification = new Admin_Bar_Notification_Controller();
         }
 
         function load_post_type()
