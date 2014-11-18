@@ -83,7 +83,7 @@ class MMessage_Backend_Controller extends IG_Request
         wp_enqueue_style('mm_style');
 
         $id = fRequest::get('id', 'int', 0);
-        $model = MM_Conversation_Model::find($id);
+        $model = MM_Conversation_Model::model()->find($id);
         if (is_object($model)) {
             $this->render('backend/view', array(
                 'model' => $model

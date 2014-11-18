@@ -1,14 +1,19 @@
+<?php if ($this->has_flash("mm_sent_" . get_current_user_id())): ?>
+    <div class="row">
+        <br/>
+        <div class="col-md-12 no-padding">
+            <div class="alert alert-success">
+                <?php echo $this->get_flash("mm_sent_" . get_current_user_id()) ?>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+<?php endif; ?>
+
 <?php if (count($models)): ?>
     <br/>
     <div class="row">
-        <?php if ($this->has_flash("mm_sent_" . get_current_user_id())): ?>
-            <div class="col-md-12 no-padding">
-                <div class="alert alert-success">
-                    <?php echo $this->get_flash("mm_sent_" . get_current_user_id()) ?>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        <?php endif; ?>
+
         <div class="col-md-5 col-sm-3 col-xs-3 no-padding">
             <div class="message-list">
                 <form class="mm-search-form" method="get" action="<?php echo fURL::get() ?>">

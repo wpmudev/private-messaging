@@ -204,5 +204,10 @@ if (!class_exists('IG_Uploader_Model')) {
 
             return $image;
         }
+
+        public static function model($class_name = __CLASS__)
+        {
+            return parent::model($class_name);
+        }
     }
 }

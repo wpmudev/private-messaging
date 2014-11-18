@@ -105,7 +105,7 @@ class Notify_Controller extends IG_Request
             $ids = array_filter($ids);
             foreach ($ids as $id) {
                 if (filter_var($id, FILTER_VALIDATE_INT)) {
-                    $upload = IG_Uploader_Model::find($id);
+                    $upload = IG_Uploader_Model::model()->find($id);
 
                     if (is_object($upload) && $upload->file) {
                         $attachments[] = get_attached_file($upload->file);

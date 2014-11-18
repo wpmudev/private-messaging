@@ -28,7 +28,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 if (!class_exists('MMessaging')) {
-    include_once __DIR__ . '/framework/loader.php';
+    require_once (dirname(__FILE__) . '/framework/loader.php');
 
     class MMessaging
     {

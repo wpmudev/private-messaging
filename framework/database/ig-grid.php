@@ -64,7 +64,7 @@ if (!class_exists('IG_Grid')) {
                     $class = get_class($this->model);
                     if (isset($_POST[$class])) {
                         foreach ($_POST[$class] as $id) {
-                            $model = $class::find($id);
+                            $model = $class::model()->find($id);
                             if (is_object($model)) {
                                 $model->delete();
                             }

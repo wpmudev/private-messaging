@@ -6,9 +6,11 @@
  * @author: Hoang Ngo
  * @package: Database
  */
-if(!class_exists('IG_Post_Model')) {
+if (!class_exists('IG_Post_Model')) {
     class IG_Post_Model extends IG_Model
     {
+        private static $_models = array();
+
         /**
          * Default value of Wordpress post
          * @var array
@@ -184,7 +186,7 @@ if(!class_exists('IG_Post_Model')) {
             if ($after_save)
                 $this->after_save();
             //loaded the data
-            $model = self::find($saved);
+            $model = $this->find($saved);
             $this->import($model->export());
 
             return $this;
@@ -206,6 +208,14 @@ if(!class_exists('IG_Post_Model')) {
             do_action($this->get_table() . '_after_save');
         }
 
+        public static function model($class_name = __CLASS__)
+        {
+            //cache
+            if (!isset(self::$_models[$class_name])) {
+                self::$_models[$class_name] = new $class_name();
+            }
+            return self::$_models[$class_name];
+        }
 
         /**
          * This function will search the model by id. This id is the ID of wp_posts
@@ -214,14 +224,14 @@ if(!class_exists('IG_Post_Model')) {
          *
          * @return mixed|void
          */
-        public static function find($id)
+        public function find($id)
         {
             //first we need to get the post
             $post = get_post($id);
             if (!is_object($post)) {
                 return null;
             }
-            $class = get_called_class();
+            $class = get_class($this);
             $model = new $class;
             foreach ($model->get_mapped() as $key => $val) {
                 $model->$key = $post->$val;
@@ -241,26 +251,26 @@ if(!class_exists('IG_Post_Model')) {
             }
             $model->set_exist(true);
 
-            return apply_filters(self::table_name() . '_model_find', $model, $class, $id);
+            return apply_filters($this->get_table() . '_model_find', $model, $class, $id);
         }
 
         /**
          * Query through wp_posts table and return the data
          * @return array
          */
-        public static function all()
+        public function all()
         {
             //for faster, getting the wpdb
             global $wpdb;
             $sql = "SELECT ID FROM " . $wpdb->posts . " WHERE post_type=%s";
-            $ids = $wpdb->get_col($wpdb->prepare($sql, self::table_name()));
+            $ids = $wpdb->get_col($wpdb->prepare($sql, $this->get_table()));
             //gatehr all ids, now the time has come
             $models = array();
             foreach ($ids as $id) {
-                $models[] = self::find($id);
+                $models[] = $this->find($id);
             }
 
-            return apply_filters(self::table_name() . '_result_all', $models);
+            return apply_filters($this->get_table() . '_result_all', $models);
         }
 
         /**
@@ -271,17 +281,17 @@ if(!class_exists('IG_Post_Model')) {
          *
          * @return array
          */
-        public static function all_with_condition($args = array())
+        public function all_with_condition($args = array())
         {
             //get only need to get ids
             $args['fields'] = 'ids';
-            $args['post_type'] = self::table_name();
+            $args['post_type'] = $this->get_table();
             $query = new WP_Query($args);
 
             $data = array();
 
             foreach ($query->posts as $post_id) {
-                $model = self::find($post_id);
+                $model = $this->find($post_id);
                 if ($model) {
                     $data[] = $model;
                 }
@@ -294,24 +304,13 @@ if(!class_exists('IG_Post_Model')) {
         /**
          * @return mixed
          */
-        public static function count()
+        public function count()
         {
             global $wpdb;
             $sql = "SELECT count(ID) FROM {$wpdb->posts} WHERE post_type=%s AND post_status=%s";
-            $total = $wpdb->get_var($wpdb->prepare($sql, self::table_name(), 'publish'));
+            $total = $wpdb->get_var($wpdb->prepare($sql, $this->get_table(), 'publish'));
 
             return $total;
-        }
-
-        /**
-         * @return mixed
-         */
-        private static function table_name()
-        {
-            $class = get_called_class();
-            $empty = new $class;
-
-            return $empty->get_table();
         }
 
         /**

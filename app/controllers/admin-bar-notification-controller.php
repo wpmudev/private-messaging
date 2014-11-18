@@ -20,6 +20,7 @@ class Admin_Bar_Notification_Controller extends IG_Request
     {
         wp_enqueue_style('selectivejs');
         wp_enqueue_script('selectivejs');
+        wp_enqueue_style('mm_style');
     }
 
     function compose_form_footer()

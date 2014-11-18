@@ -122,12 +122,12 @@ WHERE (posts.post_title LIKE %s OR posts.post_content LIKE %s OR wp_users.user_l
                     "per_page" => $perpage,
                 ));
 
-                $this->items = MM_Conversation_Model::all_with_condition('id IN (' . implode(',', $ids) . ') LIMIT ' . $offset . ',' . $perpage, array(//':ids' => implode(',', $ids)
+                $this->items = MM_Conversation_Model::model()->all_with_condition('id IN (' . implode(',', $ids) . ') LIMIT ' . $offset . ',' . $perpage, array(//':ids' => implode(',', $ids)
                 ));
 
             }
         } else {
-            $this->items = MM_Conversation_Model::all_with_condition(' LIMIT ' . $offset . ',' . $perpage);
+            $this->items = MM_Conversation_Model::model()->all_with_condition(' LIMIT ' . $offset . ',' . $perpage);
         }
     }
 

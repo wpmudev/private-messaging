@@ -95,7 +95,12 @@ class MM_Message_Model extends IG_Post_Model
 
     function after_save()
     {
-        $c = MM_Conversation_Model::find($this->conversation_id);
+        $c = MM_Conversation_Model::model()->find($this->conversation_id);
         $c->update_count();
+    }
+
+    public static function model($class_name = __CLASS__)
+    {
+        return parent::model($class_name);
     }
 }

@@ -48,7 +48,7 @@ class Inbox_Shortcode_Controller extends IG_Request
         }
 
         $id = mmg()->decrypt(fRequest::get('id'));
-        $model = MM_Conversation_Model::find($id);
+        $model = MM_Conversation_Model::model()->find($id);
         $this->render_inbox_message($model);
         $last = $model->get_last_message();
         if ($last->send_from != get_current_user_id()) {
@@ -146,7 +146,7 @@ class Inbox_Shortcode_Controller extends IG_Request
                 $message_id = mmg()->decrypt(fRequest::get('id', 'string', null));
                 $conv_id = mmg()->decrypt(fRequest::get('parent_id', 'string', null));
 
-                $c_model = MM_Conversation_Model::find($conv_id);
+                $c_model = MM_Conversation_Model::model()->find($conv_id);
                 $user_ids = $c_model->user_index;
 
                 $user_ids = $this->logins_to_ids($user_ids);
@@ -191,7 +191,7 @@ class Inbox_Shortcode_Controller extends IG_Request
     function _reply_message($conv_id, $message_id, $user_id, $model)
     {
         //load conversation
-        $conversation = MM_Conversation_Model::find($conv_id);
+        $conversation = MM_Conversation_Model::model()->find($conv_id);
         //we will add new message to this conversation
         $conversation->save();
         //update users from this conversation, now save the message
@@ -200,7 +200,7 @@ class Inbox_Shortcode_Controller extends IG_Request
         $m->send_to = $user_id;
         $m->conversation_id = $conversation->id;
         $m->status = MM_Message_Model::UNREAD;
-        $mess = MM_Message_Model::find($message_id);
+        $mess = MM_Message_Model::model()->find($message_id);
         $m->subject = __("Re:", mmg()->domain) . ' ' . $mess->subject;
 
         $m->save();

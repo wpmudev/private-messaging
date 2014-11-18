@@ -16,8 +16,11 @@ if (!class_exists('IG_Uploader_Controller')) {
         {
             if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'iup_load_upload_form'))
                 return;
-            $id = fRequest::get('id', 'int', 0);
-            $model = IG_Uploader_Model::find($id);
+            $id = fRequest::get('id', 'int', null);
+            $model = null;
+            if($id!==null) {
+                $model = IG_Uploader_Model::model()->find($id);
+            }
             if (!is_object($model)) {
                 $model = new IG_Uploader_Model();
             }
@@ -32,7 +35,7 @@ if (!class_exists('IG_Uploader_Controller')) {
             if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'igu_file_delete'))
                 return;
 
-            $model = IG_Uploader_Model::find(fRequest::get('id', 'int', 0));
+            $model = IG_Uploader_Model::model()->find(fRequest::get('id', 'int', 0));
             if (is_object($model)) {
                 $model->delete();
             }
@@ -47,7 +50,7 @@ if (!class_exists('IG_Uploader_Controller')) {
                 $model = '';
                 $id = fRequest::get('IG_Uploader_Model[id]', 'int', 0);
                 if ($id != 0) {
-                    $model = IG_Uploader_Model::find($id);
+                    $model = IG_Uploader_Model::model()->find($id);
                 }
                 if (!is_object($model)) {
                     $model = new IG_Uploader_Model();

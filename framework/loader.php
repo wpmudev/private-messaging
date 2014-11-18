@@ -2,7 +2,6 @@
 /**
  * Author: Hoang Ngo
  */
-
 spl_autoload_register('ig_loader');
 /**
  * @param $class
@@ -10,23 +9,23 @@ spl_autoload_register('ig_loader');
 function ig_loader($class)
 {
     $classes = array(
-        'IG_Model' => __DIR__ . '/database/ig-model.php',
-        'IG_Post_Model' => __DIR__ . '/database/ig-post-model.php',
-        'IG_DB_Model' => __DIR__ . '/database/ig-db-model.php',
-        'IG_Option_Model' => __DIR__ . '/database/ig-option-model.php',
-        'IG_Grid' => __DIR__ . '/database/ig-grid.php',
-        'IG_Form' => __DIR__ . '/form/ig-form.php',
-        'IG_Active_Form' => __DIR__ . '/form/ig-active-form.php',
-        'IG_Form_Generator' => __DIR__ . '/generator/ig-form-generator.php',
-        'IG_Request' => __DIR__ . '/request/ig-request.php',
-        'IG_Logger' => __DIR__ . '/logger/ig-logger.php',
+        'IG_Model' => dirname(__FILE__) . '/database/ig-model.php',
+        'IG_Post_Model' => dirname(__FILE__) . '/database/ig-post-model.php',
+        'IG_DB_Model' => dirname(__FILE__) . '/database/ig-db-model.php',
+        'IG_Option_Model' => dirname(__FILE__) . '/database/ig-option-model.php',
+        'IG_Grid' => dirname(__FILE__) . '/database/ig-grid.php',
+        'IG_Form' => dirname(__FILE__) . '/form/ig-form.php',
+        'IG_Active_Form' => dirname(__FILE__) . '/form/ig-active-form.php',
+        'IG_Form_Generator' => dirname(__FILE__) . '/generator/ig-form-generator.php',
+        'IG_Request' => dirname(__FILE__) . '/request/ig-request.php',
+        'IG_Logger' => dirname(__FILE__) . '/logger/ig-logger.php',
     );
 
     if (isset($classes[$class])) {
         require_once $classes[$class];
     } else {
         // Customize this to your root Flourish directory
-        $flourish_root = __DIR__ . '/vendors/flourishlib/';
+        $flourish_root = dirname(__FILE__) . '/vendors/flourishlib/';
 
         $file = $flourish_root . $class . '.php';
 
@@ -37,10 +36,10 @@ function ig_loader($class)
     }
 }
 
-include_once __DIR__ . '/vendors/Container.php';
+include_once dirname(__FILE__) . '/vendors/Container.php';
 
 if (!class_exists('RedBean_SimpleModel')) {
-    include_once __DIR__ . '/vendors/rb.php';
+    include_once dirname(__FILE__) . '/vendors/rb.php';
 }
 
 if (!function_exists('ig_enqueue_scripts')) {

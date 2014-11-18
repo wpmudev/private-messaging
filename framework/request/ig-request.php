@@ -14,9 +14,9 @@ if (!class_exists('IG_Request')) {
          */
         public function render($view, $params = array(), $output = true)
         {
-            $pool = explode('\\', __DIR__);
+            $pool = explode('\\', dirname(__FILE__));
             //we will get the path below the controller
-            $reflector = new \ReflectionClass(get_called_class());
+            $reflector = new ReflectionClass(get_class($this));
 
             $base_path = substr($reflector->getFileName(), 0, stripos($reflector->getFileName(), 'controllers'));
 
@@ -43,7 +43,7 @@ if (!class_exists('IG_Request')) {
         public function render_partial($view, $params = array(), $output = true)
         {
             //we will get the path below the controller
-            $reflector = new \ReflectionClass(get_called_class());
+            $reflector = new ReflectionClass(get_class($this));
             
             $base_path = substr($reflector->getFileName(), 0, stripos($reflector->getFileName(), 'controllers'));
             $view_path = $base_path . '/views/' . $view . '.php';
@@ -70,7 +70,7 @@ if (!class_exists('IG_Request')) {
 
         public function set_flash($key, $message)
         {
-            $class = get_called_class();
+            $class = get_class($this);
             $db = get_option('ig_flash');
             if (!is_array($db)) {
                 $db = array();
@@ -83,7 +83,7 @@ if (!class_exists('IG_Request')) {
         public function has_flash($key)
         {
             $db = get_option('ig_flash');
-            $class = get_called_class();
+            $class = get_class($this);
             $index = $class . '_' . $key;
             return isset($db[$index]);
         }
@@ -91,7 +91,7 @@ if (!class_exists('IG_Request')) {
         public function get_flash($key)
         {
             $db = get_option('ig_flash');
-            $class = get_called_class();
+            $class = get_class($this);
             $index = $class . '_' . $key;
             if (isset($db[$index])) {
                 $msg = $db[$index];

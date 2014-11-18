@@ -88,7 +88,7 @@ if ( ! class_exists( 'IG_Model' ) ) {
 		 */
 		public function validate() {
 			$this->before_validate();
-			require_once dirname( __DIR__ ) . '/vendors/gump.class.php';
+			require_once dirname( dirname(__FILE__) ) . '/vendors/gump.class.php';
 			$validator = new GUMP();
 			$validated = $validator->is_valid( $this->export(), $this->rules );
 			if ( $validated === true ) {
@@ -176,10 +176,10 @@ if ( ! class_exists( 'IG_Model' ) ) {
 		 */
 		public function export() {
 			$data        = array();
-			$ref_class   = new ReflectionClass( get_called_class() );
+			$ref_class   = new ReflectionClass( get_class($this) );
 			$system_prop = array( 'exist', 'errors', 'table', 'rules', 'relations', 'mapped', 'toolbox', 'pk' );
 			foreach ( $ref_class->getProperties() as $prop ) {
-				if ( $prop->class == get_called_class() && ! in_array( $prop->name, $system_prop ) ) {
+				if ( $prop->class == get_class($this) && ! in_array( $prop->name, $system_prop ) ) {
 					$data[ $prop->name ] = $this->{$prop->name};
 				}
 			}

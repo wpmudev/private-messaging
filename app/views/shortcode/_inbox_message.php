@@ -59,7 +59,7 @@ if (!isset($render_reply)) {
             <div class="message-footer">
                 <div class="row">
                     <?php foreach ($ids as $id): ?>
-                        <?php $a_m = IG_Uploader_Model::find($id); ?>
+                        <?php $a_m = IG_Uploader_Model::model()->find($id); ?>
                         <div class="col-md-6 message-attachment">
                             <a class="load-attachment-info" data-target="#<?php echo $id ?>" href="#">
                                 <i class="fa fa-paperclip fa-2x pull-left"></i>

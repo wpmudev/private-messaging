@@ -44,7 +44,7 @@ class MM_Conversation_Model extends IG_DB_Model
     {
         $ids = explode(',', $this->index);
         $ids = array_unique(array_filter($ids));
-        $models = MM_Message_Model::all_with_condition(array(
+        $models = MM_Message_Model::model()->all_with_condition(array(
             'post__in' => $ids,
             'post_status' => 'publish',
             'nopaging' => true
@@ -64,7 +64,8 @@ AND send_to.meta_value = %d ORDER BY conv.date DESC";
         if (empty($ids)) {
             return array();
         }
-        $models = self::all_with_condition('id IN (' . implode(',', $ids) . ') ORDER BY date DESC');
+        $models = MM_Conversation_Model::model()->all_with_condition('id IN (' . implode(',', $ids) . ') ORDER BY date DESC');
+
         return $models;
     }
 
@@ -74,7 +75,7 @@ AND send_to.meta_value = %d ORDER BY conv.date DESC";
         $ids = array_unique(array_filter($ids));
         $id = array_pop($ids);
 
-        $model = MM_Message_Model::find($id);
+        $model = MM_Message_Model::model()->find($id);
         if (is_object($model)) {
             return $model;
         }
@@ -85,7 +86,7 @@ AND send_to.meta_value = %d ORDER BY conv.date DESC";
         $ids = explode(',', $this->index);
         $ids = array_unique(array_filter($ids));
         $id = array_shift($ids);
-        $model = MM_Message_Model::find($id);
+        $model = MM_Message_Model::model()->find($id);
         if (is_object($model)) {
             return $model;
         }
@@ -113,7 +114,7 @@ AND send_to.meta_value = %d ORDER BY conv.date DESC";
 
     public function update_count()
     {
-        $models = MM_Message_Model::all_with_condition(array(
+        $models = MM_Message_Model::model()->all_with_condition(array(
             'nopaging' => true,
             'meta_query' => array(
                 array(
@@ -168,7 +169,7 @@ AND send_to.meta_value = %d AND stat.meta_value=%s ORDER BY conv.date DESC";
         if (empty($ids)) {
             return array();
         }
-        $models = self::all_with_condition('id IN (' . implode(',', $ids) . ') ORDER BY date DESC');
+        $models =  MM_Conversation_Model::model()->all_with_condition('id IN (' . implode(',', $ids) . ') ORDER BY date DESC');
         return $models;
     }
 
@@ -185,7 +186,7 @@ AND send_to.meta_value = %d AND stat.meta_value=%s ORDER BY conv.date DESC";
         if (empty($ids)) {
             return array();
         }
-        $models = self::all_with_condition('id IN (' . implode(',', $ids) . ') ORDER BY date DESC');
+        $models =  MM_Conversation_Model::model()->all_with_condition('id IN (' . implode(',', $ids) . ') ORDER BY date DESC');
         return $models;
     }
 
@@ -200,7 +201,7 @@ INNER JOIN wp_mm_conversation conv ON conv.id = conv_id.meta_value
         if (empty($ids)) {
             return array();
         }
-        $models = self::all_with_condition('id IN (' . implode(',', $ids) . ') ORDER BY date DESC');
+        $models = MM_Conversation_Model::model()->all_with_condition('id IN (' . implode(',', $ids) . ') ORDER BY date DESC');
         return $models;
     }
 
@@ -208,7 +209,7 @@ INNER JOIN wp_mm_conversation conv ON conv.id = conv_id.meta_value
     {
         $ids = explode(',', $this->index);
         $ids = array_unique(array_filter($ids));
-        $models = MM_Message_Model::all_with_condition(array(
+        $models = MM_Message_Model::model()->all_with_condition(array(
             'post__in' => $ids,
             'post_status' => 'publish',
             'nopaging' => true,
@@ -227,7 +228,7 @@ INNER JOIN wp_mm_conversation conv ON conv.id = conv_id.meta_value
     {
         $ids = explode(',', $this->index);
         $ids = array_unique(array_filter($ids));
-        $models = MM_Message_Model::all_with_condition(array(
+        $models = MM_Message_Model::model()->all_with_condition(array(
             'post__in' => $ids,
             'post_status' => 'publish',
             'nopaging' => true,
@@ -286,7 +287,7 @@ INNER JOIN wp_mm_conversation conv ON conv.id = conv_id.meta_value
 
     public static function search($query)
     {
-        $ms = MM_Message_Model::all_with_condition(array(
+        $ms = MM_Message_Model::model()->all_with_condition(array(
             's' => $query,
             'status' => 'publish',
             'meta_query' => array(
@@ -326,5 +327,10 @@ INNER JOIN wp_mm_conversation conv ON conv.id = conv_id.meta_value
         global $wpdb;
 
         return $wpdb->base_prefix . $this->table;
+    }
+
+    public static function model($class_name = __CLASS__)
+    {
+        return parent::model($class_name);
     }
 }
