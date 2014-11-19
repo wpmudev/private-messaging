@@ -38,7 +38,7 @@ if (!isset($render_reply)) {
                             if ($message->send_from == get_current_user_id()) {
                                 echo __("me", mmg()->domain) . ' (' . $message->get_name($message->send_from) . ')';
                             } else {
-                                $message->get_name($message->send_from);
+                                echo $message->get_name($message->send_from);
                             }?></strong>
 
                         <p><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></p>

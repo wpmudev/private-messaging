@@ -238,3 +238,307 @@ GROUP BY conversation.id
 INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
 INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
 GROUP BY conversation.id
+[2014-11-19 16:44:21] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+GROUP BY conversation.id
+[2014-11-19 16:44:22] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+GROUP BY conversation.id
+[2014-11-19 16:45:45] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+GROUP BY conversation.id
+[2014-11-19 16:45:47] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+GROUP BY conversation.id
+[2014-11-19 16:45:48] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+GROUP BY conversation.id
+[2014-11-19 16:45:50] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+GROUP BY conversation.id
+[2014-11-19 16:45:51] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+GROUP BY conversation.id
+[2014-11-19 16:45:53] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+GROUP BY conversation.id
+[2014-11-19 16:46:52] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:47:06] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:47:51] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:47:59] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:48:05] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:48:08] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:48:10] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:48:11] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:48:29] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:48:31] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:48:56] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:48:59] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:49:06] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:49:24] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:49:26] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:49:29] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:49:31] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:49:40] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:49:42] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:49:44] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:49:45] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:49:47] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:49:49] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:50:01] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:50:05] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:50:09] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:50:12] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:50:14] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:50:20] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:50:21] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:50:32] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:50:42] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:50:44] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:50:46] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:52:26] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:52:28] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:52:30] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:52:32] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:52:35] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:52:37] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:52:40] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:52:42] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:52:50] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:52:54] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:53:00] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:53:28] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 0
+
+[2014-11-19 16:53:32] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 3
+
+[2014-11-19 16:53:37] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 3
+
+[2014-11-19 16:53:39] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 3
+
+[2014-11-19 16:53:40] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 3
+
+[2014-11-19 16:54:58] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:00] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:02] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:03] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:04] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:08] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:10] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:14] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:15] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:17] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:55:30] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 3
+
+[2014-11-19 16:55:43] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 3
+
+[2014-11-19 16:55:45] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:55:53] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:56:53] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:56:56] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 1
+
+[2014-11-19 16:57:51] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+
+[2014-11-19 16:58:39] [INFO] SELECT conversation.id FROM wp_mm_conversation conversation
+INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
+INNER JOIN wp_postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = 2
+

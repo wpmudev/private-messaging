@@ -63,7 +63,6 @@ class MM_Conversation_Model extends IG_DB_Model {
 		$sql = "SELECT conversation.id FROM {$wpdb->base_prefix}mm_conversation conversation
 INNER JOIN {$wpdb->prefix}postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
 INNER JOIN {$wpdb->prefix}postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS UNSIGNED) = %d
-GROUP BY conversation.id
 ORDER BY conversation.date DESC LIMIT $offset,$per_page";
 
 		$ids = $wpdb->get_col( $wpdb->prepare( $sql, get_current_user_id() ) );
@@ -213,10 +212,8 @@ ORDER BY conversation.date DESC LIMIT $offset,$per_page";
 		$total_pages                              = ceil( self::count_all() / $per_page );
 		mmg()->global['conversation_total_pages'] = $total_pages;
 
-		$sql = "SELECT conversation.id FROM wp_mm_conversation conversation
-INNER JOIN wp_postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
-INNER JOIN wp_posts posts ON posts.ID = con_id.post_id
-WHERE posts.post_author=%d
+		$sql = "SELECT conversation.id FROM {$wpdb->base_prefix}mm_conversation conversation
+WHERE conversation.from=%d
 ORDER BY conversation.date DESC LIMIT $offset,$per_page";
 
 		$ids = $wpdb->get_col( $wpdb->prepare( $sql, get_current_user_id(), MM_Message_Model::UNREAD ) );
@@ -282,10 +279,10 @@ ORDER BY conversation.date DESC LIMIT $offset,$per_page";
 			$sql = "SELECT conversation.id FROM {$wpdb->base_prefix}mm_conversation conversation
 INNER JOIN {$wpdb->prefix}postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
 INNER JOIN {$wpdb->prefix}postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = %d
-GROUP BY conversation.id";
+";
 			mmg()->get_logger()->log($wpdb->prepare( $sql, get_current_user_id()));
 			$count = $wpdb->get_col( $wpdb->prepare( $sql, get_current_user_id() ) );
-			wp_cache_set( 'mm_count_all', count($count) );
+			wp_cache_set( 'mm_count_all', count(array_unique($count)) );
 		}
 
 		return wp_cache_get( 'mm_count_all' );
@@ -297,11 +294,10 @@ GROUP BY conversation.id";
 			$sql = "SELECT conversation.id FROM {$wpdb->base_prefix}mm_conversation conversation
 INNER JOIN {$wpdb->prefix}postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
 INNER JOIN {$wpdb->prefix}postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = %d
-INNER JOIN {$wpdb->prefix}postmeta mstat ON mstat.post_id = con_id.post_id AND mstat.meta_key='_status' AND mstat.meta_value=%s
-GROUP BY conversation.id";
+INNER JOIN {$wpdb->prefix}postmeta mstat ON mstat.post_id = con_id.post_id AND mstat.meta_key='_status' AND mstat.meta_value=%s";
 
 			$count = $wpdb->get_col( $wpdb->prepare( $sql, get_current_user_id(), MM_Message_Model::UNREAD ) );
-			wp_cache_set( 'mm_count_unread', count($count) );
+			wp_cache_set( 'mm_count_unread', count(array_unique($count)) );
 		}
 
 		return wp_cache_get( 'mm_count_unread' );
