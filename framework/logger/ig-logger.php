@@ -14,7 +14,7 @@ if (!class_exists('IG_Logger')) {
         public function __construct($type, $location)
         {
             $this->type = $type;
-            $path = dirname(__DIR__) . '/runtime/' . $location;
+            $path = dirname(dirname(__FILE__)) . '/runtime/' . $location;
             $this->location = $path;
         }
 

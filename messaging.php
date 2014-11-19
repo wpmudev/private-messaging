@@ -27,55 +27,54 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
-if (!class_exists('MMessaging')) {
-    require_once (dirname(__FILE__) . '/framework/loader.php');
+if ( ! class_exists( 'MMessaging' ) ) {
+	require_once( dirname( __FILE__ ) . '/framework/loader.php' );
 
-    class MMessaging
-    {
-        public $plugin_url;
-        public $plugin_path;
-        public $domain;
-        public $prefix;
+	class MMessaging {
+		public $plugin_url;
+		public $plugin_path;
+		public $domain;
+		public $prefix;
 
-        public $version = "1.2";
+		public $version = "1.2";
 
-        private static $_instance;
+		public $global = array();
 
-        private function __construct()
-        {
-            //variables init
-            $this->plugin_url = plugin_dir_url(__FILE__);
-            $this->plugin_path = plugin_dir_path(__FILE__);
-            $this->domain = 'private_messaging';
-            $this->prefix = 'mm_';
-            //load the framework
+		private static $_instance;
 
-            //autoload
-            spl_autoload_register(array(&$this, 'autoload'));
+		private function __construct() {
+			//variables init
+			$this->plugin_url  = plugin_dir_url( __FILE__ );
+			$this->plugin_path = plugin_dir_path( __FILE__ );
+			$this->domain      = 'private_messaging';
+			$this->prefix      = 'mm_';
+			//load the framework
 
-            //enqueue scripts, use it here so both frontend and backend can use
-            add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
-            add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
+			//autoload
+			spl_autoload_register( array( &$this, 'autoload' ) );
 
-            $this->check_upgrade();
-            add_action('init', array(&$this, 'dispatch'));
-        }
+			//enqueue scripts, use it here so both frontend and backend can use
+			add_action( 'wp_enqueue_scripts', array( &$this, 'scripts' ) );
+			add_action( 'admin_enqueue_scripts', array( &$this, 'scripts' ) );
 
-        function check_upgrade()
-        {
-            global $wpdb;
+			$this->check_upgrade();
+			add_action( 'init', array( &$this, 'dispatch' ) );
+		}
 
-            $charset_collate = '';
+		function check_upgrade() {
+			global $wpdb;
 
-            if (!empty($wpdb->charset)) {
-                $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
-            }
+			$charset_collate = '';
 
-            if (!empty($wpdb->collate)) {
-                $charset_collate .= " COLLATE {$wpdb->collate}";
-            }
+			if ( ! empty( $wpdb->charset ) ) {
+				$charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
+			}
 
-            $sql = "-- ----------------------------;
+			if ( ! empty( $wpdb->collate ) ) {
+				$charset_collate .= " COLLATE {$wpdb->collate}";
+			}
+
+			$sql = "-- ----------------------------;
 CREATE TABLE `wp_mm_conversation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime DEFAULT NULL,
@@ -87,256 +86,270 @@ CREATE TABLE `wp_mm_conversation` (
   UNIQUE KEY id (id)
 ) $charset_collate;";
 
-            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") !== $wpdb->base_prefix . 'mm_conversation') {
-                //do upgrade
-                require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                dbDelta($sql);
-            }
-        }
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'" ) !== $wpdb->base_prefix . 'mm_conversation' ) {
+				//do upgrade
+				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+				dbDelta( $sql );
+			}
+		}
 
-        function scripts()
-        {
-            wp_enqueue_script('jquery');
-            wp_enqueue_script('ig-bootstrap');
-            if (is_admin()) {
-                wp_enqueue_style('ig-bootstrap');
-            } else {
-                wp_enqueue_style(apply_filters('mm_front_theme', 'ig-bootstrap'));
-            }
-            wp_enqueue_style('ig-fontawesome');
+		function scripts() {
+			wp_enqueue_script( 'jquery' );
+			wp_enqueue_script( 'ig-bootstrap' );
+			if ( is_admin() ) {
+				wp_enqueue_style( 'ig-bootstrap' );
+			} else {
+				wp_enqueue_style( apply_filters( 'mm_front_theme', 'ig-bootstrap' ) );
+			}
+			wp_enqueue_style( 'ig-fontawesome' );
 
-            wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
-            wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);
-            wp_register_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array('jquery'), $this->version);
+			wp_register_style( 'mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version );
+			wp_register_style( 'mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version );
+			wp_register_script( 'mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array( 'jquery' ), $this->version );
 
-            wp_register_script('selectivejs', $this->plugin_url . 'assets/selectivejs/js/standalone/selectize.js', array('jquery'), $this->version);
-            wp_register_style('selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array(), $this->version);
+			wp_register_script( 'selectivejs', $this->plugin_url . 'assets/selectivejs/js/standalone/selectize.js', array( 'jquery' ), $this->version );
+			wp_register_style( 'selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array(), $this->version );
 
-        }
+		}
 
-        function dispatch()
-        {
-            //load post type
-            $this->load_post_type();
+		function dispatch() {
+			//load post type
+			$this->load_post_type();
 
-            if (is_admin()) {
-                $backend = new MM_Backend();
-            } else {
-                $front = new MM_Frontend();
-            }
-            //include components we need to use
-            include $this->plugin_path . 'app/components/ig-uploader.php';
-            include $this->plugin_path . 'app/components/mm-addon-table.php';
-            //load add on
-            $addons = $this->setting()->plugins;
-            if (!is_array($addons))
-                $addons = array();
-            foreach ($addons as $addon) {
-                if (file_exists($addon))
-                    include_once $addon;
-            }
-            //loading add on & components
-            new MAjax();
-            $inbox_sc = new Inbox_Shortcode_Controller();
-            $messge_me_sc = new Message_Me_Shortcode_Controller();
-            $admin_bar_notification = new Admin_Bar_Notification_Controller();
-        }
+			if ( is_admin() ) {
+				$backend = new MM_Backend();
+			} else {
+				$front = new MM_Frontend();
+			}
+			//include components we need to use
+			include $this->plugin_path . 'app/components/ig-uploader.php';
+			include $this->plugin_path . 'app/components/mm-addon-table.php';
+			//load add on
+			$addons = $this->setting()->plugins;
+			if ( ! is_array( $addons ) ) {
+				$addons = array();
+			}
+			foreach ( $addons as $addon ) {
+				if ( file_exists( $addon ) ) {
+					include_once $addon;
+				}
+			}
+			//loading add on & components
+			new MAjax();
+			$inbox_sc               = new Inbox_Shortcode_Controller();
+			$messge_me_sc           = new Message_Me_Shortcode_Controller();
+			$admin_bar_notification = new Admin_Bar_Notification_Controller();
+		}
 
-        function load_post_type()
-        {
-            $args = array(
-                'supports' => array(),
-                'hierarchical' => false,
-                'public' => false,
-                'show_ui' => false,
-                'show_in_menu' => false,
-                'show_in_nav_menus' => false,
-                'show_in_admin_bar' => false,
-                'can_export' => true,
-                'has_archive' => false,
-                'exclude_from_search' => false,
-                'publicly_queryable' => true,
-                'capability_type' => 'page',
-            );
-            register_post_type('mm_message', $args);
-        }
+		function load_post_type() {
+			$args = array(
+				'supports'            => array(),
+				'hierarchical'        => false,
+				'public'              => false,
+				'show_ui'             => false,
+				'show_in_menu'        => false,
+				'show_in_nav_menus'   => false,
+				'show_in_admin_bar'   => false,
+				'can_export'          => true,
+				'has_archive'         => false,
+				'exclude_from_search' => false,
+				'publicly_queryable'  => true,
+				'capability_type'     => 'page',
+			);
+			register_post_type( 'mm_message', $args );
+		}
 
-        function autoload($class)
-        {
-            $filename = str_replace('_', '-', strtolower($class)) . '.php';
-            if (strstr($filename, '-controller.php')) {
-                //looking in the controllers folder and sub folders to get this class
-                $files = $this->listFolderFiles($this->plugin_path . 'app/controllers');
-                foreach ($files as $file) {
-                    if (strcmp($filename, pathinfo($file, PATHINFO_BASENAME)) === 0) {
-                        include_once $file;
-                        break;
-                    }
-                }
-            } elseif (strstr($filename, '-model.php')) {
-                $files = $this->listFolderFiles($this->plugin_path . 'app/models');
+		function autoload( $class ) {
+			$filename = str_replace( '_', '-', strtolower( $class ) ) . '.php';
+			if ( strstr( $filename, '-controller.php' ) ) {
+				//looking in the controllers folder and sub folders to get this class
+				$files = $this->listFolderFiles( $this->plugin_path . 'app/controllers' );
+				foreach ( $files as $file ) {
+					if ( strcmp( $filename, pathinfo( $file, PATHINFO_BASENAME ) ) === 0 ) {
+						include_once $file;
+						break;
+					}
+				}
+			} elseif ( strstr( $filename, '-model.php' ) ) {
+				$files = $this->listFolderFiles( $this->plugin_path . 'app/models' );
 
-                foreach ($files as $file) {
-                    if (strcmp($filename, pathinfo($file, PATHINFO_BASENAME)) === 0) {
-                        include_once $file;
-                        break;
-                    }
-                }
-            } else {
-                //include normal file inside app folder
-                if (file_exists($this->plugin_path . 'app/' . $filename)) {
-                    include_once $this->plugin_path . 'app/' . $filename;
-                }
-            }
-        }
+				foreach ( $files as $file ) {
+					if ( strcmp( $filename, pathinfo( $file, PATHINFO_BASENAME ) ) === 0 ) {
+						include_once $file;
+						break;
+					}
+				}
+			} else {
+				//include normal file inside app folder
+				if ( file_exists( $this->plugin_path . 'app/' . $filename ) ) {
+					include_once $this->plugin_path . 'app/' . $filename;
+				}
+			}
+		}
 
-        public static function get_instance()
-        {
-            if (!self::$_instance instanceof MMessaging) {
-                self::$_instance = new MMessaging();
-            }
-            return self::$_instance;
-        }
+		public static function get_instance() {
+			if ( ! self::$_instance instanceof MMessaging ) {
+				self::$_instance = new MMessaging();
+			}
 
-        function listFolderFiles($dir)
-        {
-            $ffs = scandir($dir);
-            $i = 0;
-            $list = array();
-            foreach ($ffs as $ff) {
-                if ($ff != '.' && $ff != '..') {
-                    if (strlen($ff) >= 5) {
-                        if (substr($ff, -4) == '.php') {
-                            $list[] = $dir . '/' . $ff;
-                        }
-                    }
-                    if (is_dir($dir . '/' . $ff))
-                        $list = array_merge($list, $this->listFolderFiles($dir . '/' . $ff));
-                }
-            }
-            return $list;
-        }
+			return self::$_instance;
+		}
 
-        function get_avatar_url($get_avatar)
-        {
-            if (preg_match("/src='(.*?)'/i", $get_avatar, $matches)) {
-                preg_match("/src='(.*?)'/i", $get_avatar, $matches);
-                return $matches[1];
-            } else {
-                preg_match("/src=\"(.*?)\"/i", $get_avatar, $matches);
-                return $matches[1];
-            }
-        }
+		function listFolderFiles( $dir ) {
+			$ffs  = scandir( $dir );
+			$i    = 0;
+			$list = array();
+			foreach ( $ffs as $ff ) {
+				if ( $ff != '.' && $ff != '..' ) {
+					if ( strlen( $ff ) >= 5 ) {
+						if ( substr( $ff, - 4 ) == '.php' ) {
+							$list[] = $dir . '/' . $ff;
+						}
+					}
+					if ( is_dir( $dir . '/' . $ff ) ) {
+						$list = array_merge( $list, $this->listFolderFiles( $dir . '/' . $ff ) );
+					}
+				}
+			}
 
-        function mb_word_wrap($string, $max_length = 100, $end_substitute = null, $html_linebreaks = false)
-        {
+			return $list;
+		}
 
-            if ($html_linebreaks) $string = preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
-            $string = strip_tags($string); //gets rid of the HTML
+		function get_avatar_url( $get_avatar ) {
+			if ( preg_match( "/src='(.*?)'/i", $get_avatar, $matches ) ) {
+				preg_match( "/src='(.*?)'/i", $get_avatar, $matches );
 
-            if (empty($string) || mb_strlen($string) <= $max_length) {
-                if ($html_linebreaks) $string = nl2br($string);
-                return $string;
-            }
+				return $matches[1];
+			} else {
+				preg_match( "/src=\"(.*?)\"/i", $get_avatar, $matches );
 
-            if ($end_substitute) $max_length -= mb_strlen($end_substitute, 'UTF-8');
+				return $matches[1];
+			}
+		}
 
-            $stack_count = 0;
-            while ($max_length > 0) {
-                $char = mb_substr($string, --$max_length, 1, 'UTF-8');
-                if (preg_match('#[^\p{L}\p{N}]#iu', $char)) $stack_count++; //only alnum characters
-                elseif ($stack_count > 0) {
-                    $max_length++;
-                    break;
-                }
-            }
-            $string = mb_substr($string, 0, $max_length, 'UTF-8') . $end_substitute;
-            if ($html_linebreaks) $string = nl2br($string);
+		function mb_word_wrap( $string, $max_length = 100, $end_substitute = null, $html_linebreaks = false ) {
 
-            return $string;
-        }
+			if ( $html_linebreaks ) {
+				$string = preg_replace( '/\<br(\s*)?\/?\>/i', "\n", $string );
+			}
+			$string = strip_tags( $string ); //gets rid of the HTML
 
-        function encrypt($text)
-        {
-            if (function_exists('mcrypt_encrypt')) {
-                return str_replace('fCryptography::symmetric', '', fCryptography::symmetricKeyEncrypt($text, SECURE_AUTH_KEY));
-            } else {
-                return $text;
-            }
-        }
+			if ( empty( $string ) || mb_strlen( $string ) <= $max_length ) {
+				if ( $html_linebreaks ) {
+					$string = nl2br( $string );
+				}
 
-        function decrypt($text)
-        {
-            if (function_exists('mcrypt_encrypt')) {
-                $text = 'fCryptography::symmetric' . $text;
-                return fCryptography::symmetricKeyDecrypt($text, SECURE_AUTH_KEY);
-            } else {
-                return $text;
-            }
-        }
+				return $string;
+			}
 
-        function get_available_addon()
-        {
-            //load all shortcode
-            $coms = glob($this->plugin_path . 'app/addons/*.php');
-            $data = array();
-            foreach ($coms as $com) {
-                if (file_exists($com)) {
-                    $meta = get_file_data($com, array(
-                        'Name' => 'Name',
-                        'Author' => 'Author',
-                        'Description' => 'Description',
-                        'AuthorURI' => 'Author URI',
-                        'Network' => 'Network'
-                    ), 'component');
+			if ( $end_substitute ) {
+				$max_length -= mb_strlen( $end_substitute, 'UTF-8' );
+			}
 
-                    if (strlen(trim($meta['Name'])) > 0) {
-                        $data[$com] = $meta;
-                    }
-                }
-            }
-            return $data;
-        }
+			$stack_count = 0;
+			while ( $max_length > 0 ) {
+				$char = mb_substr( $string, -- $max_length, 1, 'UTF-8' );
+				if ( preg_match( '#[^\p{L}\p{N}]#iu', $char ) ) {
+					$stack_count ++;
+				} //only alnum characters
+				elseif ( $stack_count > 0 ) {
+					$max_length ++;
+					break;
+				}
+			}
+			$string = mb_substr( $string, 0, $max_length, 'UTF-8' ) . $end_substitute;
+			if ( $html_linebreaks ) {
+				$string = nl2br( $string );
+			}
 
-        function setting()
-        {
-            $setting = new MM_Setting_Model();
-            $setting->load();
-            return $setting;
-        }
+			return $string;
+		}
 
-        function html_beautifier($html)
-        {
-            require_once $this->plugin_path . 'vendors/SmartDOMDocument.class.php';
-            $x = new SmartDOMDocument();
-            $x->loadHTML($html);
-            $clean = $x->saveHTMLExact();
-            return $clean;
-        }
+		function encrypt( $text ) {
+			if ( function_exists( 'mcrypt_encrypt' ) ) {
+				return str_replace( 'fCryptography::symmetric', '', fCryptography::symmetricKeyEncrypt( $text, SECURE_AUTH_KEY ) );
+			} else {
+				return $text;
+			}
+		}
 
-        function get_logger($type = 'file', $location = '')
-        {
-            if (empty($location)) {
-                $location = $this->domain;
-            }
-            $logger = new IG_Logger($type, $location);
-            return $logger;
-        }
-    }
+		function decrypt( $text ) {
+			if ( function_exists( 'mcrypt_encrypt' ) ) {
+				$text = 'fCryptography::symmetric' . $text;
+
+				return fCryptography::symmetricKeyDecrypt( $text, SECURE_AUTH_KEY );
+			} else {
+				return $text;
+			}
+		}
+
+		function get_available_addon() {
+			//load all shortcode
+			$coms = glob( $this->plugin_path . 'app/addons/*.php' );
+			$data = array();
+			foreach ( $coms as $com ) {
+				if ( file_exists( $com ) ) {
+					$meta = get_file_data( $com, array(
+						'Name'        => 'Name',
+						'Author'      => 'Author',
+						'Description' => 'Description',
+						'AuthorURI'   => 'Author URI',
+						'Network'     => 'Network'
+					), 'component' );
+
+					if ( strlen( trim( $meta['Name'] ) ) > 0 ) {
+						$data[ $com ] = $meta;
+					}
+				}
+			}
+
+			return $data;
+		}
+
+		function setting() {
+			$setting = new MM_Setting_Model();
+			$setting->load();
+
+			return $setting;
+		}
+
+		function html_beautifier( $html ) {
+			require_once $this->plugin_path . 'vendors/SmartDOMDocument.class.php';
+			$x = new SmartDOMDocument();
+			$x->loadHTML( $html );
+			$clean = $x->saveHTMLExact();
+
+			return $clean;
+		}
+
+		function get_logger( $type = 'file', $location = '' ) {
+			if ( empty( $location ) ) {
+				$location = $this->domain;
+			}
+			$logger = new IG_Logger( $type, $location );
+
+			return $logger;
+		}
+	}
 
 //include dashboard
-    global $wpmudev_notices;
-    $wpmudev_notices[] = array('id' => '', 'name' => 'Private Messaging', 'screens' => array(
-        'toplevel_page_mm_main', 'messaging_page_mm_setting', 'admin_page_mm_view'
-    ));
-    include_once(plugin_dir_path(__FILE__) . 'lib/dash-notices/wpmudev-dash-notification.php');
+	global $wpmudev_notices;
+	$wpmudev_notices[] = array(
+		'id'      => '',
+		'name'    => 'Private Messaging',
+		'screens' => array(
+			'toplevel_page_mm_main',
+			'messaging_page_mm_setting',
+			'admin_page_mm_view'
+		)
+	);
+	include_once( plugin_dir_path( __FILE__ ) . 'lib/dash-notices/wpmudev-dash-notification.php' );
 
-    function mmg()
-    {
-        return MMessaging::get_instance();
-    }
+	function mmg() {
+		return MMessaging::get_instance();
+	}
 
 //init once
-    mmg();
-    include_once mmg()->plugin_path . 'functions.php';
+	mmg();
+	include_once mmg()->plugin_path . 'functions.php';
 }

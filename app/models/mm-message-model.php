@@ -97,6 +97,8 @@ class MM_Message_Model extends IG_Post_Model
     {
         $c = MM_Conversation_Model::model()->find($this->conversation_id);
         $c->update_count();
+	    //clear cache
+
     }
 
     public static function model($class_name = __CLASS__)

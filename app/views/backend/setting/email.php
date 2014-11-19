@@ -4,6 +4,8 @@
     </div>
 
     <?php $form = new IG_Active_Form($model);
+    $data = stripslashes_deep($model->export());
+    $model->import($data);
     $form->open(array("attributes" => array("class" => "form-horizontal")));?>
 
     <div class="form-group <?php echo $model->has_error("noti_subject") ? "has-error" : null ?>">
