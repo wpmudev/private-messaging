@@ -280,7 +280,6 @@ ORDER BY conversation.date DESC LIMIT $offset,$per_page";
 INNER JOIN {$wpdb->prefix}postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
 INNER JOIN {$wpdb->prefix}postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = %d
 ";
-			mmg()->get_logger()->log($wpdb->prepare( $sql, get_current_user_id()));
 			$count = $wpdb->get_col( $wpdb->prepare( $sql, get_current_user_id() ) );
 			wp_cache_set( 'mm_count_all', count(array_unique($count)) );
 		}
