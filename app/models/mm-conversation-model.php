@@ -246,7 +246,6 @@ ORDER BY conversation.date DESC LIMIT $offset,$per_page";
 				)
 			),
 		) );
-		mmg()->get_logger()->log(var_export($models,true));
 		return count( $models ) > 0;
 	}
 
@@ -269,10 +268,10 @@ ORDER BY conversation.date DESC LIMIT $offset,$per_page";
 				)
 			),
 		) );
-		mmg()->get_logger()->log(var_export($models,true));
+		//mmg()->get_logger()->log(var_export($models,true));
 		foreach ( $models as $model ) {
 			$model->status = MM_Message_Model::READ;
-			var_dump($model->save());
+			$model->save();
 		}
 	}
 

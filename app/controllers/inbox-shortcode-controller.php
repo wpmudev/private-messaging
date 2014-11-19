@@ -45,9 +45,14 @@ class Inbox_Shortcode_Controller extends IG_Request {
 
 		$id    = mmg()->decrypt( fRequest::get( 'id' ) );
 		$model = MM_Conversation_Model::model()->find( $id );
-		$this->render_inbox_message( $model );
+		$html  = $this->render_inbox_message( $model );
 		do_action( 'mm_conversation_read', $model );
 		$model->mark_as_read();
+		fJSON::output( array(
+			'html'         => $html,
+			'count_unread' => MM_Conversation_Model::count_unread(),
+			'count_read'   => MM_Conversation_Model::count_read()
+		) );
 		exit;
 	}
 
@@ -246,9 +251,10 @@ class Inbox_Shortcode_Controller extends IG_Request {
 	function render_inbox_message( MM_Conversation_Model $model ) {
 		//get all the message from this conversation
 		$messages = $model->get_messages();
-		$this->render_partial( 'shortcode/_inbox_message', array(
+
+		return $this->render_partial( 'shortcode/_inbox_message', array(
 			'messages' => $messages
-		) );
+		), false );
 	}
 
 	/**

@@ -72,31 +72,33 @@
 		</div>
 		<div class="col-md-7 col-xs-9 col-sm-9 no-padding">
 			<div id="mmessage-content" class="ps-container ps-active-x ps-active-y">
-				<?php $this->render_inbox_message( reset( $models ) ) ?>
+				<?php echo $this->render_inbox_message( reset( $models ) ) ?>
 			</div>
 		</div>
 		<div class="clearfix"></div>
 	</div>
-	<div class="row mm-paging">
-		<div class="col-md-12 no-padding">
-			<?php if ( $paged <= 1 ): ?>
-				<a disabled href="#"
-				   class="btn btn-default btn-sm pull-left"><?php _e( "Previous", mmg()->domain ) ?></a>
-			<?php else: ?>
-				<a href="<?php echo add_query_arg( 'mpaged', $paged - 1 ) ?>"
-				   class="btn btn-default btn-sm pull-left"><?php _e( "Previous", mmg()->domain ) ?></a>
-			<?php endif; ?>
-			<?php if ( $paged >= $total_pages ): ?>
-				<a disabled href="#"
-				   class="btn btn-default btn-sm pull-right"><?php _e( "Next", mmg()->domain ) ?></a>
-			<?php else: ?>
-				<a href="<?php echo add_query_arg( 'mpaged', $paged + 1 ) ?>"
-				   class="btn btn-default btn-sm pull-right"><?php _e( "Next", mmg()->domain ) ?></a>
-			<?php endif; ?>
+	<?php if ( $total_pages > 1 ): ?>
+		<div class="row mm-paging">
+			<div class="col-md-12 no-padding">
+				<?php if ( $paged <= 1 ): ?>
+					<a disabled href="#"
+					   class="btn btn-default btn-sm pull-left"><?php _e( "Previous", mmg()->domain ) ?></a>
+				<?php else: ?>
+					<a href="<?php echo add_query_arg( 'mpaged', $paged - 1 ) ?>"
+					   class="btn btn-default btn-sm pull-left"><?php _e( "Previous", mmg()->domain ) ?></a>
+				<?php endif; ?>
+				<?php if ( $paged >= $total_pages ): ?>
+					<a disabled href="#"
+					   class="btn btn-default btn-sm pull-right"><?php _e( "Next", mmg()->domain ) ?></a>
+				<?php else: ?>
+					<a href="<?php echo add_query_arg( 'mpaged', $paged + 1 ) ?>"
+					   class="btn btn-default btn-sm pull-right"><?php _e( "Next", mmg()->domain ) ?></a>
+				<?php endif; ?>
+				<div class="clearfix"></div>
+			</div>
 			<div class="clearfix"></div>
 		</div>
-		<div class="clearfix"></div>
-	</div>
+	<?php endif; ?>
 	<script type="text/javascript">
 		jQuery(document).ready(function ($) {
 			$('.load-conv').click(function () {
@@ -112,11 +114,14 @@
 					beforeSend: function () {
 						that.css('cursor', 'wait');
 					},
-					success: function (html) {
+					success: function (data) {
 						that.css('cursor', 'pointer');
 						$('.load-conv').removeClass('active');
 						that.addClass('active read');
-						$('#mmessage-content').html(html);
+						$('.mm-admin-bar span').text(data.count_unread);
+						$('.unread-count').attr('data-original-title', data.count_unread + ' ' + $('.unread-count').data('text'));
+						$('.read-count').attr('data-original-title', data.count_read + ' ' + $('.read-count').data('text'));
+						$('#mmessage-content').html(data.html);
 
 						$('#mmessage-content').perfectScrollbar({
 							suppressScrollX: true

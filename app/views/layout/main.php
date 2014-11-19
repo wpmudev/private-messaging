@@ -10,16 +10,18 @@
                     <i class="fa fa-inbox"></i> <?php _e("Inbox", mmg()->domain) ?>
                 </a>
                 <a href="<?php echo add_query_arg('box', 'unread') ?>"
-                   class="mm-tooltip btn btn-default btn-sm <?php echo fRequest::get('box') == 'unread' ? 'active' : null ?>"
+                   class="mm-tooltip unread-count btn btn-default btn-sm <?php echo fRequest::get('box') == 'unread' ? 'active' : null ?>"
                    data-placement="top"
                    data-container=".mm-toolbar-btn"
+                   data-text="<?php _e("message(s)", mmg()->domain) ?>"
                    title="<?php echo MM_Conversation_Model::count_unread() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="fa fa-envelope"></i> <?php _e("Unread", mmg()->domain) ?>
                 </a>
                 <a href="<?php echo add_query_arg('box', 'read') ?>"
-                   class="mm-tooltip btn btn-default btn-sm <?php echo fRequest::get('box') == 'read' ? 'active' : null ?>"
+                   class="mm-tooltip btn read-count btn-default btn-sm <?php echo fRequest::get('box') == 'read' ? 'active' : null ?>"
                    data-placement="top"
                    data-container=".mm-toolbar-btn"
+                   data-text="<?php _e("message(s)", mmg()->domain) ?>"
                    title="<?php echo MM_Conversation_Model::count_read() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="glyphicon glyphicon-eye-open"></i> <?php _e("Read", mmg()->domain) ?>
                 </a>
