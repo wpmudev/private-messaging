@@ -1,4 +1,4 @@
-.igu-media-file, .igu-sample-file {
+.igu-media-file, .igu-sample-file, .igu-media-file-land {
     /*border: 1px solid #e7e7e7;*/
     -webkit-border-radius: 3px 3px 3px 3px;
     border-radius: 3px 3px 3px 3px;
@@ -205,6 +205,54 @@
 
 .igu-purple {
     background: #a7609a;
+}
+
+.igu-media-file-land {
+    width: 200px;
+    margin: 0;
+}
+
+.igu-media-file-land .well{
+    padding: 3px !important;
+    margin-bottom: 5px;
+}
+
+.igu-media-file-land .igu-media-file-thumbnail {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    float: left;
+}
+
+.igu-media-file-land .igu-media-file-thumbnail i {
+    text-align: center;
+    font-size: 33px;
+    line-height: 50px;
+    color: #ffffff;
+}
+
+.igu-media-file-land .igu-media-file-meta {
+    float: right;
+    width: 133px;
+    box-sizing: border-box;
+    padding-left: 5px;
+    position: relative;
+}
+
+.igu-media-file-land .igu-media-file-meta h5, .igu-media-file-land .igu-media-file-meta p {
+    margin: 0;
+}
+
+.igu-media-file-land .igu-media-file-meta h5 {
+    font-weight: 600;
+}
+.igu-media-file-land .igu-media-file-meta p {
+   padding-top: 8px;
+}
+
+.igu-media-file-land .igu-media-file-meta .btn-group-xs {
+    position: absolute;
+    right: 0
 }
 
 .file-view-port {

@@ -4,7 +4,7 @@ $c_id = uniqid();
 $f_id = uniqid();
 ?>
 <div id="<?php echo $c_id ?>">
-<div class="panel panel-default" style="border-width: 1px;position:relative;">
+<div class="panel panel-default" style="margin-bottom: 5px;border-width: 1px;position:relative;">
     <div class="panel-heading">
         <strong><?php _e('Attach images or files for extra information', ig_uploader()->domain) ?></strong>
         <button type="button"
@@ -16,7 +16,7 @@ $f_id = uniqid();
     <div class="panel-body file-view-port">
         <?php if (is_array($models) && count($models)): ?>
             <?php foreach ($models as $model): ?>
-                <?php $this->render_partial('_single_file', array(
+                <?php $this->render_partial(apply_filters('igu_single_file_template','_single_file'), array(
                     'model' => $model
                 )) ?>
             <?php endforeach; ?>
@@ -134,7 +134,7 @@ $f_id = uniqid();
                     var form = pop.$tip.find('form').first();
                     var cache_id = 'igu_cache_' + that.data('id');
                     window[cache_id] = form.serializeArray();
-                });
+                })
             }
         });
 
@@ -196,6 +196,7 @@ $f_id = uniqid();
         $('body').on('click', '.igu-file-delete', function () {
             var id = $(this).data('id');
             var that = $(this);
+	        var parent = that.closest('div').parent().parent();
             $.ajax({
                 type: 'POST',
                 url: '<?php echo admin_url('admin-ajax.php') ?>',
@@ -205,16 +206,17 @@ $f_id = uniqid();
                     _wpnonce: '<?php echo wp_create_nonce('igu_file_delete') ?>'
                 },
                 beforeSend: function () {
-                    that.parent().parent().find('button').attr('disabled', 'disabled');
-                    that.parent().parent().css('opacity', 0.5);
-
+                   /* that.parent().parent().find('button').attr('disabled', 'disabled');
+                    that.parent().parent().css('opacity', 0.5);*/
+	                parent.find('button').attr('disabled', 'disabled');
+	                parent.css('opacity', 0.5);
                 },
                 success: function () {
                     $('#<?php echo $target_id ?>').val($('#<?php echo $target_id ?>').val().replace(id, ''));
-                    that.parent().parent().remove();
+	                parent.remove();
                 }
             })
-        })
+        });
     })
 </script>
 </div>

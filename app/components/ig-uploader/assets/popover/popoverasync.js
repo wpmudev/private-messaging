@@ -81,6 +81,21 @@
         if (!this.$tip) this.$tip = $(this.options.template);
         return this.$tip
     };
+    PopoverAsync.prototype.getPosition = function ($element) {
+        $element   = $element || this.$element
+        //console.log($element);
+        if($element.is(':visible')==false){
+            //temp fix for dropdown
+            $element = $element.closest('ul').prev();
+        }
+        var el     = $element[0]
+        var isBody = el.tagName == 'BODY'
+        return $.extend({}, (typeof el.getBoundingClientRect == 'function') ? el.getBoundingClientRect() : null, {
+            scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop(),
+            width:  isBody ? $(window).width()  : $element.outerWidth(),
+            height: isBody ? $(window).height() : $element.outerHeight()
+        }, isBody ? { top: 0, left: 0 } : $element.offset())
+    }
 
 
     // EXTENDED POPOVER PLUGIN DEFINITION

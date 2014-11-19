@@ -2,156 +2,155 @@
 /**
  * Author: Hoang Ngo
  */
-if (!class_exists('IG_Uploader_Controller')) {
-    class IG_Uploader_Controller extends IG_Request
-    {
-        public function __construct()
-        {
-            add_action('wp_loaded', array(&$this, 'handler_upload'));
-            add_action('wp_ajax_igu_file_delete', array(&$this, 'delete_file'));
-            add_action('wp_ajax_iup_load_upload_form', array(&$this, 'load_upload_form'));
-        }
+if ( ! class_exists( 'IG_Uploader_Controller' ) ) {
+	class IG_Uploader_Controller extends IG_Request {
+		public function __construct() {
+			add_action( 'wp_loaded', array( &$this, 'handler_upload' ) );
+			add_action( 'wp_ajax_igu_file_delete', array( &$this, 'delete_file' ) );
+			add_action( 'wp_ajax_iup_load_upload_form', array( &$this, 'load_upload_form' ) );
+			add_filter( 'igu_single_file_template', array( &$this, 'single_file_template' ) );
+		}
 
-        function load_upload_form()
-        {
-            if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'iup_load_upload_form'))
-                return;
-            $id = fRequest::get('id', 'int', null);
-            $model = null;
-            if($id!==null) {
-                $model = IG_Uploader_Model::model()->find($id);
-            }
-            if (!is_object($model)) {
-                $model = new IG_Uploader_Model();
-            }
-            $this->render_partial('_uploader_form', array(
-                'model' => $model
-            ));
-            exit;
-        }
+		function single_file_template() {
+			return '_single_file_land';
+		}
 
-        function delete_file()
-        {
-            if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'igu_file_delete'))
-                return;
+		function load_upload_form() {
+			if ( ! wp_verify_nonce( fRequest::get( '_wpnonce' ), 'iup_load_upload_form' ) ) {
+				return;
+			}
+			$id    = fRequest::get( 'id', 'int', null );
+			$model = null;
+			if ( $id !== null ) {
+				$model = IG_Uploader_Model::model()->find( $id );
+			}
+			if ( ! is_object( $model ) ) {
+				$model = new IG_Uploader_Model();
+			}
+			$this->render_partial( '_uploader_form', array(
+				'model' => $model
+			) );
+			exit;
+		}
 
-            $model = IG_Uploader_Model::model()->find(fRequest::get('id', 'int', 0));
-            if (is_object($model)) {
-                $model->delete();
-            }
-            exit;
-        }
+		function delete_file() {
+			if ( ! wp_verify_nonce( fRequest::get( '_wpnonce' ), 'igu_file_delete' ) ) {
+				return;
+			}
 
-        function handler_upload()
-        {
-            if (fRequest::get('igu_uploading')) {
-                if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'igu_uploading'))
-                    return;
-                $model = '';
-                $id = fRequest::get('IG_Uploader_Model[id]', 'int', 0);
-                if ($id != 0) {
-                    $model = IG_Uploader_Model::model()->find($id);
-                }
-                if (!is_object($model)) {
-                    $model = new IG_Uploader_Model();
-                }
-                $model->import(fRequest::get('IG_Uploader_Model'));
-                if (isset($_FILES['IG_Uploader_Model'])) {
-                    $uploaded = $this->rearrange($_FILES['IG_Uploader_Model']);
-                    if (!empty($uploaded['file']['name'])) {
-                        $model->file_upload = $uploaded;
-                    }
-                }
-                if ($model->validate()) {
+			$model = IG_Uploader_Model::model()->find( fRequest::get( 'id', 'int', 0 ) );
+			if ( is_object( $model ) ) {
+				$model->delete();
+			}
+			exit;
+		}
 
-                    $model->save();
-                    fJSON::output(array(
-                        'status' => 'success',
-                        'html' => $this->render_single_file($model, true),
-                        'id' => $model->id
-                    ));
-                } else {
-                    fJSON::output(array(
-                        'status' => 'fail',
-                        'errors' => $model->get_errors()
-                    ));
-                }
-                exit;
-            }
-        }
+		function handler_upload() {
+			if ( fRequest::get( 'igu_uploading' ) ) {
+				if ( ! wp_verify_nonce( fRequest::get( '_wpnonce' ), 'igu_uploading' ) ) {
+					return;
+				}
+				$model = '';
+				$id    = fRequest::get( 'IG_Uploader_Model[id]', 'int', 0 );
+				if ( $id != 0 ) {
+					$model = IG_Uploader_Model::model()->find( $id );
+				}
+				if ( ! is_object( $model ) ) {
+					$model = new IG_Uploader_Model();
+				}
+				$model->import( fRequest::get( 'IG_Uploader_Model' ) );
+				if ( isset( $_FILES['IG_Uploader_Model'] ) ) {
+					$uploaded = $this->rearrange( $_FILES['IG_Uploader_Model'] );
+					if ( ! empty( $uploaded['file']['name'] ) ) {
+						$model->file_upload = $uploaded;
+					}
+				}
+				if ( $model->validate() ) {
 
-        public function upload_form($attribute, $target_model, $container)
-        {
-            wp_enqueue_style('igu-uploader');
-            wp_enqueue_script('popoverasync');
-            wp_enqueue_script('jquery-frame-transport');
+					$model->save();
+					fJSON::output( array(
+						'status' => 'success',
+						'html'   => $this->render_single_file( $model, true ),
+						'id'     => $model->id
+					) );
+				} else {
+					fJSON::output( array(
+						'status' => 'fail',
+						'errors' => $model->get_errors()
+					) );
+				}
+				exit;
+			}
+		}
 
-            $ids = $target_model->$attribute;
-            $models = array();
-            if (!is_array($ids)) {
-                $ids = explode(',', $ids);
-                $ids = array_filter(array_unique($ids));
-            }
-            if (!empty($ids)) {
-                $models = IG_Uploader_Model::all_with_condition(array(
-                    'status' => 'publish',
-                    'post__in' => $ids
-                ));
-            }
+		public function upload_form( $attribute, $target_model, $container ) {
+			wp_enqueue_style( 'igu-uploader' );
+			wp_enqueue_script( 'popoverasync' );
+			wp_enqueue_script( 'jquery-frame-transport' );
 
-            $mode = IG_Uploader_Model::MODE_EXTEND;
+			$ids    = $target_model->$attribute;
+			$models = array();
+			if ( ! is_array( $ids ) ) {
+				$ids = explode( ',', $ids );
+				$ids = array_filter( array_unique( $ids ) );
+			}
+			if ( ! empty( $ids ) ) {
+				$models = IG_Uploader_Model::all_with_condition( array(
+					'status'   => 'publish',
+					'post__in' => $ids
+				) );
+			}
 
-            if ($mode == IG_Uploader_Model::MODE_LITE) {
-                $this->_lite_form();
-            } else {
-                $this->_extend_form($models, $attribute, $target_model, $container);
-            }
-        }
+			$mode = IG_Uploader_Model::MODE_EXTEND;
 
-        public function render_single_file($model, $return = false)
-        {
-            if ($return) {
-                return $this->render_partial('_single_file', array(
-                    'model' => $model
-                ), false);
-            }
-            $this->render_partial('_single_file', array(
-                'model' => $model
-            ));
-        }
+			if ( $mode == IG_Uploader_Model::MODE_LITE ) {
+				$this->_lite_form();
+			} else {
+				$this->_extend_form( $models, $attribute, $target_model, $container );
+			}
+		}
 
-        public function _lite_form()
-        {
+		public function render_single_file( $model, $return = false ) {
+			if ( $return ) {
+				return $this->render_partial( apply_filters( 'igu_single_file_template', '_single_file' ), array(
+					'model' => $model
+				), false );
+			}
+			$this->render_partial( apply_filters( 'igu_single_file_template', '_single_file' ), array(
+				'model' => $model
+			) );
+		}
 
-        }
+		public function _lite_form() {
 
-        public function _extend_form($models, $attribute, $target_model, $container)
-        {
-            $cid = uniqid();
+		}
 
-            $this->render('_extend_form', array(
-                'models' => $models,
-                'tmodel' => $target_model,
-                'attribute' => $attribute,
-                'target_id' => $this->build_id($target_model, $attribute),
-                'container' => $container
-            ));
-        }
+		public function _extend_form( $models, $attribute, $target_model, $container ) {
+			$cid = uniqid();
 
-        function rearrange($arr)
-        {
-            foreach ($arr as $key => $all) {
-                foreach ($all as $i => $val) {
-                    $new[$i][$key] = $val;
-                }
-            }
-            return $new;
-        }
+			$this->render( '_extend_form', array(
+				'models'    => $models,
+				'tmodel'    => $target_model,
+				'attribute' => $attribute,
+				'target_id' => $this->build_id( $target_model, $attribute ),
+				'container' => $container
+			) );
+		}
 
-        private function build_id($model, $attribute)
-        {
-            $class_name = get_class($model);
-            return sanitize_title($class_name . '-' . $attribute);
-        }
-    }
+		function rearrange( $arr ) {
+			foreach ( $arr as $key => $all ) {
+				foreach ( $all as $i => $val ) {
+					$new[ $i ][ $key ] = $val;
+				}
+			}
+
+			return $new;
+		}
+
+		private function build_id( $model, $attribute ) {
+			$class_name = get_class( $model );
+
+			return sanitize_title( $class_name . '-' . $attribute );
+		}
+	}
 }

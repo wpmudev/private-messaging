@@ -2,7 +2,7 @@
 
 <div class="modal fade" id="reply-form-c">
     <div id="<?php echo $c_id ?>">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width: 659px">
             <div class="modal-content" id="reply-compose">
                 <?php $model = new MM_Message_Model() ?>
                 <?php $form = new IG_Active_Form($model);
