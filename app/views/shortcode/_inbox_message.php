@@ -184,7 +184,7 @@ if (!isset($render_reply)) {
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
-<?php $this->render_partial('shortcode/_reply_form') ?>
+
 
 <script type="text/javascript">
     jQuery(document).ready(function ($) {

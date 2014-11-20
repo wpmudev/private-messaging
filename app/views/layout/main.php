@@ -53,7 +53,7 @@
     </div>
 
     <?php echo $content; ?>
-    <?php $this->render_partial('shortcode/_compose_form') ?>
+
 </div>
 
 <script type="text/javascript">

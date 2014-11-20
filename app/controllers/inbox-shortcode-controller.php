@@ -67,7 +67,7 @@ class Inbox_Shortcode_Controller extends IG_Request {
 		if ( ! is_user_logged_in() ) {
 			return $this->render( 'shortcode/login', array(), false );
 		}
-
+		add_action( 'wp_footer', array( &$this, 'render_compose_form' ) );
 		//$a = shortcode_atts($atts, array());
 		$type = fRequest::get( 'box', 'string', 'inbox' );
 		if ( isset( $_GET['query'] ) && ! empty( $_GET['query'] ) ) {
@@ -101,6 +101,12 @@ class Inbox_Shortcode_Controller extends IG_Request {
 			'total_pages' => $total_pages,
 			'paged'       => fRequest::get( 'mpaged' )
 		), false );
+	}
+
+	function render_compose_form() {
+
+		$this->render_partial( 'shortcode/_compose_form' );
+		$this->render_partial('shortcode/_reply_form') ;
 	}
 
 	function suggest_users() {
