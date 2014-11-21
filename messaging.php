@@ -75,7 +75,7 @@ if ( ! class_exists( 'MMessaging' ) ) {
 			}
 
 			$sql = "-- ----------------------------;
-CREATE TABLE `wp_mm_conversation` (
+CREATE TABLE `{$wpdb->prefix}mm_conversation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime DEFAULT NULL,
   `count` tinyint(3) unsigned DEFAULT NULL,
