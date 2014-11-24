@@ -7,22 +7,22 @@ class Message_Me_Shortcode_Controller extends IG_Request
 {
     public function __construct()
     {
-        add_shortcode('pm_user', array(&$this, 'message_me'));
+        add_shortcode('pm_user', array(&$this, 'pm_user'));
     }
 
-    function message_me($atts)
+    function pm_user($atts)
     {
         $a = shortcode_atts(array(
             'user_id' => '',
-            'name' => '',
+            'user_name' => '',
             'text' => __('Message me', mmg()->domain),
             'class' => 'btn btn-sm btn-primary',
             'subject' => __('You have new message!', mmg()->domain)
         ), $atts);
         if (!empty($a['user_id'])) {
             $user = get_user_by('id', $a['user_id']);
-        } elseif (!empty($a['name'])) {
-            $user = get_user_by('login', $a['name']);
+        } elseif (!empty($a['user_name'])) {
+            $user = get_user_by('login', $a['user_name']);
         } elseif (in_the_loop()) {
             //this is in the loop, we can get author
             $username = get_the_author();

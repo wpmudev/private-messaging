@@ -16,15 +16,19 @@
         </div>
     </div>
     <div class="col-md-6 col-xs-6 col-sm-6 text-center">
-        <p><strong><?php _e("Message Me", mmg()->domain) ?></strong></p>
+        <p><strong><?php _e("PM User", mmg()->domain) ?></strong></p>
         <div class="clearfix"></div>
 
         <div class="text-left">
-            <p><code>[message_me]</code></p>
+            <p><code>[pm_user]</code></p>
             <ul>
                 <li>
                     <mark><?php _e("user_id", mmg()->domain) ?></mark>
                     : <?php _e("This is the id of the user this message form will send email too", mmg()->domain) ?>
+                </li>
+                <li>
+                    <mark><?php _e("user_name", mmg()->domain) ?></mark>
+                    : <?php _e("This is the user name of the user this message form will send email too, less priority than user_id", mmg()->domain) ?>
                 </li>
                 <li>
                     <mark><?php _e("text", mmg()->domain) ?></mark>
