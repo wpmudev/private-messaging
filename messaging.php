@@ -4,7 +4,7 @@ Plugin Name: Private Messaging
 Plugin URI: https://premium.wpmudev.org/project/XXXXXXX/
 Description:
 Author: WPMU DEV
-Version: 1.0 RC 2
+Version: 1.0 RC 3
 Author URI: http://premium.wpmudev.org
 WDP ID: ***
 Text Domain: private_messaging
@@ -36,7 +36,7 @@ if ( ! class_exists( 'MMessaging' ) ) {
 		public $domain;
 		public $prefix;
 
-		public $version = "1.2";
+		public $version = "1.0";
 
 		public $global = array();
 
