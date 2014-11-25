@@ -24,11 +24,15 @@
             <ul>
                 <li>
                     <mark><?php _e("user_id", mmg()->domain) ?></mark>
-                    : <?php _e("This is the id of the user this message form will send email too", mmg()->domain) ?>
+                    : <?php _e("This is the id of the user this message form will send email to", mmg()->domain) ?>
                 </li>
                 <li>
                     <mark><?php _e("user_name", mmg()->domain) ?></mark>
-                    : <?php _e("This is the user name of the user this message form will send email too, less priority than user_id", mmg()->domain) ?>
+                    : <?php _e("This is the user name of the user this message form will send email to, less priority than user_id", mmg()->domain) ?>
+                </li>
+                <li>
+                    <mark><?php _e("in_the_loop", mmg()->domain) ?></mark>
+                    : <?php _e("Only accept 1|0, if both user_id and user_name is empty, and if this shortcode in a loop, it's will get the author user_id", mmg()->domain) ?>
                 </li>
                 <li>
                     <mark><?php _e("text", mmg()->domain) ?></mark>
