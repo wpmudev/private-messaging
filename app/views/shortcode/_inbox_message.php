@@ -6,7 +6,7 @@ if (!isset($render_reply)) {
 ?>
 <section class="message-content">
     <div class="message-content-actions pull-right">
-        <?php if (fRequest::get('box') != 'sent' && $render_reply==true): ?>
+        <?php if (fRequest::get('box') != 'sent' && $render_reply == true): ?>
             <?php
             $from_data = get_userdata($message->send_from);
             ?>
@@ -79,6 +79,7 @@ if (!isset($render_reply)) {
                                         <div class="modal-body sample-pop" style="max-height:450px;overflow-y:scroll">
                                             <?php
                                             $file = $a_m->file;
+                                            //check does this file exist
 
                                             $file_url = '';
                                             $show_image = false;
@@ -100,8 +101,14 @@ if (!isset($render_reply)) {
                                                         <i class="glyphicon glyphicon-floppy-disk"></i>
                                                         <?php _e('Size', mmg()->domain) ?>:
                                                         <strong><?php
-                                                            $f = new fFile(get_attached_file($file));
-                                                            echo $f->getSize(true);
+                                                            $tfile = get_attached_file($file);
+                                                            //check does this files has deleted
+                                                            if ($tfile) {
+                                                                $f = new fFile(get_attached_file($file));
+                                                                echo $f->getSize(true);
+                                                            } else {
+                                                                echo __("N/A", mmg()->domain);
+                                                            }
                                                             ?></strong>
                                                     </li>
                                                     <li class="list-group-item upload-item">
