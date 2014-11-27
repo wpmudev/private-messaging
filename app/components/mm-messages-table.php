@@ -53,7 +53,7 @@ class MM_Messages_Table extends WP_List_Table
     public function column_col_name(MM_Conversation_Model $item)
     {
         $message = $item->get_last_message();
-        return sprintf('<p><strong><a href="%s">%s</a></strong></p><p>%s</p>', admin_url('admin.php?page=mm_view&id='.$item->id), $message->subject, mmg()->mb_word_wrap(strip_tags($message->content)));
+        return sprintf('<p><strong><a href="%s">%s</a></strong></p><p>%s</p>', admin_url('admin.php?page=mm_view&id=' . $item->id), $message->subject, mmg()->mb_word_wrap(strip_tags($message->content)));
     }
 
     public function column_col_users(MM_Conversation_Model $item)
@@ -127,7 +127,7 @@ WHERE (posts.post_title LIKE %s OR posts.post_content LIKE %s OR wp_users.user_l
 
             }
         } else {
-            $this->items = MM_Conversation_Model::model()->all_with_condition(' LIMIT ' . $offset . ',' . $perpage);
+            $this->items = MM_Conversation_Model::model()->find_all('1=1', array(), $perpage, $offset);
         }
     }
 

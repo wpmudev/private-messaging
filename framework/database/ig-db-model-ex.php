@@ -194,15 +194,14 @@ if (!class_exists('IG_DB_Model_Ex')) {
          * @param bool $order
          * @return array
          */
-        public function find_all($condition, $params = array(), $limit = false, $offset = false, $order = false)
+        public function find_all($condition = '1=1', $params = array(), $limit = false, $offset = false, $order = false)
         {
             $driver = $this->__connect();
             $query = $driver->from($this->get_table())->where($condition, $params);
-            if ($limit) {
+            if ($limit && $offset) {
+                $query->limit($offset . ',' . $limit);
+            } elseif ($limit) {
                 $query->limit($limit);
-            }
-            if ($offset) {
-                $query->offset($offset);
             }
             if ($order) {
                 $query->orderBy($order);
@@ -222,12 +221,12 @@ if (!class_exists('IG_DB_Model_Ex')) {
             $driver = $this->__connect();
             $query = $driver->from($this->get_table())->where('id', $ids);
 
-            if ($limit) {
+            if ($limit && $offset) {
+                $query->limit($offset . ',' . $limit);
+            } elseif ($limit) {
                 $query->limit($limit);
             }
-            if ($offset) {
-                $query->offset($offset);
-            }
+
             if ($order) {
                 $query->orderBy($order);
             }
@@ -258,11 +257,10 @@ if (!class_exists('IG_DB_Model_Ex')) {
         {
             $driver = $this->__connect();
             $query = $driver->from($this->get_table())->where($params);
-            if ($limit) {
+            if ($limit && $offset) {
+                $query->limit($offset . ',' . $limit);
+            } elseif ($limit) {
                 $query->limit($limit);
-            }
-            if ($offset) {
-                $query->offset($offset);
             }
             if ($order) {
                 $query->orderBy($order);

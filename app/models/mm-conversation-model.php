@@ -54,12 +54,12 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
         $paged = fRequest::get('mpaged', 'int', 1);
 
         $offset = ($paged - 1) * $per_page;
+
         $total_pages = ceil(self::count_all() / $per_page);
 
         mmg()->global['conversation_total_pages'] = $total_pages;
         $model = new MM_Conversation_Model();
         $driver = $model->get_driver();
-
 
         $query = $driver->from($model->get_table() . ' AS conversation')->disableSmartJoin()
             ->innerJoin($wpdb->postmeta . " AS con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id")
@@ -67,13 +67,13 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
             ->where("CAST(send_to.meta_value AS UNSIGNED) = :user_id", array(
                 ':user_id' => get_current_user_id()
             ))
-            ->orderBy("conversation.date DESC")->limit($per_page)->offset($offset);
+            ->orderBy("conversation.date DESC")->limit($offset . ',' . $per_page);
         $ids = $query->fetchAll('id');
         $ids = array_filter(array_unique(array_keys($ids)));
         if (empty($ids)) {
             return array();
         }
-        $models = $model->find_all_by_ids($ids, $per_page, $offset, 'date DESC');
+        $models = $model->find_all_by_ids($ids, false, false, 'date DESC');
         /* $sql = "SELECT conversation.id FROM {$wpdb->base_prefix}mm_conversation conversation
  INNER JOIN {$wpdb->prefix}postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
  INNER JOIN {$wpdb->prefix}postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS UNSIGNED) = %d
@@ -185,13 +185,13 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
                 ':user_id' => get_current_user_id(),
                 ':status' => MM_Message_Model::UNREAD
             ))
-            ->orderBy("conversation.date DESC")->limit($per_page)->offset($offset);
+            ->orderBy("conversation.date DESC")->limit($offset . ',' . $per_page);
         $ids = $query->fetchAll('id');
         $ids = array_filter(array_unique(array_keys($ids)));
         if (empty($ids)) {
             return array();
         }
-        $models = $model->find_all_by_ids($ids, $per_page, $offset, 'date DESC');
+        $models = $model->find_all_by_ids($ids, false, false, 'date DESC');
         /*$sql = "SELECT conversation.id FROM {$wpdb->base_prefix}mm_conversation conversation
 INNER JOIN {$wpdb->prefix}postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
 INNER JOIN {$wpdb->prefix}postmeta send_to ON send_to.post_id = con_id.post_id AND send_to.meta_key='_send_to' AND CAST(send_to.meta_value AS CHAR) = %d
@@ -230,13 +230,13 @@ ORDER BY conversation.date DESC LIMIT $offset,$per_page";
                 ':user_id' => get_current_user_id(),
                 ':status' => MM_Message_Model::READ
             ))
-            ->orderBy("conversation.date DESC")->limit($per_page)->offset($offset);
+            ->orderBy("conversation.date DESC")->limit($offset . ',' . $per_page);
         $ids = $query->fetchAll('id');
         $ids = array_filter(array_unique(array_keys($ids)));
         if (empty($ids)) {
             return array();
         }
-        $models = $model->find_all_by_ids($ids, $per_page, $offset, 'date DESC');
+        $models = $model->find_all_by_ids($ids, false, false, 'date DESC');
 
         /*    $sql = "SELECT conversation.id FROM {$wpdb->base_prefix}mm_conversation conversation
     INNER JOIN {$wpdb->prefix}postmeta con_id ON con_id.meta_key='_conversation_id' AND CAST(con_id.meta_value as UNSIGNED)=conversation.id
@@ -272,13 +272,13 @@ ORDER BY conversation.date DESC LIMIT $offset,$per_page";
             ->where("CAST(posts.post_author AS UNSIGNED) = :user_id", array(
                 ':user_id' => get_current_user_id()
             ))
-            ->orderBy("conversation.date DESC")->limit($per_page)->offset($offset);
+            ->orderBy("conversation.date DESC")->limit($offset . ',' . $per_page);
         $ids = $query->fetchAll('id');
         $ids = array_filter(array_unique(array_keys($ids)));
         if (empty($ids)) {
             return array();
         }
-        $models = $model->find_all_by_ids($ids, $per_page, $offset, 'date DESC');
+        $models = $model->find_all_by_ids($ids, false, false, 'date DESC');
         /* $sql = "SELECT conversation.id FROM {$wpdb->base_prefix}mm_conversation conversation
  WHERE conversation.from=%d
  ORDER BY conversation.date DESC LIMIT $offset,$per_page";
