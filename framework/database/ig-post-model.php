@@ -254,6 +254,131 @@ if (!class_exists('IG_Post_Model')) {
             return apply_filters($this->get_table() . '_model_find', $model, $class, $id);
         }
 
+        public function find_by_attributes($params, $paged = false, $order = false)
+        {
+            $query = array(
+                'post_type' => $this->table,
+                'fields' => 'ids'
+            );
+            $meta_query = array();
+            $tax_query = array();
+
+            foreach ($params as $key => $val) {
+                if (isset($this->mapped[$key])) {
+                    $query[$this->mapped[$key]] = $val;
+                } else {
+                    $re = $this->_relation($key);
+                    if ($re['type'] == 'meta') {
+                        $meta_query[] = array(
+                            'key' => $re['key'],
+                            'value' => $val,
+                            'compare' => '=',
+                        );
+                    } else {
+                        $tax_query[] = array(
+                            'taxonomy' => $re['key'],
+                            'field' => 'slug',
+                            'terms' => $val,
+                        );
+                    }
+                }
+            }
+
+            $query['meta_query'] = $meta_query;
+            $query['tax_query'] = $tax_query;
+            if ($paged) {
+                $query['paged'] = $paged;
+            } else {
+                $query['nopaging'] = 1;
+            }
+
+            if ($order) {
+                $order = explode(' ', $order);
+                if (count($order) == 2) {
+                    $query['orderby'] = $order[0];
+                    $query['order'] = $order[1];
+                } else {
+                    $query['orderby'] = $order;
+                }
+            }
+            $query = new WP_Query(apply_filters($this->table . 'find_by_attributes', $query, $params));
+            wp_reset_query();
+
+            $models = array();
+            foreach ($query->posts as $post_id) {
+                $model = $this->find($post_id);
+                if ($model) {
+                    $models[] = $model;
+                }
+            }
+            return $models;
+        }
+
+        public function find_by_ids($ids, $paged = false, $limit = false, $order = false)
+        {
+            if (!is_array($ids)) {
+                $ids = explode(',', $ids);
+            }
+
+            if ($paged == false && $order == false) {
+                $models = array();
+                foreach ($ids as $post_id) {
+                    $model = $this->find($post_id);
+                    if ($model) {
+                        $models[] = $model;
+                    }
+                }
+                return $models;
+            }
+
+            //use wp_query for order and paging
+            $params = array(
+                'post_type' => $this->table,
+                'fields' => 'ids',
+                'post__in' => $ids
+            );
+            if ($paged) {
+                $params['paged'] = $paged;
+            } else {
+                $params['nopaging'] = 1;
+            }
+            if ($limit) {
+                $params['posts_per_page'] = $limit;
+            }
+
+            if ($order) {
+                $order = explode(' ', $order);
+                if (count($order) == 2) {
+                    $params['orderby'] = $order[0];
+                    $params['order'] = $order[1];
+                } else {
+                    $params['orderby'] = $order;
+                }
+            }
+
+            $query = new WP_Query(apply_filters($this->table . 'find_all_by_ids', $params));
+            wp_reset_query();
+
+            $models = array();
+            foreach ($query->posts as $post_id) {
+                $model = $this->find($post_id);
+                if ($model) {
+                    $models[] = $model;
+                }
+            }
+            return $models;
+        }
+
+        private function  _relation($key)
+        {
+            foreach ($this->relations as $re) {
+                if ($re['map'] == $key) {
+                    return $re;
+                }
+            }
+            return false;
+        }
+
         /**
          * Query through wp_posts table and return the data
          * @return array
