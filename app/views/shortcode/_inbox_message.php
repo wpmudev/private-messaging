@@ -7,16 +7,36 @@ if (!isset($render_reply)) {
 <section class="message-content">
     <div class="message-content-actions pull-right">
         <?php if (fRequest::get('box') != 'sent' && $render_reply == true): ?>
-            <?php
-            $from_data = get_userdata($message->send_from);
-            ?>
-            <button
-                data-username="<?php echo esc_attr($from_data->user_login) ?>"
-                data-parentid="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
-                data-id="<?php echo esc_attr(mmg()->encrypt($message->id)) ?>" type="button"
-                class="btn btn-info btn-sm mm-reply">
-                <i class="fa fa-reply"></i>
-            </button>
+    <?php
+    $from_data = get_userdata($message->send_from);
+    ?>
+        <div class="btn-group btn-group-sm">
+            <?php $conversation = MM_Conversation_Model::model()->find($message->conversation_id);?>
+            <?php if ($conversation->is_archive()): ?>
+                <a href="#" title="<?php echo esc_attr(__("Unarchive", mmg()->domain)) ?>"
+                   data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                   data-type="<?php echo MM_Message_Status_Model::STATUS_READ ?>"
+                   class="btn btn-sm btn-default mm-status"><i class="fa fa-undo"></i></a>
+                <a href="#" title="<?php echo esc_attr(__("Delete", mmg()->domain)) ?>"
+                   data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                   data-type="<?php echo MM_Message_Status_Model::STATUS_DELETE ?>"
+                   class="btn btn-sm btn-danger mm-status"><i class="fa fa-trash"></i></a>
+            <?php else: ?>
+                <button
+                    data-username="<?php echo esc_attr($from_data->user_login) ?>"
+                    data-parentid="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                    data-id="<?php echo esc_attr(mmg()->encrypt($message->id)) ?>" type="button"
+                    class="btn btn-info btn-sm mm-reply">
+                    <i class="fa fa-reply"></i>
+                </button>
+                <a href="#" title="<?php echo esc_attr(__("Archive", mmg()->domain)) ?>"
+                   data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                   data-type="<?php echo MM_Message_Status_Model::STATUS_ARCHIVE ?>"
+                   class="btn btn-sm btn-default mm-status"><i class="fa fa-archive"></i></a>
+            <?php endif; ?>
+        </div>
+
+
         <?php endif; ?>
         <!--<button type="button" class="btn btn-danger btn-sm">
             <i class="glyphicon glyphicon-trash"></i>

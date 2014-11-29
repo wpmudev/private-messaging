@@ -65,8 +65,15 @@ if (!class_exists('IG_DB_Model_Ex')) {
             unset($data['id']);
             $data = $this->esc_db_field($data);
             $driver = $this->__connect();
+            /*            $driver->debug = function ($BaseQuery) {
+                            echo "query: " . $BaseQuery->getQuery(false) . "<br/>";
+                            echo "parameters: " . implode(', ', $BaseQuery->getParameters()) . "<br/>";
+                            echo "rowCount: " . $BaseQuery->getResult()->rowCount() . "<br/>";
+                        };*/
             $query = $driver->update($this->get_table())->set($data)->where('id', $this->id);
+
             $query->execute();
+
             return $this->id;
         }
 
@@ -178,6 +185,7 @@ if (!class_exists('IG_DB_Model_Ex')) {
             if ($order) {
                 $query->orderBy($order);
             }
+
             $data = $query->fetch();
             if ($data) {
                 $model = $this->fetch_model($data);
@@ -194,7 +202,7 @@ if (!class_exists('IG_DB_Model_Ex')) {
          * @param bool $order
          * @return array
          */
-        public function find_all($condition = '1=1', $params = array(), $limit = false, $offset = false, $order = false)
+        public function find_all($condition = '', $params = array(), $limit = false, $offset = false, $order = false)
         {
             $driver = $this->__connect();
             $query = $driver->from($this->get_table())->where($condition, $params);
@@ -206,6 +214,7 @@ if (!class_exists('IG_DB_Model_Ex')) {
             if ($order) {
                 $query->orderBy($order);
             }
+
 
             $data = $query->fetchAll();
             $models = array();
@@ -232,6 +241,7 @@ if (!class_exists('IG_DB_Model_Ex')) {
             }
 
             $data = $query->fetchAll();
+
             $models = array();
             foreach ($data as $row) {
                 $models[] = $this->fetch_model($row);

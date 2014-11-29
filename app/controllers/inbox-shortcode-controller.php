@@ -14,6 +14,24 @@ class Inbox_Shortcode_Controller extends IG_Request
         add_action('wp_ajax_mm_send_message', array(&$this, 'send_message'));
         add_action('wp_ajax_mm_suggest_users', array(&$this, 'suggest_users'));
         add_action('wp_ajax_mm_load_conversation', array(&$this, 'load_conversation'));
+        add_action('wp_ajax_mm_status', array(&$this, 'change_status'));
+    }
+
+    function change_status()
+    {
+        if (!wp_verify_nonce(FRequest::get('_wpnonce'), 'mm_status')) {
+            exit;
+        }
+        $id = fRequest::get('id', 'string');
+        $id = mmg()->decrypt($id);
+        $type = fRequest::get('type', 'string', null);
+        $model = MM_Conversation_Model::model()->find($id);
+        if (is_object($model) && !is_null($type)) {
+            $status = $model->get_current_status();
+
+            $status->status = $type;
+            $status->save();
+        }
     }
 
     function process_request()
@@ -50,12 +68,16 @@ class Inbox_Shortcode_Controller extends IG_Request
         $id = mmg()->decrypt(fRequest::get('id'));
         $model = MM_Conversation_Model::model()->find($id);
         $html = $this->render_inbox_message($model);
-        do_action('mm_conversation_read', $model);
-        $model->mark_as_read();
+
+        if (!$model->is_archive()) {
+            $model->mark_as_read();
+            do_action('mm_conversation_read', $model);
+        }
+
         fJSON::output(array(
             'html' => $html,
-            'count_unread' => MM_Conversation_Model::count_unread(),
-            'count_read' => MM_Conversation_Model::count_read()
+            'count_unread' => MM_Conversation_Model::count_unread(true),
+            'count_read' => MM_Conversation_Model::count_read(true)
         ));
         exit;
     }
@@ -92,6 +114,9 @@ class Inbox_Shortcode_Controller extends IG_Request
                 break;
             case 'sent':
                 $models = MM_Conversation_Model::get_sent();
+                break;
+            case 'archive':
+                $models = MM_Conversation_Model::get_archive();
                 break;
             case'setting':
                 return $this->render('shortcode/setting', array(), false);
@@ -206,6 +231,7 @@ class Inbox_Shortcode_Controller extends IG_Request
     {
         //load conversation
         $conversation = MM_Conversation_Model::model()->find($conv_id);
+        $conversation->status = MM_Message_Status_Model::STATUS_UNREAD;
         //we will add new message to this conversation
         $conversation->save();
         //update users from this conversation, now save the message
@@ -218,7 +244,15 @@ class Inbox_Shortcode_Controller extends IG_Request
         $m->subject = __("Re:", mmg()->domain) . ' ' . $mess->subject;
 
         $m->save();
-
+        //update status for send to
+        $status = MM_Message_Status_Model::model()->find_one_with_attributes(array(
+            'conversation_id' => $conversation->id,
+            'user_id' => $user_id
+        ));
+        if (is_object($status)) {
+            $status->status = MM_Message_Status_Model::STATUS_UNREAD;
+            $status->save();
+        }
 
         //update index
         $conversation->update_index($m->id);
@@ -229,6 +263,7 @@ class Inbox_Shortcode_Controller extends IG_Request
     {
         //create new conservation
         $conservation = new MM_Conversation_Model();
+        $conservation->status = MM_Message_Status_Model::STATUS_UNREAD;
         $conservation->save();
         //save message
         $m = new MM_Message_Model();
@@ -240,6 +275,21 @@ class Inbox_Shortcode_Controller extends IG_Request
         //update index
         $conservation->update_index($m->id);
         do_action('mm_message_sent', $m);
+        //update status
+        $model = new MM_Message_Status_Model();
+        $model->user_id = $user_id;
+        $model->conversation_id = $conservation->id;
+        $model->status = MM_Message_Status_Model::STATUS_UNREAD;
+        $model->type = MM_Message_Status_Model::TYPE_CONVERSATION;
+        $model->save();
+        //we need both for each sender & reciver
+        $model = new MM_Message_Status_Model();
+        $model->user_id = get_current_user_id();
+        $model->conversation_id = $conservation->id;
+        $model->status = MM_Message_Status_Model::STATUS_UNREAD;
+        $model->type = MM_Message_Status_Model::TYPE_CONVERSATION;
+        $model->save();
+
     }
 
     function logins_to_ids($users)

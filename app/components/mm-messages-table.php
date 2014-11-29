@@ -70,7 +70,7 @@ class MM_Messages_Table extends WP_List_Table
 
     public function column_col_count(MM_Conversation_Model $item)
     {
-        return $item->count;
+        return $item->message_count;
     }
 
     function prepare_items()
@@ -127,7 +127,7 @@ WHERE (posts.post_title LIKE %s OR posts.post_content LIKE %s OR wp_users.user_l
 
             }
         } else {
-            $this->items = MM_Conversation_Model::model()->find_all('1=1', array(), $perpage, $offset);
+            $this->items = MM_Conversation_Model::model()->find_all('', array(), $perpage, $offset);
         }
     }
 

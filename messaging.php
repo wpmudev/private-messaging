@@ -27,352 +27,453 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
-if ( ! class_exists( 'MMessaging' ) ) {
-	require_once( dirname( __FILE__ ) . '/framework/loader.php' );
+if (!class_exists('MMessaging')) {
+    require_once(dirname(__FILE__) . '/framework/loader.php');
 
-	class MMessaging {
-		public $plugin_url;
-		public $plugin_path;
-		public $domain;
-		public $prefix;
+    class MMessaging
+    {
+        public $plugin_url;
+        public $plugin_path;
+        public $domain;
+        public $prefix;
 
-		public $version = "1.0";
+        public $version = "1.0";
 
-		public $global = array();
+        public $global = array();
 
-		private static $_instance;
+        private static $_instance;
 
-		private function __construct() {
-			//variables init
-			$this->plugin_url  = plugin_dir_url( __FILE__ );
-			$this->plugin_path = plugin_dir_path( __FILE__ );
-			$this->domain      = 'private_messaging';
-			$this->prefix      = 'mm_';
-			//load the framework
+        private function __construct()
+        {
+            //variables init
+            $this->plugin_url = plugin_dir_url(__FILE__);
+            $this->plugin_path = plugin_dir_path(__FILE__);
+            $this->domain = 'private_messaging';
+            $this->prefix = 'mm_';
+            //load the framework
 
-			//autoload
-			spl_autoload_register( array( &$this, 'autoload' ) );
+            //autoload
+            spl_autoload_register(array(&$this, 'autoload'));
 
-			//enqueue scripts, use it here so both frontend and backend can use
-			add_action( 'wp_enqueue_scripts', array( &$this, 'scripts' ) );
-			add_action( 'admin_enqueue_scripts', array( &$this, 'scripts' ) );
+            //enqueue scripts, use it here so both frontend and backend can use
+            add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
+            add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
 
-			$this->check_upgrade();
-			add_action( 'init', array( &$this, 'dispatch' ) );
-		}
+            $this->check_upgrade();
+            add_action('init', array(&$this, 'dispatch'));
+        }
 
-		function check_upgrade() {
-			global $wpdb;
+        function check_upgrade()
+        {
+            global $wpdb;
 
-			$charset_collate = '';
+            $charset_collate = '';
 
-			if ( ! empty( $wpdb->charset ) ) {
-				$charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
-			}
+            if (!empty($wpdb->charset)) {
+                $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
+            }
 
-			if ( ! empty( $wpdb->collate ) ) {
-				$charset_collate .= " COLLATE {$wpdb->collate}";
-			}
+            if (!empty($wpdb->collate)) {
+                $charset_collate .= " COLLATE {$wpdb->collate}";
+            }
 
-			$sql = "-- ----------------------------;
-CREATE TABLE `{$wpdb->prefix}mm_conversation` (
+            $sql = "-- ----------------------------;
+CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date` datetime DEFAULT NULL,
-  `count` tinyint(3) unsigned DEFAULT NULL,
-  `index` varchar(255) DEFAULT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `message_count` tinyint(3) DEFAULT NULL,
+  `message_index` varchar(255) DEFAULT NULL,
   `user_index` varchar(255) DEFAULT NULL,
-  `from` tinyint(3) DEFAULT NULL,
+  `send_from` tinyint(3) DEFAULT NULL,
   `site_id` tinyint(1) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1
   UNIQUE KEY id (id)
 ) $charset_collate;";
 
-			if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'" ) !== $wpdb->base_prefix . 'mm_conversation' ) {
-				//do upgrade
-				require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-				dbDelta( $sql );
-			}
-		}
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            //check does this is clean install
+            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") !== $wpdb->base_prefix . 'mm_conversation') {
+                //do upgrade
 
-		function scripts() {
-			wp_enqueue_script( 'jquery' );
-			wp_enqueue_script( 'ig-bootstrap' );
-			if ( is_admin() ) {
-				wp_enqueue_style( 'ig-bootstrap' );
-			} else {
-				wp_enqueue_style( apply_filters( 'mm_front_theme', 'ig-bootstrap' ) );
-			}
-			wp_enqueue_style( 'ig-fontawesome' );
+                dbDelta($sql);
+            } else {
+                if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") !== $wpdb->base_prefix . 'mm_status') {
+                    $sql = "CREATE TABLE `{$wpdb->base_prefix}mm_status` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `conversation_id` int(11) DEFAULT NULL,
+  `message_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `type` tinyint(4) DEFAULT NULL,
+  UNIQUE KEY id (id)
+) $charset_collate;
+";
 
-			wp_register_style( 'mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version );
-			wp_register_style( 'mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version );
-			wp_register_script( 'mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array( 'jquery' ), $this->version );
+                    dbDelta($sql);
+                }
+                //upgrade script
+                //check does column status exist
+                $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'status'";
+                $exist = $wpdb->get_var($sql);
+                if (is_null($exist)) {
+                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation ADD COLUMN `status` INT(11) DEFAULT 1;";
+                    $wpdb->query($sql);
+                }
+                //rename column
+                $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'date'";
+                $exist = $wpdb->get_var($sql);
+                if (!is_null($exist)) {
+                    //change date name
+                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `date` `date_created` DATETIME";
+                    $wpdb->query($sql);
+                }
 
-			wp_register_script( 'selectivejs', $this->plugin_url . 'assets/selectivejs/js/standalone/selectize.js', array( 'jquery' ), $this->version );
-			wp_register_style( 'selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array(), $this->version );
+                //rename column
+                $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'count'";
+                $exist = $wpdb->get_var($sql);
+                if (!is_null($exist)) {
+                    //change date name
+                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `count` `message_count` TINYINT;";
+                    $wpdb->query($sql);
+                }
 
-		}
+                //rename column
+                $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'index'";
+                $exist = $wpdb->get_var($sql);
+                if (!is_null($exist)) {
+                    //change date name
+                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `index` `message_index` VARCHAR(255);";
+                    $wpdb->query($sql);
+                }
 
-		function dispatch() {
-			//load post type
-			$this->load_post_type();
+                //rename column
+                $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'from'";
+                $exist = $wpdb->get_var($sql);
+                if (!is_null($exist)) {
+                    //change date name
+                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `from` `send_from` TINYINT;";
+                    $wpdb->query($sql);
+                }
+            }
+        }
 
-			if ( is_admin() ) {
-				$backend = new MM_Backend();
-			} else {
-				$front = new MM_Frontend();
-			}
-			//include components we need to use
-			include $this->plugin_path . 'app/components/ig-uploader.php';
-			include $this->plugin_path . 'app/components/mm-addon-table.php';
-			//load add on
-			$addons = $this->setting()->plugins;
-			if ( ! is_array( $addons ) ) {
-				$addons = array();
-			}
-			foreach ( $addons as $addon ) {
-				if ( file_exists( $addon ) ) {
-					include_once $addon;
-				}
-			}
-			//loading add on & components
-			new MAjax();
-			$inbox_sc               = new Inbox_Shortcode_Controller();
-			$messge_me_sc           = new Message_Me_Shortcode_Controller();
-			$admin_bar_notification = new Admin_Bar_Notification_Controller();
-		}
+        function scripts()
+        {
+            wp_enqueue_script('jquery');
+            wp_enqueue_script('ig-bootstrap');
+            if (is_admin()) {
+                wp_enqueue_style('ig-bootstrap');
+            } else {
+                wp_enqueue_style(apply_filters('mm_front_theme', 'ig-bootstrap'));
+            }
+            wp_enqueue_style('ig-fontawesome');
 
-		function load_post_type() {
-			$args = array(
-				'supports'            => array(),
-				'hierarchical'        => false,
-				'public'              => false,
-				'show_ui'             => false,
-				'show_in_menu'        => false,
-				'show_in_nav_menus'   => false,
-				'show_in_admin_bar'   => false,
-				'can_export'          => true,
-				'has_archive'         => false,
-				'exclude_from_search' => false,
-				'publicly_queryable'  => true,
-				'capability_type'     => 'page',
-			);
-			register_post_type( 'mm_message', $args );
-		}
+            wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
+            wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);
+            wp_register_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array('jquery'), $this->version);
 
-		function autoload( $class ) {
-			$filename = str_replace( '_', '-', strtolower( $class ) ) . '.php';
-			if ( strstr( $filename, '-controller.php' ) ) {
-				//looking in the controllers folder and sub folders to get this class
-				$files = $this->listFolderFiles( $this->plugin_path . 'app/controllers' );
-				foreach ( $files as $file ) {
-					if ( strcmp( $filename, pathinfo( $file, PATHINFO_BASENAME ) ) === 0 ) {
-						include_once $file;
-						break;
-					}
-				}
-			} elseif ( strstr( $filename, '-model.php' ) ) {
-				$files = $this->listFolderFiles( $this->plugin_path . 'app/models' );
+            wp_register_script('selectivejs', $this->plugin_url . 'assets/selectivejs/js/standalone/selectize.js', array('jquery'), $this->version);
+            wp_register_style('selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array(), $this->version);
 
-				foreach ( $files as $file ) {
-					if ( strcmp( $filename, pathinfo( $file, PATHINFO_BASENAME ) ) === 0 ) {
-						include_once $file;
-						break;
-					}
-				}
-			} else {
-				//include normal file inside app folder
-				if ( file_exists( $this->plugin_path . 'app/' . $filename ) ) {
-					include_once $this->plugin_path . 'app/' . $filename;
-				}
-			}
-		}
+        }
 
-		public static function get_instance() {
-			if ( ! self::$_instance instanceof MMessaging ) {
-				self::$_instance = new MMessaging();
-			}
+        function dispatch()
+        {
+            //load post type
+            $this->load_post_type();
 
-			return self::$_instance;
-		}
+            if (is_admin()) {
+                $backend = new MM_Backend();
+            } else {
+                $front = new MM_Frontend();
+            }
+            //include components we need to use
+            include $this->plugin_path . 'app/components/ig-uploader.php';
+            include $this->plugin_path . 'app/components/mm-addon-table.php';
+            //load add on
+            $addons = $this->setting()->plugins;
+            if (!is_array($addons)) {
+                $addons = array();
+            }
+            foreach ($addons as $addon) {
+                if (file_exists($addon)) {
+                    include_once $addon;
+                }
+            }
+            //loading add on & components
+            new MAjax();
+            $inbox_sc = new Inbox_Shortcode_Controller();
+            $messge_me_sc = new Message_Me_Shortcode_Controller();
+            $admin_bar_notification = new Admin_Bar_Notification_Controller();
+        }
 
-		function listFolderFiles( $dir ) {
-			$ffs  = scandir( $dir );
-			$i    = 0;
-			$list = array();
-			foreach ( $ffs as $ff ) {
-				if ( $ff != '.' && $ff != '..' ) {
-					if ( strlen( $ff ) >= 5 ) {
-						if ( substr( $ff, - 4 ) == '.php' ) {
-							$list[] = $dir . '/' . $ff;
-						}
-					}
-					if ( is_dir( $dir . '/' . $ff ) ) {
-						$list = array_merge( $list, $this->listFolderFiles( $dir . '/' . $ff ) );
-					}
-				}
-			}
+        function load_post_type()
+        {
+            $args = array(
+                'supports' => array(),
+                'hierarchical' => false,
+                'public' => false,
+                'show_ui' => false,
+                'show_in_menu' => false,
+                'show_in_nav_menus' => false,
+                'show_in_admin_bar' => false,
+                'can_export' => true,
+                'has_archive' => false,
+                'exclude_from_search' => false,
+                'publicly_queryable' => true,
+                'capability_type' => 'page',
+            );
+            register_post_type('mm_message', $args);
+        }
 
-			return $list;
-		}
+        function autoload($class)
+        {
+            $filename = str_replace('_', '-', strtolower($class)) . '.php';
+            if (strstr($filename, '-controller.php')) {
+                //looking in the controllers folder and sub folders to get this class
+                $files = $this->listFolderFiles($this->plugin_path . 'app/controllers');
+                foreach ($files as $file) {
+                    if (strcmp($filename, pathinfo($file, PATHINFO_BASENAME)) === 0) {
+                        include_once $file;
+                        break;
+                    }
+                }
+            } elseif (strstr($filename, '-model.php')) {
+                $files = $this->listFolderFiles($this->plugin_path . 'app/models');
 
-		function get_avatar_url( $get_avatar ) {
-			if ( preg_match( "/src='(.*?)'/i", $get_avatar, $matches ) ) {
-				preg_match( "/src='(.*?)'/i", $get_avatar, $matches );
+                foreach ($files as $file) {
+                    if (strcmp($filename, pathinfo($file, PATHINFO_BASENAME)) === 0) {
+                        include_once $file;
+                        break;
+                    }
+                }
+            } else {
+                //include normal file inside app folder
+                if (file_exists($this->plugin_path . 'app/' . $filename)) {
+                    include_once $this->plugin_path . 'app/' . $filename;
+                }
+            }
+        }
 
-				return $matches[1];
-			} else {
-				preg_match( "/src=\"(.*?)\"/i", $get_avatar, $matches );
+        public static function get_instance()
+        {
+            if (!self::$_instance instanceof MMessaging) {
+                self::$_instance = new MMessaging();
+            }
 
-				return $matches[1];
-			}
-		}
+            return self::$_instance;
+        }
 
-		function mb_word_wrap( $string, $max_length = 100, $end_substitute = null, $html_linebreaks = false ) {
+        function listFolderFiles($dir)
+        {
+            $ffs = scandir($dir);
+            $i = 0;
+            $list = array();
+            foreach ($ffs as $ff) {
+                if ($ff != '.' && $ff != '..') {
+                    if (strlen($ff) >= 5) {
+                        if (substr($ff, -4) == '.php') {
+                            $list[] = $dir . '/' . $ff;
+                        }
+                    }
+                    if (is_dir($dir . '/' . $ff)) {
+                        $list = array_merge($list, $this->listFolderFiles($dir . '/' . $ff));
+                    }
+                }
+            }
 
-			if ( $html_linebreaks ) {
-				$string = preg_replace( '/\<br(\s*)?\/?\>/i', "\n", $string );
-			}
-			$string = strip_tags( $string ); //gets rid of the HTML
+            return $list;
+        }
 
-			if ( empty( $string ) || mb_strlen( $string ) <= $max_length ) {
-				if ( $html_linebreaks ) {
-					$string = nl2br( $string );
-				}
+        function get_avatar_url($get_avatar)
+        {
+            if (preg_match("/src='(.*?)'/i", $get_avatar, $matches)) {
+                preg_match("/src='(.*?)'/i", $get_avatar, $matches);
 
-				return $string;
-			}
+                return $matches[1];
+            } else {
+                preg_match("/src=\"(.*?)\"/i", $get_avatar, $matches);
 
-			if ( $end_substitute ) {
-				$max_length -= mb_strlen( $end_substitute, 'UTF-8' );
-			}
+                return $matches[1];
+            }
+        }
 
-			$stack_count = 0;
-			while ( $max_length > 0 ) {
-				$char = mb_substr( $string, -- $max_length, 1, 'UTF-8' );
-				if ( preg_match( '#[^\p{L}\p{N}]#iu', $char ) ) {
-					$stack_count ++;
-				} //only alnum characters
-				elseif ( $stack_count > 0 ) {
-					$max_length ++;
-					break;
-				}
-			}
-			$string = mb_substr( $string, 0, $max_length, 'UTF-8' ) . $end_substitute;
-			if ( $html_linebreaks ) {
-				$string = nl2br( $string );
-			}
+        function mb_word_wrap($string, $max_length = 100, $end_substitute = null, $html_linebreaks = false)
+        {
 
-			return $string;
-		}
+            if ($html_linebreaks) {
+                $string = preg_replace('/\<br(\s*)?\/?\>/i', "\n", $string);
+            }
+            $string = strip_tags($string); //gets rid of the HTML
 
-		function encrypt( $text ) {
-			if ( function_exists( 'mcrypt_encrypt' ) ) {
-				return str_replace( 'fCryptography::symmetric', '', fCryptography::symmetricKeyEncrypt( $text, SECURE_AUTH_KEY ) );
-			} else {
-				return $text;
-			}
-		}
+            if (empty($string) || mb_strlen($string) <= $max_length) {
+                if ($html_linebreaks) {
+                    $string = nl2br($string);
+                }
 
-		function decrypt( $text ) {
-			if ( function_exists( 'mcrypt_encrypt' ) ) {
-				$text = 'fCryptography::symmetric' . $text;
+                return $string;
+            }
 
-				return fCryptography::symmetricKeyDecrypt( $text, SECURE_AUTH_KEY );
-			} else {
-				return $text;
-			}
-		}
+            if ($end_substitute) {
+                $max_length -= mb_strlen($end_substitute, 'UTF-8');
+            }
 
-		function trim_text($input, $length, $ellipses = true, $strip_html = true) {
-			//strip tags, if desired
-			if ($strip_html) {
-				$input = strip_tags($input);
-			}
+            $stack_count = 0;
+            while ($max_length > 0) {
+                $char = mb_substr($string, --$max_length, 1, 'UTF-8');
+                if (preg_match('#[^\p{L}\p{N}]#iu', $char)) {
+                    $stack_count++;
+                } //only alnum characters
+                elseif ($stack_count > 0) {
+                    $max_length++;
+                    break;
+                }
+            }
+            $string = mb_substr($string, 0, $max_length, 'UTF-8') . $end_substitute;
+            if ($html_linebreaks) {
+                $string = nl2br($string);
+            }
 
-			//no need to trim, already shorter than trim length
-			if (strlen($input) <= $length) {
-				return $input;
-			}
+            return $string;
+        }
 
-			//find last space within length
-			$last_space = strrpos(substr($input, 0, $length), ' ');
-			$trimmed_text = substr($input, 0, $last_space);
+        function encrypt($text)
+        {
+            if (function_exists('mcrypt_encrypt')) {
+                return str_replace('fCryptography::symmetric', '', fCryptography::symmetricKeyEncrypt($text, SECURE_AUTH_KEY));
+            } else {
+                return $text;
+            }
+        }
 
-			//add ellipses (...)
-			if ($ellipses) {
-				$trimmed_text .= '...';
-			}
+        function decrypt($text)
+        {
+            if (function_exists('mcrypt_encrypt')) {
+                $text = 'fCryptography::symmetric' . $text;
 
-			return $trimmed_text;
-		}
+                return fCryptography::symmetricKeyDecrypt($text, SECURE_AUTH_KEY);
+            } else {
+                return $text;
+            }
+        }
 
-		function get_available_addon() {
-			//load all shortcode
-			$coms = glob( $this->plugin_path . 'app/addons/*.php' );
-			$data = array();
-			foreach ( $coms as $com ) {
-				if ( file_exists( $com ) ) {
-					$meta = get_file_data( $com, array(
-						'Name'        => 'Name',
-						'Author'      => 'Author',
-						'Description' => 'Description',
-						'AuthorURI'   => 'Author URI',
-						'Network'     => 'Network'
-					), 'component' );
+        function trim_text($input, $length, $ellipses = true, $strip_html = true)
+        {
+            //strip tags, if desired
+            if ($strip_html) {
+                $input = strip_tags($input);
+            }
 
-					if ( strlen( trim( $meta['Name'] ) ) > 0 ) {
-						$data[ $com ] = $meta;
-					}
-				}
-			}
+            //no need to trim, already shorter than trim length
+            if (strlen($input) <= $length) {
+                return $input;
+            }
 
-			return $data;
-		}
+            //find last space within length
+            $last_space = strrpos(substr($input, 0, $length), ' ');
+            $trimmed_text = substr($input, 0, $last_space);
 
-		function setting() {
-			$setting = new MM_Setting_Model();
-			$setting->load();
+            //add ellipses (...)
+            if ($ellipses) {
+                $trimmed_text .= '...';
+            }
 
-			return $setting;
-		}
+            return $trimmed_text;
+        }
 
-		function html_beautifier( $html ) {
-			require_once $this->plugin_path . 'vendors/SmartDOMDocument.class.php';
-			$x = new SmartDOMDocument();
-			$x->loadHTML( $html );
-			$clean = $x->saveHTMLExact();
+        function get_available_addon()
+        {
+            //load all shortcode
+            $coms = glob($this->plugin_path . 'app/addons/*.php');
+            $data = array();
+            foreach ($coms as $com) {
+                if (file_exists($com)) {
+                    $meta = get_file_data($com, array(
+                        'Name' => 'Name',
+                        'Author' => 'Author',
+                        'Description' => 'Description',
+                        'AuthorURI' => 'Author URI',
+                        'Network' => 'Network'
+                    ), 'component');
 
-			return $clean;
-		}
+                    if (strlen(trim($meta['Name'])) > 0) {
+                        $data[$com] = $meta;
+                    }
+                }
+            }
 
-		function get_logger( $type = 'file', $location = '' ) {
-			if ( empty( $location ) ) {
-				$location = $this->domain;
-			}
-			$logger = new IG_Logger( $type, $location );
+            return $data;
+        }
 
-			return $logger;
-		}
-	}
+        function setting()
+        {
+            $setting = new MM_Setting_Model();
+            $setting->load();
+
+            return $setting;
+        }
+
+        function html_beautifier($html)
+        {
+            require_once $this->plugin_path . 'vendors/SmartDOMDocument.class.php';
+            $x = new SmartDOMDocument();
+            $x->loadHTML($html);
+            $clean = $x->saveHTMLExact();
+
+            return $clean;
+        }
+
+        function get_logger($type = 'file', $location = '')
+        {
+            if (empty($location)) {
+                $location = $this->domain;
+            }
+            $logger = new IG_Logger($type, $location);
+
+            return $logger;
+        }
+    }
 
 //include dashboard
-	global $wpmudev_notices;
-	$wpmudev_notices[] = array(
-		'id'      => '',
-		'name'    => 'Private Messaging',
-		'screens' => array(
-			'toplevel_page_mm_main',
-			'messaging_page_mm_setting',
-			'admin_page_mm_view'
-		)
-	);
-	include_once( plugin_dir_path( __FILE__ ) . 'lib/dash-notices/wpmudev-dash-notification.php' );
+    global $wpmudev_notices;
+    $wpmudev_notices[] = array(
+        'id' => '',
+        'name' => 'Private Messaging',
+        'screens' => array(
+            'toplevel_page_mm_main',
+            'messaging_page_mm_setting',
+            'admin_page_mm_view'
+        )
+    );
+    include_once(plugin_dir_path(__FILE__) . 'lib/dash-notices/wpmudev-dash-notification.php');
 
-	function mmg() {
-		return MMessaging::get_instance();
-	}
+    function mmg()
+    {
+        return MMessaging::get_instance();
+    }
 
 //init once
-	mmg();
-	include_once mmg()->plugin_path . 'functions.php';
+    mmg();
+    include_once mmg()->plugin_path . 'functions.php';
 }

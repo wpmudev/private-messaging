@@ -2,14 +2,14 @@
     <div class="row">
         <div class="col-md-10 co-sm-12 col-xs-12 no-padding mm-toolbar-btn">
             <div class="btn-group btn-group-sm">
-                <a href="<?php echo add_query_arg('box', 'inbox') ?>"
+                <a href="<?php echo add_query_arg('box', 'inbox', get_permalink(mmg()->setting()->inbox_page)) ?>"
                    class="mm-tooltip btn btn-default btn-sm <?php echo fRequest::get('box', 'string', 'inbox') == 'inbox' ? 'active' : null ?>"
                    data-container=".mm-toolbar-btn"
                    data-placement="top"
                    title="<?php echo MM_Conversation_Model::count_all() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="fa fa-inbox"></i> <?php _e("Inbox", mmg()->domain) ?>
                 </a>
-                <a href="<?php echo add_query_arg('box', 'unread') ?>"
+                <a href="<?php echo add_query_arg('box', 'unread', get_permalink(mmg()->setting()->inbox_page)) ?>"
                    class="mm-tooltip unread-count btn btn-default btn-sm <?php echo fRequest::get('box') == 'unread' ? 'active' : null ?>"
                    data-placement="top"
                    data-container=".mm-toolbar-btn"
@@ -17,7 +17,7 @@
                    title="<?php echo MM_Conversation_Model::count_unread() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="fa fa-envelope"></i> <?php _e("Unread", mmg()->domain) ?>
                 </a>
-                <a href="<?php echo add_query_arg('box', 'read') ?>"
+                <a href="<?php echo add_query_arg('box', 'read', get_permalink(mmg()->setting()->inbox_page)) ?>"
                    class="mm-tooltip btn read-count btn-default btn-sm <?php echo fRequest::get('box') == 'read' ? 'active' : null ?>"
                    data-placement="top"
                    data-container=".mm-toolbar-btn"
@@ -25,9 +25,14 @@
                    title="<?php echo MM_Conversation_Model::count_read() ?> <?php _e("message(s)", mmg()->domain) ?>">
                     <i class="glyphicon glyphicon-eye-open"></i> <?php _e("Read", mmg()->domain) ?>
                 </a>
-                <a href="<?php echo add_query_arg('box', 'sent') ?>"
+
+                <a href="<?php echo add_query_arg('box', 'sent', get_permalink(mmg()->setting()->inbox_page)) ?>"
                    class="btn btn-default btn-sm <?php echo fRequest::get('box') == 'sent' ? 'active' : null ?>">
                     <i class="glyphicon glyphicon-send"></i> <?php _e("Sent", mmg()->domain) ?>
+                </a>
+                <a href="<?php echo add_query_arg('box', 'archive', get_permalink(mmg()->setting()->inbox_page)) ?>"
+                   class="btn btn-default btn-sm <?php echo fRequest::get('box') == 'archive' ? 'active' : null ?>">
+                    <i class="glyphicon glyphicon-briefcase"></i> <?php _e("Archive", mmg()->domain) ?>
                 </a>
                 <a class="btn btn-default btn-sm" href="<?php echo add_query_arg('box', 'setting') ?>">
                     <i class="fa fa-gear"></i> <?php _e("Settings", mmg()->domain) ?>
