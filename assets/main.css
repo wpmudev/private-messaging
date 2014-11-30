@@ -140,7 +140,7 @@
 
 .mmessage-container .file-view-port {
     max-height: 200px;
-    min-height: 120px;
+   /* min-height: 120px;*/
     overflow-y: scroll;
     padding: 5px;
 }
