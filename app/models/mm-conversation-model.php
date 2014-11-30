@@ -68,11 +68,11 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
 
         $query = $driver->from($model->get_table() . ' conversation')->disableSmartJoin()
             ->innerJoin(MM_Message_Status_Model::model()->get_table() . ' mstat ON mstat.conversation_id=conversation.id')
-           /* ->innerJoin($wpdb->postmeta . " meta ON meta.meta_key='_conversation_id' AND meta.meta_value=conversation.id")
-            ->innerJoin($wpdb->postmeta . " send_to ON send_to.meta_key='_send_to' AND send_to.post_id=meta.post_id")*/
+            ->innerJoin($wpdb->postmeta . " meta ON meta.meta_key='_conversation_id' AND meta.meta_value=conversation.id")
+            ->innerJoin($wpdb->postmeta . " send_to ON send_to.meta_key='_send_to' AND send_to.post_id=meta.post_id")
             ->where('mstat.user_id', get_current_user_id())
             ->where('mstat.status', array(MM_Message_Status_Model::STATUS_READ, MM_Message_Status_Model::STATUS_UNREAD))
-           /* ->where("CAST(send_to.meta_value AS UNSIGNED)", get_current_user_id())*/
+            ->where("send_to.meta_value", get_current_user_id())
             ->orderBy("conversation.date_created DESC")->limit($offset . ',' . $per_page)->groupBy('conversation.id');
 
         $res = $query->execute();
@@ -242,9 +242,12 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
 
         $query = $driver->from($model->get_table() . ' conversation')->select(array('conversation.id'))->disableSmartJoin()
             ->innerJoin(MM_Message_Status_Model::model()->get_table() . ' mstat ON mstat.conversation_id=conversation.id')
+            ->innerJoin($wpdb->postmeta . " meta ON meta.meta_key='_conversation_id' AND meta.meta_value=conversation.id")
+            ->innerJoin($wpdb->postmeta . " send_to ON send_to.meta_key='_send_to' AND send_to.post_id=meta.post_id")
             ->where('mstat.user_id', get_current_user_id())
             ->where('mstat.status', MM_Message_Status_Model::STATUS_UNREAD)
             ->where('mstat.type', MM_Message_Status_Model::TYPE_CONVERSATION)
+            ->where("send_to.meta_value", get_current_user_id())
             ->orderBy("conversation.date_created DESC")->limit($offset . ',' . $per_page)->groupBy('conversation.id');
 
         $res = $query->execute();
@@ -337,14 +340,20 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     public static function count_all()
     {
         if (wp_cache_get('mm_count_all') == false) {
+            global $wpdb;
             $model = new MM_Conversation_Model();
             $driver = $model->get_driver();
 
             $query = $driver->from($model->get_table() . ' conversation')->disableSmartJoin()
                 ->innerJoin(MM_Message_Status_Model::model()->get_table() . ' mstat ON mstat.conversation_id=conversation.id')
+                ->innerJoin($wpdb->postmeta . " meta ON meta.meta_key='_conversation_id' AND meta.meta_value=conversation.id")
+                ->innerJoin($wpdb->postmeta . " send_to ON send_to.meta_key='_send_to' AND send_to.post_id=meta.post_id")
                 ->where('mstat.status', array(MM_Message_Status_Model::STATUS_READ, MM_Message_Status_Model::STATUS_UNREAD))
-                ->where('mstat.user_id=:user_id', array(':user_id' => get_current_user_id()))
+                ->where('mstat.user_id', get_current_user_id())
+                ->where("send_to.meta_value", get_current_user_id())
                 ->groupBy('conversation.id');
+
+
             $res = $query->execute();
             $count = $res->rowCount();
 
@@ -357,13 +366,17 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     public static function count_unread($no_cache = false)
     {
         if (wp_cache_get('mm_count_unread') == false || $no_cache == true) {
+            global $wpdb;
             $model = new MM_Conversation_Model();
             $driver = $model->get_driver();
             $query = $driver->from($model->get_table() . ' conversation')->select(array('conversation.id'))->disableSmartJoin()
                 ->innerJoin(MM_Message_Status_Model::model()->get_table() . ' mstat ON mstat.conversation_id=conversation.id')
+                ->innerJoin($wpdb->postmeta . " meta ON meta.meta_key='_conversation_id' AND meta.meta_value=conversation.id")
+                ->innerJoin($wpdb->postmeta . " send_to ON send_to.meta_key='_send_to' AND send_to.post_id=meta.post_id")
                 ->where('mstat.user_id', get_current_user_id())
                 ->where('mstat.status', MM_Message_Status_Model::STATUS_UNREAD)
                 ->where('mstat.type', MM_Message_Status_Model::TYPE_CONVERSATION)
+                ->where("send_to.meta_value", get_current_user_id())
                 ->groupBy('conversation.id');
             $res = $query->execute();
             $count = $res->rowCount();

@@ -286,7 +286,8 @@ class Inbox_Shortcode_Controller extends IG_Request
         $model = new MM_Message_Status_Model();
         $model->user_id = get_current_user_id();
         $model->conversation_id = $conservation->id;
-        $model->status = MM_Message_Status_Model::STATUS_UNREAD;
+        //because we send so status should be read
+        $model->status = MM_Message_Status_Model::STATUS_READ;
         $model->type = MM_Message_Status_Model::TYPE_CONVERSATION;
         $model->save();
 
