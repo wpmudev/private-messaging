@@ -34,7 +34,7 @@
                    class="btn btn-default btn-sm <?php echo fRequest::get('box') == 'archive' ? 'active' : null ?>">
                     <i class="glyphicon glyphicon-briefcase"></i> <?php _e("Archive", mmg()->domain) ?>
                 </a>
-                <a class="btn btn-default btn-sm" href="<?php echo add_query_arg('box', 'setting') ?>">
+                <a class="btn btn-default btn-sm hidden-xs hidden-sm" href="<?php echo add_query_arg('box', 'setting') ?>">
                     <i class="fa fa-gear"></i> <?php _e("Settings", mmg()->domain) ?>
                 </a>
             </div>
