@@ -212,6 +212,7 @@
     margin: 0;
 }
 
+
 .igu-media-file-land .well{
     padding: 3px !important;
     margin-bottom: 5px;
@@ -237,6 +238,15 @@
     box-sizing: border-box;
     padding-left: 5px;
     position: relative;
+}
+@media screen and (max-width: 767px) {
+    .igu-media-file-land {
+        width: 140px;
+        margin: 0;
+    }
+    .igu-media-file-land .igu-media-file-meta {
+        width: 125px;
+    }
 }
 
 .igu-media-file-land .igu-media-file-meta h5, .igu-media-file-land .igu-media-file-meta p {

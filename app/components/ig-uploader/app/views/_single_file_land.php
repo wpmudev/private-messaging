@@ -16,7 +16,7 @@ $color  = $colors[ array_rand( $colors ) ];
 ?>
 <div class="igu-media-file-land" id="igu-media-file-<?php echo $model->id ?>" data-id="<?php echo $model->id ?>">
 	<div class="well well-sm">
-		<div class="igu-media-file-thumbnail <?php echo $color ?>">
+		<div class="igu-media-file-thumbnail hidden-xs hidden-sm <?php echo $color ?>">
 			<?php echo $model->mime_to_icon() ?>
 		</div>
 		<div class="igu-media-file-meta">

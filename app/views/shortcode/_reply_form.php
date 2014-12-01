@@ -1,6 +1,6 @@
 <?php $c_id = uniqid(); ?>
 <div class="mmessage-container">
-	<div class="modal fade" id="reply-form-c">
+	<div class="modal fade" id="reply-form-c" style="z-index: 9999">
 		<div id="<?php echo $c_id ?>">
 			<div class="modal-dialog" style="width: 659px">
 				<div class="modal-content" id="reply-compose">

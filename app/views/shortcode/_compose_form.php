@@ -1,7 +1,7 @@
 <?php $model = new MM_Message_Model();
 ?>
 <div class="mmessage-container">
-    <div class="modal fade" id="compose-form-container">
+    <div class="modal fade" id="compose-form-container" style="z-index: 9999">
         <div class="modal-dialog" style="min-width:50%;max-width: 659px">
             <div class="modal-content" id="compose-modal">
                 <div class="modal-header">
