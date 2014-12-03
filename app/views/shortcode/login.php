@@ -5,7 +5,7 @@
             <div class="page-header">
                 <h3><?php _e("Sign in", mmg()->domain) ?></h3>
             </div>
-            <?php $this->wp_login_form(); ?>
+            <?php mm_login_form(); ?>
         </div>
     </div>
     <div class="col-md-6 no-padding">
@@ -17,4 +17,5 @@
             <a href="<?php echo wp_registration_url(); ?>" class="btn btn-primary mm_signup_btn"><?php _e("Create Account", mmg()->domain) ?></a>
         </div>
     </div>
+    <div class="clearfix"></div>
 </div>

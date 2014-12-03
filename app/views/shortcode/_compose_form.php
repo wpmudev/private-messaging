@@ -17,7 +17,7 @@
                             "text" => "Send To",
                             "attributes" => array("class" => "control-label col-sm-2 hidden-xs hidden-sm")
                         )) ?>
-                        <div class="col-sm-10">
+                        <div class="col-md-10 col-sm-12 col-xs-12">
                             <?php $form->text("send_to", array("attributes" => array("class" => "form-control", "placeholder" => "Send to"))) ?>
                             <!--<span
                                 class="help-block m-b-none"><?php /*_e("Please enter the username, separate by commas", mmg()->domain) */ ?></span>-->
@@ -31,7 +31,7 @@
                             "text" => "Subject",
                             "attributes" => array("class" => "control-label col-sm-2 hidden-xs hidden-sm")
                         )) ?>
-                        <div class="col-sm-10">
+                        <div class="col-md-10 col-sm-12 col-xs-12">
                             <?php $form->text("subject", array("attributes" => array("class" => "form-control", "placeholder" => "Subject"))) ?>
                             <span class="help-block m-b-none error-subject"><?php $form->error("subject") ?></span>
                         </div>
@@ -43,7 +43,7 @@
                             "text" => "Content",
                             "attributes" => array("class" => "control-label col-sm-2 hidden-xs hidden-sm")
                         )) ?>
-                        <div class="col-sm-10">
+                        <div class="col-md-10 col-sm-12 col-xs-12">
                             <?php $form->text_area("content", array(
                                 "attributes" => array(
                                     "class" => "form-control mm_wsysiwyg",
