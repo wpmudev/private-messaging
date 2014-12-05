@@ -52,5 +52,5 @@ if (is_array($cache) && $cache['status'] == true) {
     delete_user_meta($user->ID, $key);
     exit;
 } else {
-    echo "retry: 5000" . PHP_EOL;
+    echo "retry: 10000" . PHP_EOL;
 }
