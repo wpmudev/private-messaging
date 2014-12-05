@@ -91,7 +91,7 @@ if (!class_exists('MM_Push_Notification')) {
                                                 addClass: 'mmessage-container btn btn-primary btn-xs',
                                                 text: 'View', onClick: function ($noty) {
                                                 $noty.close();
-                                                var url = '<?php echo get_permalink(mmg()->setting()->inbox_page) ?>&box=unread';
+                                                var url = '<?php echo get_permalink(mmg()->setting()->inbox_page) ?>?box=unread';
                                                 location.href= url;
                                             }
                                             }
