@@ -19,7 +19,6 @@ echo ":" . str_repeat(" ", 2048) . "\n"; // 2 kB padding for IE
 function mm_server_sent_msg($id, $msg)
 {
     echo "id: $id" . PHP_EOL;
-    echo "retry: 10000" . PHP_EOL;
     echo "data: $msg" . PHP_EOL;
     echo PHP_EOL;
     ob_flush();
@@ -52,5 +51,6 @@ if (is_array($cache) && $cache['status'] == true) {
     mm_server_sent_msg($i, fJSON::encode($cache));
     delete_user_meta($user->ID, $key);
     exit;
+} else {
+    echo "retry: 5000" . PHP_EOL;
 }
-sleep(5);
