@@ -254,6 +254,59 @@ if (!class_exists('IG_Post_Model')) {
             return apply_filters($this->get_table() . '_model_find', $model, $class, $id);
         }
 
+        public function find_one_by_attributes($params, $order = false)
+        {
+            $query = array(
+                'post_type' => $this->table,
+                'fields' => 'ids'
+            );
+            $meta_query = array();
+            $tax_query = array();
+
+            foreach ($params as $key => $val) {
+                if (isset($this->mapped[$key])) {
+                    $query[$this->mapped[$key]] = $val;
+                } else {
+                    $re = $this->_relation($key);
+                    if ($re['type'] == 'meta') {
+                        $meta_query[] = array(
+                            'key' => $re['key'],
+                            'value' => $val,
+                            'compare' => '=',
+                        );
+                    } else {
+                        $tax_query[] = array(
+                            'taxonomy' => $re['key'],
+                            'field' => 'slug',
+                            'terms' => $val,
+                        );
+                    }
+                }
+            }
+
+            $query['meta_query'] = $meta_query;
+            $query['tax_query'] = $tax_query;
+
+            if ($order) {
+                $order = explode(' ', $order);
+                if (count($order) == 2) {
+                    $query['orderby'] = $order[0];
+                    $query['order'] = $order[1];
+                } else {
+                    $query['orderby'] = $order;
+                }
+            }
+
+            $query['posts_per_page'] = 1;
+            $query['paged']=1;
+            $query = new WP_Query(apply_filters($this->table . 'find_one_by_attributes', $query, $params));
+
+            wp_reset_query();
+            $post = $query->posts[0];
+            $model = $this->find($post);
+            return $model;
+        }
+
         public function find_by_attributes($params, $paged = false, $order = false)
         {
             $query = array(

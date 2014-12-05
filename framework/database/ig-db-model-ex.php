@@ -9,32 +9,14 @@ if (!class_exists('IG_DB_Model_Ex')) {
         public $id;
 
         /**
-         * @var FluentPDO
-         */
-        private $driver;
-        /**
          * @var array Model indexer
          */
         private static $_models = array();
 
         public function __connect()
         {
-            if (!is_object($this->driver)) {
-                $host = DB_HOST;
-                $user = DB_USER;
-                $password = DB_PASSWORD;
-                $db = DB_NAME;
-                $port = explode(':', $host);
-                if (count($port) == 1) {
-                    $port = 3306;
-                } else {
-                    $port = $port[1];
-                }
-                $pdo = new PDO("mysql:dbname=" . $db . ";host=" . $host . ";port=" . $port, $user, $password);
-                $this->driver = new FluentPDO($pdo);
-            }
-
-            return $this->driver;
+            global $wpdb;
+            return $wpdb;
         }
 
         /**
@@ -62,17 +44,12 @@ if (!class_exists('IG_DB_Model_Ex')) {
         private function perform_update()
         {
             $data = $this->export();
-            unset($data['id']);
-            $data = $this->esc_db_field($data);
-            $driver = $this->__connect();
-            /*            $driver->debug = function ($BaseQuery) {
-                            echo "query: " . $BaseQuery->getQuery(false) . "<br/>";
-                            echo "parameters: " . implode(', ', $BaseQuery->getParameters()) . "<br/>";
-                            echo "rowCount: " . $BaseQuery->getResult()->rowCount() . "<br/>";
-                        };*/
-            $query = $driver->update($this->get_table())->set($data)->where('id', $this->id);
-
-            $query->execute();
+            $data = stripslashes_deep($data);
+            $wpdb = $this->__connect();
+            $wpdb->show_errors();
+            $wpdb->update($this->get_table(), $data, array(
+                'id' => $this->id
+            ));
 
             return $this->id;
         }
@@ -83,10 +60,10 @@ if (!class_exists('IG_DB_Model_Ex')) {
         private function perform_insert()
         {
             $data = $this->export();
-            $data = $this->esc_db_field($data);
-            $driver = $this->__connect();
-            $query = $driver->insertInto($this->get_table(), $data);
-            $id = $query->execute();
+            $data = stripslashes_deep($data);
+            $wpdb = $this->__connect();
+            $wpdb->insert($this->get_table(), $data);
+            $id = $wpdb->insert_id;
             return $id;
         }
 
@@ -141,8 +118,9 @@ if (!class_exists('IG_DB_Model_Ex')) {
          */
         public function find($id)
         {
-            $driver = $this->__connect();
-            $record = $driver->from($this->get_table())->where('id', $id)->fetch();
+            $wpdb = $this->__connect();
+            $sql = $wpdb->prepare("SELECT * FROM " . $this->get_table() . " WHERE id = %d", $id);
+            $record = $wpdb->get_row($sql, ARRAY_A);
             if ($record) {
                 $model = $this->fetch_model($record);
                 return $model;
@@ -158,12 +136,17 @@ if (!class_exists('IG_DB_Model_Ex')) {
          */
         public function find_one($condition, $params = array(), $order = false)
         {
-            $driver = $this->__connect();
-            $query = $driver->from($this->get_table())->where($condition, $params);
+            $wpdb = $this->__connect();
+
+            $sql = "SELECT * FROM " . $this->get_table() . " WHERE " . $condition;
+
             if ($order) {
-                $query->orderBy($order);
+                $sql .= " ORDER BY " . $order;
             }
-            $data = $query->fetch();
+
+            $sql = $wpdb->prepare($sql, $params);
+
+            $data = $wpdb->get_row($sql);
             if ($data) {
                 $model = $this->fetch_model($data);
                 return $model;
@@ -179,14 +162,22 @@ if (!class_exists('IG_DB_Model_Ex')) {
          */
         public function find_one_with_attributes($params, $order = false)
         {
-            $driver = $this->__connect();
+            $wpdb = $this->__connect();
             $params = $this->esc_db_field($params);
-            $query = $driver->from($this->get_table())->where($params);
+
+            $sql = "SELECT * FROM " . $this->get_table();
+            $where = array();
+            foreach ($params as $key => $val) {
+                $where[] = "$key = '" . esc_sql($val) . "'";
+            }
+            $sql .= " WHERE " . implode(' AND ', $where);
+
             if ($order) {
-                $query->orderBy($order);
+                $sql .= " ORDER BY " . $order;
             }
 
-            $data = $query->fetch();
+            $data = $wpdb->get_row($sql, ARRAY_A);
+
             if ($data) {
                 $model = $this->fetch_model($data);
                 return $model;
@@ -204,19 +195,29 @@ if (!class_exists('IG_DB_Model_Ex')) {
          */
         public function find_all($condition = '', $params = array(), $limit = false, $offset = false, $order = false)
         {
-            $driver = $this->__connect();
-            $query = $driver->from($this->get_table())->where($condition, $params);
-            if ($limit && $offset) {
-                $query->limit($offset . ',' . $limit);
-            } elseif ($limit) {
-                $query->limit($limit);
+            $wpdb = $this->__connect();
+
+            if (!empty($condition)) {
+                $sql = "SELECT * FROM " . $this->get_table() . " WHERE " . $condition;
+            } else {
+                $sql = "SELECT * FROM " . $this->get_table();
             }
+
             if ($order) {
-                $query->orderBy($order);
+                $sql .= " ORDER BY " . $order;
             }
 
+            if ($limit && $offset) {
+                $sql .= " LIMIT $offset,$limit";
+            } elseif ($limit) {
+                $sql .= " LIMIT $limit";
+            }
 
-            $data = $query->fetchAll();
+            if (!empty($params)) {
+                $sql = $wpdb->prepare($sql, $params);
+            }
+            $data = $wpdb->get_results($sql, ARRAY_A);
+
             $models = array();
             foreach ($data as $row) {
                 $models[] = $this->fetch_model($row);
@@ -227,20 +228,18 @@ if (!class_exists('IG_DB_Model_Ex')) {
 
         public function find_all_by_ids($ids, $limit = false, $offset = false, $order = false)
         {
-            $driver = $this->__connect();
-            $query = $driver->from($this->get_table())->where('id', $ids);
-
-            if ($limit && $offset) {
-                $query->limit($offset . ',' . $limit);
-            } elseif ($limit) {
-                $query->limit($limit);
-            }
-
+            $wpdb = $this->__connect();
+            $sql = "SELECT * FROM " . $this->get_table() . " WHERE id IN (" . implode(',', $ids) . ")";
             if ($order) {
-                $query->orderBy($order);
+                $sql .= " ORDER BY " . $order;
+            }
+            if ($limit && $offset) {
+                $sql .= " LIMIT $offset,$limit";
+            } elseif ($limit) {
+                $sql .= " LIMIT $limit";
             }
 
-            $data = $query->fetchAll();
+            $data = $wpdb->get_results($sql, ARRAY_A);
 
             $models = array();
             foreach ($data as $row) {
@@ -265,36 +264,27 @@ if (!class_exists('IG_DB_Model_Ex')) {
 
         public function find_by_attributes($params = array(), $limit = false, $offset = false, $order = false)
         {
-            $driver = $this->__connect();
-            $query = $driver->from($this->get_table())->where($params);
-            if ($limit && $offset) {
-                $query->limit($offset . ',' . $limit);
-            } elseif ($limit) {
-                $query->limit($limit);
+            $wpdb = $this->__connect();
+            $params = $this->esc_db_field($params);
+
+            $sql = "SELECT * FROM " . $this->get_table();
+            $where = array();
+            foreach ($params as $key => $val) {
+                $where[] = "$key = '" . esc_sql($val) . "'";
             }
+            $sql .= " WHERE " . implode(' AND ', $where);
+
             if ($order) {
-                $query->orderBy($order);
-            }
-            $data = $query->fetchAll();
-            $models = array();
-            foreach ($data as $row) {
-                $models[] = $this->fetch_model($row);
+                $sql .= " ORDER BY " . $order;
             }
 
-            return $models;
-        }
+            if ($limit && $offset) {
+                $sql .= " LIMIT $offset,$limit";
+            } elseif ($limit) {
+                $sql .= " LIMIT $limit";
+            }
 
-        /**
-         *
-         * @param string $sql
-         * @param array $data
-         *
-         * @return array
-         */
-        public function all_with_condition($sql = ' 1 = 1 ', $data = array())
-        {
-            $driver = $this->__connect();
-            $data = $driver->from($this->get_table())->where($sql, $data)->fetchAll();
+            $data = $wpdb->get_results($sql, ARRAY_A);
 
             $models = array();
             foreach ($data as $row) {
@@ -325,8 +315,10 @@ if (!class_exists('IG_DB_Model_Ex')) {
          */
         function delete()
         {
-            $driver = $this->__connect();
-            $driver->delete($this->get_table(), $this->id);
+            $wpdb = $this->__connect();
+            $wpdb->delete($this->get_table(), array(
+                'id' => $this->id
+            ));
         }
 
         /**

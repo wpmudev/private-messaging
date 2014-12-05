@@ -107,24 +107,14 @@ class MM_Messages_Table extends WP_List_Table
 
         if (isset($_GET['s']) && !empty($_GET['s'])) {
             if (isset($_GET['s'])) {
-                $sql = "SELECT _conv.id FROM wp_posts posts
-INNER JOIN wp_postmeta conv_id ON posts.ID = conv_id.post_id AND conv_id.meta_key='_conversation_id'
-INNER JOIN wp_postmeta send_to ON posts.ID = send_to.post_id AND send_to.meta_key='_send_to'
-INNER JOIN wp_mm_conversation conv ON conv.id = conv_id.meta_value
-INNER JOIN wp_users ON wp_users.ID=posts.post_author OR wp_users.ID = send_to.meta_value
-WHERE (posts.post_title LIKE %s OR posts.post_content LIKE %s OR wp_users.user_login LIKE %s) AND posts.post_status='publish'";
-                $totals = $wpdb->get_var($wpdb->prepare(str_replace('_conv.id', 'COUNT(DISTINCT(conv.id))', $sql), "%$_GET[s]%", "%$_GET[s]%", "%$_GET[s]%"));
-                $ids = $wpdb->get_col($wpdb->prepare(str_replace('_conv.id', 'DISTINCT(conv.id)', $sql), "%$_GET[s]%", "%$_GET[s]%", "%$_GET[s]%"));
+                $this->items = MM_Conversation_Model::search($_GET['s'], $perpage);
+                $totals = mmg()->global['conversation_total_pages'];
                 $totalpages = ceil($totals / $perpage);
                 $this->set_pagination_args(array(
                     "total_items" => $totals,
                     "total_pages" => $totalpages,
                     "per_page" => $perpage,
                 ));
-
-                $this->items = MM_Conversation_Model::model()->all_with_condition('id IN (' . implode(',', $ids) . ') LIMIT ' . $offset . ',' . $perpage, array(//':ids' => implode(',', $ids)
-                ));
-
             }
         } else {
             $this->items = MM_Conversation_Model::model()->find_all('', array(), $perpage, $offset);

@@ -4,6 +4,7 @@
 <div class="row">
     <div class="col-md-6 col-xs-6 col-sm-6 text-center">
         <p><strong><?php _e("Inbox Page", mmg()->domain) ?></strong></p>
+
         <div class="clearfix"></div>
 
         <div class="text-left">
@@ -17,6 +18,7 @@
     </div>
     <div class="col-md-6 col-xs-6 col-sm-6 text-center">
         <p><strong><?php _e("PM User", mmg()->domain) ?></strong></p>
+
         <div class="clearfix"></div>
 
         <div class="text-left">
@@ -46,8 +48,11 @@
                     <mark><?php _e("subject", mmg()->domain) ?></mark>
                     : <?php _e("Subject of the email people send to this user via the button", mmg()->domain) ?>
                 </li>
-
+                <li class="text-info">
+                    <?php _e("Please note that, <strong>user_id</strong> or <strong>user_name</strong> or <strong>in_the_loop</strong> must be defined.") ?>
+                </li>
             </ul>
+
         </div>
     </div>
     <div class="clearfix"></div>

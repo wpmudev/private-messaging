@@ -7,10 +7,79 @@ class MM_Upgrade_Controller extends IG_Request
 {
     public function __construct()
     {
-        add_action('admin_notices', array(&$this, 'admin_notice'));
+        //add_action('admin_notices', array(&$this, 'admin_notice'));
         add_action('admin_menu', array(&$this, 'admin_menu'));
-        add_action('wp_ajax_mm_import', array(&$this, 'import'));
-        add_action('wp_ajax_mm_cleanup', array(&$this, 'cleanup'));
+        add_action('wp_ajax_mm_create_table', array(&$this, 'create_table'));
+    }
+
+    function create_table()
+    {
+        if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'mm_create_table')) {
+            exit;
+        }
+        global $wpdb;
+        $type = fRequest::get('type');
+        $charset_collate = '';
+
+        if (!empty($wpdb->charset)) {
+            $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
+        }
+
+        if (!empty($wpdb->collate)) {
+            $charset_collate .= " COLLATE {$wpdb->collate}";
+        }
+        if ($type == 'c-table') {
+
+            $sql = "-- ----------------------------;
+CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_created` datetime DEFAULT NULL,
+  `message_count` tinyint(3) DEFAULT NULL,
+  `message_index` varchar(255) DEFAULT NULL,
+  `user_index` varchar(255) DEFAULT NULL,
+  `send_from` tinyint(3) DEFAULT NULL,
+  `site_id` tinyint(1) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1,
+  UNIQUE KEY id (id)
+) $charset_collate;";
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") === $wpdb->base_prefix . 'mm_conversation') {
+                fJSON::output(array(
+                    'status' => 'success'
+                ));
+            } else {
+                fJSON::output(array(
+                    'status' => 'fail',
+                    'error' => __("Can not create table {$wpdb->base_prefix}mm_conversation", mmg()->domain)
+                ));
+            }
+        } elseif ($type == 's-table') {
+            $sql = "CREATE TABLE `{$wpdb->base_prefix}mm_status` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `conversation_id` int(11) DEFAULT NULL,
+  `message_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `type` tinyint(4) DEFAULT NULL,
+  UNIQUE KEY id (id)
+) $charset_collate;
+";
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            @dbDelta($sql);
+            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") === $wpdb->base_prefix . 'mm_status') {
+                fJSON::output(array(
+                    'status' => 'success'
+                ));
+            } else {
+                fJSON::output(array(
+                    'status' => 'fail',
+                    'error' => __("Can not create table {$wpdb->base_prefix}mm_status", mmg()->domain)
+                ));
+            }
+        }
+        exit;
     }
 
     function cleanup()
@@ -89,9 +158,19 @@ class MM_Upgrade_Controller extends IG_Request
     function main()
     {
         wp_enqueue_style('mm_style');
+        global $wpdb;
+        $c_status = false;
+        $s_status = false;
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") === $wpdb->base_prefix . 'mm_conversation') {
+            $c_status = true;
+        }
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") === $wpdb->base_prefix . 'mm_status') {
+            $s_status = true;
+        }
 
         $this->render('backend/upgrade', array(
-            'data' => $this->_get_import_data()
+            'c_status' => $c_status,
+            's_status' => $s_status
         ));
     }
 
@@ -144,7 +223,7 @@ class MM_Upgrade_Controller extends IG_Request
     {
         ?>
         <div class="updated">
-            <p><?php _e(sprintf("Please use the migrate tool for upgrade messaging data to 1.2 - Do it <a href='%s'>Here</a>", admin_url()), mmg()->domain); ?></p>
+            <p><?php _e(sprintf("There's some issue with your database, Private Messaging can not create necessary tables, please try it <a href=\"%s\">here</a>", admin_url('admin.php?page=mm_main')), mmg()->domain); ?></p>
         </div>
     <?php
 

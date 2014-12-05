@@ -42,14 +42,6 @@ if (!function_exists('ig_loader')) {
 
     include_once dirname(__FILE__) . '/vendors/Container.php';
 
-    if (!class_exists('RedBean_SimpleModel')) {
-        include_once dirname(__FILE__) . '/vendors/rb.php';
-    }
-
-    if (!class_exists('FluentPDO')) {
-        include_once dirname(__FILE__) . '/vendors/FluentPDO/FluentPDO.php';
-    }
-
     if (!function_exists('ig_enqueue_scripts')) {
         add_action('wp_enqueue_scripts', 'ig_enqueue_scripts');
         add_action('admin_enqueue_scripts', 'ig_enqueue_scripts');

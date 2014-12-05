@@ -37,7 +37,7 @@ if (!class_exists('MMessaging')) {
         public $domain;
         public $prefix;
 
-        public $version = "1.0";
+        public $version = "1.0 RC5";
 
         public $global = array();
 
@@ -59,11 +59,100 @@ if (!class_exists('MMessaging')) {
             add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
             add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
 
-            $this->check_upgrade();
-            add_action('init', array(&$this, 'dispatch'));
+
+            if ($this->ready_to_use()) {
+                $this->upgrade();
+                add_action('init', array(&$this, 'dispatch'));
+            } else {
+                new MM_Upgrade_Controller();
+            }
         }
 
-        function check_upgrade()
+        function ready_to_use()
+        {
+            global $wpdb;
+            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") !== $wpdb->base_prefix . 'mm_conversation'
+                || $wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") !== $wpdb->base_prefix . 'mm_status'
+            ) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function upgrade()
+        {
+            if (get_option('mm_upgrade_' . $this->version) == 1) {
+                return;
+            }
+            global $wpdb;
+            //upgrade script
+            //check does column status exist
+            $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'status'";
+            $exist = $wpdb->get_var($sql);
+            if (is_null($exist)) {
+                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation ADD COLUMN `status` INT(11) DEFAULT 1;";
+                $wpdb->query($sql);
+            }
+            //rename column
+            $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'date'";
+            $exist = $wpdb->get_var($sql);
+            if (!is_null($exist)) {
+                //change date name
+                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `date` `date_created` DATETIME";
+                $wpdb->query($sql);
+            }
+
+            //rename column
+            $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'count'";
+            $exist = $wpdb->get_var($sql);
+            if (!is_null($exist)) {
+                //change date name
+                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `count` `message_count` TINYINT;";
+                $wpdb->query($sql);
+            }
+
+            //rename column
+            $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'index'";
+            $exist = $wpdb->get_var($sql);
+            if (!is_null($exist)) {
+                //change date name
+                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `index` `message_index` VARCHAR(255);";
+                $wpdb->query($sql);
+            }
+
+            //rename column
+            $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'from'";
+            $exist = $wpdb->get_var($sql);
+            if (!is_null($exist)) {
+                //change date name
+                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `from` `send_from` TINYINT;";
+                $wpdb->query($sql);
+            }
+            update_option('mm_upgrade_' . $this->version, 1);
+        }
+
+        function install()
         {
             global $wpdb;
 
@@ -76,9 +165,9 @@ if (!class_exists('MMessaging')) {
             if (!empty($wpdb->collate)) {
                 $charset_collate .= " COLLATE {$wpdb->collate}";
             }
-
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             $sql = "-- ----------------------------;
-CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
+CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_created` datetime DEFAULT NULL,
   `message_count` tinyint(3) DEFAULT NULL,
@@ -86,20 +175,13 @@ CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
   `user_index` varchar(255) DEFAULT NULL,
   `send_from` tinyint(3) DEFAULT NULL,
   `site_id` tinyint(1) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT 1
+  `status` tinyint(1) DEFAULT 1,
   UNIQUE KEY id (id)
 ) $charset_collate;";
 
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            //check does this is clean install
-            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") !== $wpdb->base_prefix . 'mm_conversation') {
-                //do upgrade
-
-                dbDelta($sql);
-            } else {
-                if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") !== $wpdb->base_prefix . 'mm_status') {
-                    $sql = "CREATE TABLE `{$wpdb->base_prefix}mm_status` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+            dbDelta($sql);
+            $sql = "CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_status` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `conversation_id` int(11) DEFAULT NULL,
   `message_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
@@ -110,72 +192,7 @@ CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
 ) $charset_collate;
 ";
 
-                    dbDelta($sql);
-                }
-                //upgrade script
-                //check does column status exist
-                $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'status'";
-                $exist = $wpdb->get_var($sql);
-                if (is_null($exist)) {
-                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation ADD COLUMN `status` INT(11) DEFAULT 1;";
-                    $wpdb->query($sql);
-                }
-                //rename column
-                $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'date'";
-                $exist = $wpdb->get_var($sql);
-                if (!is_null($exist)) {
-                    //change date name
-                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `date` `date_created` DATETIME";
-                    $wpdb->query($sql);
-                }
-
-                //rename column
-                $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'count'";
-                $exist = $wpdb->get_var($sql);
-                if (!is_null($exist)) {
-                    //change date name
-                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `count` `message_count` TINYINT;";
-                    $wpdb->query($sql);
-                }
-
-                //rename column
-                $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'index'";
-                $exist = $wpdb->get_var($sql);
-                if (!is_null($exist)) {
-                    //change date name
-                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `index` `message_index` VARCHAR(255);";
-                    $wpdb->query($sql);
-                }
-
-                //rename column
-                $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'from'";
-                $exist = $wpdb->get_var($sql);
-                if (!is_null($exist)) {
-                    //change date name
-                    $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `from` `send_from` TINYINT;";
-                    $wpdb->query($sql);
-                }
-            }
+            dbDelta($sql);
         }
 
         function scripts()
@@ -223,9 +240,9 @@ AND column_name = 'from'";
             }
             //loading add on & components
             new MAjax();
-            $inbox_sc = new Inbox_Shortcode_Controller();
-            $messge_me_sc = new Message_Me_Shortcode_Controller();
-            $admin_bar_notification = new Admin_Bar_Notification_Controller();
+            $this->global['inbox_sc'] = new Inbox_Shortcode_Controller();
+            $this->global['messge_me_sc'] = new Message_Me_Shortcode_Controller();
+            $this->global['admin_bar_notification'] = new Admin_Bar_Notification_Controller();
         }
 
         function load_post_type()
@@ -474,6 +491,7 @@ AND column_name = 'from'";
     }
 
 //init once
-    mmg();
+    register_activation_hook(__FILE__, array(mmg(), 'install'));
     include_once mmg()->plugin_path . 'functions.php';
+
 }

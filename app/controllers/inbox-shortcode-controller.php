@@ -108,21 +108,26 @@ class Inbox_Shortcode_Controller extends IG_Request
                 break;
             case 'unread':
                 $models = MM_Conversation_Model::get_unread();
+                $total_pages = mmg()->global['conversation_total_pages'];
                 break;
             case 'read':
                 $models = MM_Conversation_Model::get_read();
+                $total_pages = mmg()->global['conversation_total_pages'];
                 break;
             case 'sent':
                 $models = MM_Conversation_Model::get_sent();
+                $total_pages = mmg()->global['conversation_total_pages'];
                 break;
             case 'archive':
                 $models = MM_Conversation_Model::get_archive();
+                $total_pages = mmg()->global['conversation_total_pages'];
                 break;
             case'setting':
                 return $this->render('shortcode/setting', array(), false);
                 break;
             case 'search':
                 $models = MM_Conversation_Model::search(fRequest::get('query'));
+                $total_pages = mmg()->global['conversation_total_pages'];
                 break;
         }
 
@@ -290,7 +295,6 @@ class Inbox_Shortcode_Controller extends IG_Request
         $model->status = MM_Message_Status_Model::STATUS_READ;
         $model->type = MM_Message_Status_Model::TYPE_CONVERSATION;
         $model->save();
-
     }
 
     function logins_to_ids($users)
