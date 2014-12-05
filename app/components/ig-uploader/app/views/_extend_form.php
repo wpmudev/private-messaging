@@ -30,6 +30,7 @@ $f_id = uniqid();
 </div>
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
+        $('.dropdown-toggle').dropdown();
         $('#<?php echo $c_id ?> .add-file').popoverasync({
             "placement": "left",
             "trigger": "click",
@@ -189,6 +190,7 @@ $f_id = uniqid();
                             }
                         });
                     }
+                    $('.dropdown-toggle').dropdown();
                 }
             })
             return false;
