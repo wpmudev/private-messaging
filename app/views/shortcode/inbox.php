@@ -198,8 +198,8 @@
     jQuery(function ($) {
         $(".mm-compose").leanModal({
             closeButton: ".compose-close",
-            top:'5%',
-            width:'90%',
+            top:'0%',
+            width:'95%',
             maxWidth:659
         });
 

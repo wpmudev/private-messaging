@@ -6,8 +6,8 @@ $f_id = uniqid();
 <div id="<?php echo $c_id ?>">
 <div class="panel panel-default" style="margin-bottom: 5px;border-width: 1px;position:relative;">
     <div class="panel-heading">
-        <strong class="hidden-xs hidden-sm"><?php _e('Attach images or files for extra information', ig_uploader()->domain) ?></strong>
-        <small class="hidden-md hidden-lg"><?php _e('Attach images or files for extra information', ig_uploader()->domain) ?></small>
+        <strong class="hidden-xs hidden-sm"><?php _e('Attach media or other files.', ig_uploader()->domain) ?></strong>
+        <small class="hidden-md hidden-lg"><?php _e('Attach media or other files.', ig_uploader()->domain) ?></small>
         <button type="button"
                 rel="igu_popover"
                 class="btn btn-primary btn-xs pull-right add-file"><?php _e('Add', ig_uploader()->domain) ?> <i
@@ -32,7 +32,7 @@ $f_id = uniqid();
     jQuery(document).ready(function ($) {
         //$('.dropdown-toggle').dropdown();
         $('#<?php echo $c_id ?> .add-file').popoverasync({
-            "placement": "left",
+            "placement": "auto",
             "trigger": "click",
             "title": "<?php echo esc_js(__("Upload Attachment",ig_uploader()->domain)) ?>",
             "html": true,

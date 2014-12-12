@@ -26,30 +26,30 @@
             <ul>
                 <li>
                     <mark><?php _e("user_id", mmg()->domain) ?></mark>
-                    : <?php _e("This is the id of the user this message form will send email to", mmg()->domain) ?>
+                    : <?php _e("The id of the user who is the message recipient.", mmg()->domain) ?>
                 </li>
                 <li>
                     <mark><?php _e("user_name", mmg()->domain) ?></mark>
-                    : <?php _e("This is the user name of the user this message form will send email to, less priority than user_id", mmg()->domain) ?>
+                    : <?php _e("The user name of the message recipient. User ID will be given higher priority than user_name.", mmg()->domain) ?>
                 </li>
                 <li>
                     <mark><?php _e("in_the_loop", mmg()->domain) ?></mark>
-                    : <?php _e("Only accept 1|0, if both user_id and user_name is empty, and if this shortcode in a loop, it's will get the author user_id", mmg()->domain) ?>
+                    : <?php _e("Use 1 for true, 0 for false. This shortcode is used for case when there is no user ID or user_name. This shortcode will pull the author user_ID if the shortcode is inside the loop.", mmg()->domain) ?>
                 </li>
                 <li>
                     <mark><?php _e("text", mmg()->domain) ?></mark>
-                    : <?php _e("The text display, default is \"Message me\"", mmg()->domain) ?>
+                    : <?php _e("The button text to display, default is \"Message me.\"", mmg()->domain) ?>
                 </li>
                 <li>
                     <mark><?php _e("class", mmg()->domain) ?></mark>
-                    : <?php _e("Class of the message me button", mmg()->domain) ?>
+                    : <?php _e("If you want to style the message button, use this shortcodes parameter to define the class of the message button. ", mmg()->domain) ?>
                 </li>
                 <li>
                     <mark><?php _e("subject", mmg()->domain) ?></mark>
-                    : <?php _e("Subject of the email people send to this user via the button", mmg()->domain) ?>
+                    : <?php _e("This will define the subject of the message sent, if one is not added by the user. ", mmg()->domain) ?>
                 </li>
                 <li class="text-info">
-                    <?php _e("Please note that, <strong>user_id</strong> or <strong>user_name</strong> or <strong>in_the_loop</strong> must be defined.") ?>
+                    <?php _e("Please note that <strong>user_id</strong> or <strong>user_name</strong> or <strong>in_the_loop</strong> must be defined.") ?>
                 </li>
             </ul>
 

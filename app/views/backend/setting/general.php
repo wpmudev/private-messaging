@@ -6,14 +6,14 @@
     <?php $form = new IG_Active_Form($model);
     $form->open(array("attributes" => array("class" => "form-horizontal")));?>
     <div class="form-group <?php echo $model->has_error("enable_receipt") ? "has-error" : null ?>">
-        <?php $form->label("enable_receipt", array("text" => __("Enable Receipt", mmg()->domain), "attributes" => array("class" => "col-lg-2 control-label"))) ?>
+        <?php $form->label("enable_receipt", array("text" => __("Enable Message Receipt", mmg()->domain), "attributes" => array("class" => "col-lg-2 control-label"))) ?>
         <div class="col-lg-10">
             <div class="checkbox">
                 <label>
                     <?php
                     $form->hidden('enable_receipt', array('value' => 0));
                     $form->checkbox("enable_receipt", array("attributes" => array("class" => "", "value" => 1))) ?>
-                    <?php _e("Enable read message receipt? (Users will receive a email to notifying them their messages have been read)", mmg()->domain) ?>
+                    <?php _e("Tick this box to enable email notifications of read messages.", mmg()->domain) ?>
                 </label>
             </div>
         </div>

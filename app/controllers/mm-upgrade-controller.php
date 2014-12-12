@@ -42,7 +42,7 @@ class MM_Upgrade_Controller extends IG_Request
         }
         update_option('mm_db_version', mmg()->db_version);
         //redirect
-        wp_redirect(admin_url('admin.php?page=mm_main'));
+        //wp_redirect(admin_url('admin.php?page=mm_main'));
     }
 
     //fix around for bad naming

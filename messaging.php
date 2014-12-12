@@ -134,10 +134,10 @@ if (!class_exists('MMessaging')) {
             $css_write_path = $write_path . '/' . implode('-', $css) . '.css';
             $css_cache = get_option('mm_style_last_cache');
             if ($css_cache && file_exists($css_write_path) && strtotime('+1 hour', $css_cache) < time()) {
-            //remove cache
+                //remove cache
+                unlink($css_write_path);
+            }
             unlink($css_write_path);
-        }
-
             $js_write_path = $write_path . '/' . implode('-', $js) . '.js';
             if (!file_exists($css_write_path)) {
                 global $wp_styles;
@@ -205,6 +205,12 @@ if (!class_exists('MMessaging')) {
         function can_compress()
         {
             $runtime_path = $this->plugin_path . 'framework/runtime';
+            if (!is_dir($runtime_path)) {
+                //try to create
+                mkdir($runtime_path);
+            }
+            if (!is_dir($runtime_path))
+                return false;
             $use_compress = false;
             if (!is_writeable($runtime_path)) {
                 chmod($runtime_path, 775);

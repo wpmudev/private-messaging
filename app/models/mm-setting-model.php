@@ -37,8 +37,8 @@ class MM_Setting_Model extends IG_Option_Model
         ";
 
         $this->receipt_content = "Dear FROM_NAME <br/><br/>
-        Your email sent to TO_NAME on SITE_NAME has been read";
-        $this->receipt_subject = "Your email sent to TO_NAME on SITE_NAME has read";
+        The message you sent to TO_NAME on SITE_NAME has been read.";
+        $this->receipt_subject = "The message you sent to TO_NAME on SITE_NAME has been read.";
         parent::__construct();
     }
 }

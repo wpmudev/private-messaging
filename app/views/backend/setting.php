@@ -23,7 +23,7 @@
                     </li>
                     <li class="<?php echo mmg()->get('tab') == 'shortcode' ? 'active' : null ?>">
                         <a href="<?php echo add_query_arg('tab', 'shortcode') ?>">
-                            <i class="glyphicon glyphicon-cog"></i> <?php _e("Shortcode", mmg()->domain) ?></a>
+                            <i class="glyphicon glyphicon-cog"></i> <?php _e("Shortcodes", mmg()->domain) ?></a>
                     </li>
                     <?php do_action('mm_setting_menu', $model) ?>
                 </ul>

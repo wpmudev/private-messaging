@@ -17,7 +17,7 @@ $color = $colors[array_rand($colors)];
 <div class="igu-media-file-land" id="igu-media-file-<?php echo $model->id ?>" data-id="<?php echo $model->id ?>">
     <div class="well well-sm">
         <div class="row no-margin">
-            <div class="col-md-10 no-padding">
+            <div class="col-md-10 col-sm-10 col-xs-10 no-padding">
                 <div class="igu-media-file-thumbnail hidden-xs hidden-sm <?php echo $color ?>">
                     <?php echo $model->mime_to_icon() ?>
                 </div>
@@ -28,7 +28,7 @@ $color = $colors[array_rand($colors)];
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <div class="col-md-2 no-padding">
+            <div class="col-md-2 col-sm-2 col-xs-2 no-padding">
                 <div class="btn-group-vertical btn-group-xs pull-right" role="group">
                     <button data-id="<?php echo $model->id ?>"
                        data-target="#igu-uploader-form-<?php echo $model->id ?>" type="button"

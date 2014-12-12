@@ -32,7 +32,7 @@ if (!class_exists('IG_Uploader')) {
 
         function scripts()
         {
-            wp_register_style('igu-uploader', $this->plugin_url . 'assets/style.min.css');
+            wp_register_style('igu-uploader', $this->plugin_url . 'assets/style.css');
             wp_register_script('popoverasync', $this->plugin_url . 'assets/popover/popoverasync.js', array('jquery'));
 
             wp_register_script('jquery-frame-transport', $this->plugin_url . 'assets/iframe-transport/jquery.iframe-transport.js');

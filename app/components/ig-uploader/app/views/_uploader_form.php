@@ -4,7 +4,7 @@ if (!isset($model)) {
     $model = new IG_Uploader_Model();
 }
 $form = new IG_Active_Form($model);
-$form->open(array("attributes" => array("class" => "igu-upload-form", "style" => "width:100%;max-width:350px")));?>
+$form->open(array("attributes" => array("class" => "igu-upload-form", "style" => "min-width:60%;max-width:304px")));?>
 <?php if ($model->exist) {
     $form->hidden('id');
 }?>
