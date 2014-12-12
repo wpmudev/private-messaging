@@ -4,7 +4,7 @@ Plugin Name: Private Messaging
 Plugin URI: https://premium.wpmudev.org/project/XXXXXXX/
 Description:
 Author: WPMU DEV
-Version: 1.0 RC 6
+Version: 1.0 RC 7
 Author URI: http://premium.wpmudev.org
 WDP ID: ***
 Text Domain: private_messaging
@@ -586,9 +586,4 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
     register_activation_hook(__FILE__, array(mmg(), 'install'));
     include_once mmg()->plugin_path . 'functions.php';
 
-}
-add_action('activated_plugin', 'save_error');
-function save_error()
-{
-    update_option('plugin_error', ob_get_contents());
 }
