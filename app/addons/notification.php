@@ -91,21 +91,33 @@ if (!class_exists('MM_Push_Notification')) {
                                                 var n = noty({
                                                     text: text,
                                                     'theme': 'relax',
+                                                    template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
                                                     dismissQueue: true,
-                                                    'type': 'success',
+                                                    'type': 'alert',
                                                     'layout': 'topRight',
                                                     maxVisible: 5,
                                                     closeWith: ['click'],
                                                     buttons: [
                                                         {
-                                                            addClass: 'mmessage-container btn btn-primary btn-xs',
+                                                            addClass: 'btn btn-primary btn-xs',
                                                             text: 'View', onClick: function ($noty) {
                                                             $noty.close();
                                                             var url = '<?php echo get_permalink(mmg()->setting()->inbox_page) ?>?box=unread';
-                                                            location.href= url;
+                                                            location.href = url;
                                                         }
                                                         }
-                                                    ]
+                                                    ],
+                                                    animation: {
+                                                        open: {height: 'toggle'}, // jQuery animate function property object
+                                                        close: {height: 'toggle'}, // jQuery animate function property object
+                                                        easing: 'swing', // easing
+                                                        speed: 500 // opening & closing animation speed
+                                                    },
+                                                    callback: {
+                                                        onShow: function() {
+                                                            $('.noty_buttons').addClass('mmessage-container');
+                                                        }
+                                                    }
                                                 });
                                             })
                                         }
