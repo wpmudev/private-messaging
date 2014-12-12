@@ -137,7 +137,6 @@ if (!class_exists('MMessaging')) {
                 //remove cache
                 unlink($css_write_path);
             }
-            unlink($css_write_path);
             $js_write_path = $write_path . '/' . implode('-', $js) . '.js';
             if (!file_exists($css_write_path)) {
                 global $wp_styles;
