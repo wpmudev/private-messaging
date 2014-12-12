@@ -99,10 +99,18 @@ if (!class_exists('MMessaging')) {
                             //still need include core for fonts
                             wp_enqueue_style('ig-packed');
                             wp_enqueue_script('jquery');
-                            $this->compress_assets(array('mm_style', 'mm_scroll', 'selectivejs', 'igu-uploader'
-                            ), array(
-                                'mm_scroll', 'selectivejs', 'mm_lean_model', 'jquery-ui-tooltip', 'mm_sceditor', 'mm_sceditor_xhtml', 'popoverasync', 'jquery-frame-transport'
-                            ), $runtime_path);
+                            $csses = array('mm_style', 'mm_scroll', 'selectivejs');
+                            $jses = array(
+                                'mm_scroll', 'selectivejs', 'mm_lean_model', 'jquery-ui-tooltip');
+                            if ($this->setting()->allow_attachment == 1) {
+                                $csses[] = 'igu-uploader';
+                                $jses = array_merge($jses, array('popoverasync', 'jquery-frame-transport'));
+                            }
+                            if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
+                                $jses = array_merge($jses, array('mm_sceditor', 'mm_sceditor_xhtml'));
+                            }
+
+                            $this->compress_assets($csses, $jses, $runtime_path);
                         } else {
                             //needed everywhere
                             wp_enqueue_style('mm_style');
@@ -127,10 +135,16 @@ if (!class_exists('MMessaging')) {
             }
         }
 
+        function clear_assets()
+        {
+
+        }
+
         function compress_assets($css = array(), $js = array(), $write_path)
         {
             if (defined('DOING_AJAX') && DOING_AJAX)
                 return;
+
             $css_write_path = $write_path . '/' . implode('-', $css) . '.css';
             $css_cache = get_option('mm_style_last_cache');
             if ($css_cache && file_exists($css_write_path) && strtotime('+1 hour', $css_cache) < time()) {
