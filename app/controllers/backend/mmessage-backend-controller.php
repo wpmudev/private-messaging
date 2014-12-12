@@ -18,7 +18,7 @@ class MMessage_Backend_Controller extends IG_Request
         $addons = $setting->plugins;
         if (!is_array($addons))
             $addons = array();
-        $id = fRequest::get('id');
+        $id = mmg()->post('id');
         $meta = get_file_data($id, array(
             'Name' => 'Name',
             'Author' => 'Author',
@@ -32,7 +32,7 @@ class MMessage_Backend_Controller extends IG_Request
             $addons[] = $id;
             $setting->plugins = $addons;
             $setting->save();
-            fJSON::output(array(
+            wp_send_json(array(
                 'noty' => __("The add on <strong>{$meta['Name']}</strong> activated", mmg()->domain),
                 'text' => __("Deactivate", mmg()->domain)
             ));
@@ -41,7 +41,7 @@ class MMessage_Backend_Controller extends IG_Request
             unset($addons[array_search($id, $addons)]);
             $setting->plugins = $addons;
             $setting->save();
-            fJSON::output(array(
+            wp_send_json(array(
                 'noty' => __("The add on <strong>{$meta['Name']}</strong> deactivate", mmg()->domain),
                 'text' => __("Activate", mmg()->domain)
             ));
@@ -64,25 +64,25 @@ class MMessage_Backend_Controller extends IG_Request
 
     function process_request()
     {
-        if (isset($_POST['MM_Setting_Model'])) {
+        if (current_user_can('manage_options') && isset($_POST['MM_Setting_Model'])) {
+            if (!wp_verify_nonce(mmg()->post('_mmnonce'), 'mm_settings')) {
+                return;
+            }
+
             $model = new MM_Setting_Model();
             $model->load();
             $model->import($_POST['MM_Setting_Model']);
             $model->save();
 
             $this->set_flash('setting_save', __("Your settings have been successfully updated.", mmg()->domain));
-            wp_redirect(fURL::getWithQueryString());
+            wp_redirect($_SERVER['REQUEST_URI']);
             exit;
         }
     }
 
     function view()
     {
-        wp_enqueue_script('popoverasync', ig_uploader()->plugin_url . 'assets/popover/popoverasync.js', array(
-            'jquery', 'ig-bootstrap', 'jquery-frame-transport'));
-        wp_enqueue_style('mm_style');
-
-        $id = fRequest::get('id', 'int', 0);
+        $id = mmg()->get('id', 0);
         $model = MM_Conversation_Model::model()->find($id);
         if (is_object($model)) {
             $this->render('backend/view', array(

@@ -29,7 +29,8 @@ if ($setting->user_receipt == false) {
                             <input <?php echo checked('1', $user_setting['enable_receipt']) ?>
                                 type="checkbox" name="receipt" value="1"
                                 class="enable_receipt"> <?php _e("Email me when my sent messages are read", mmg()->domain) ?>
-                            <span class="help-block"><?php _e("An email will be sent to you when a user reads your message, this functionality won’t work, if they have disabled tracking within their account.", mmg()->domain) ?></span>
+                            <span
+                                class="help-block"><?php _e("An email will be sent to you when a user reads your message, this functionality won’t work, if they have disabled tracking within their account.", mmg()->domain) ?></span>
                         </label>
                     </div>
                     <div class="checkbox">
@@ -46,7 +47,7 @@ if ($setting->user_receipt == false) {
             </div>
             <?php do_action('mm_after_user_setting_form') ?>
             <div class="row">
-                <?php echo wp_nonce_field('mm_user_setting') ?>
+                <?php echo wp_nonce_field('mm_user_setting_' . get_current_user_id()) ?>
                 <div class="col-md-10 col-md-offset-2">
                     <button name="mm_user_setting" value="1" class="btn btn-primary"
                             type="submit"><?php _e("Save Changes", mmg()->domain) ?></button>
@@ -54,4 +55,14 @@ if ($setting->user_receipt == false) {
             </div>
         </fieldset>
     </form>
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $(".mm-compose").leanModal({
+                closeButton: ".compose-close",
+                top:'5%',
+                width:'90%',
+                maxWidth:659
+            });
+        })
+    </script>
 <?php } ?>

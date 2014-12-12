@@ -2,7 +2,7 @@
 /**
  * Author: Hoang Ngo
  */
-if (!class_exists('ig-uploader')) {
+if (!class_exists('IG_Uploader')) {
     class IG_Uploader
     {
         private static $_instance;
@@ -32,8 +32,8 @@ if (!class_exists('ig-uploader')) {
 
         function scripts()
         {
-            wp_register_style('igu-uploader', $this->plugin_url . 'assets/style.css');
-            wp_enqueue_script('popoverasync', $this->plugin_url . 'assets/popover/popoverasync.js',array('jquery','ig-bootstrap'));
+            wp_register_style('igu-uploader', $this->plugin_url . 'assets/style.min.css');
+            wp_register_script('popoverasync', $this->plugin_url . 'assets/popover/popoverasync.js', array('jquery'));
 
             wp_register_script('jquery-frame-transport', $this->plugin_url . 'assets/iframe-transport/jquery.iframe-transport.js');
         }
@@ -53,7 +53,7 @@ if (!class_exists('ig-uploader')) {
                     'has_archive' => false,
                     'exclude_from_search' => false,
                     'publicly_queryable' => true,
-                    'capability_type' => 'page',
+                    'capability_type' => $this->prefix . 'media',
                 );
                 register_post_type($this->prefix . 'media', $args);
             }

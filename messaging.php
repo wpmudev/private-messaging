@@ -38,6 +38,7 @@ if (!class_exists('MMessaging')) {
         public $prefix;
 
         public $version = "1.0 RC6";
+        public $db_version = '1.0';
 
         public $global = array();
 
@@ -56,163 +57,176 @@ if (!class_exists('MMessaging')) {
             spl_autoload_register(array(&$this, 'autoload'));
 
             //enqueue scripts, use it here so both frontend and backend can use
-            add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
-            add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
-
+            add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 20);
+            add_action('admin_enqueue_scripts', array(&$this, 'scripts'), 20);
 
             if ($this->ready_to_use()) {
-                $this->upgrade();
                 add_action('init', array(&$this, 'dispatch'));
             } else {
                 new MM_Upgrade_Controller();
             }
         }
 
+        //Add maintain page
         function ready_to_use()
         {
-            global $wpdb;
-            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") !== $wpdb->base_prefix . 'mm_conversation'
-                || $wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") !== $wpdb->base_prefix . 'mm_status'
-            ) {
+            if (get_option('mm_db_version') == $this->db_version) {
+                return true;
+            } else {
                 return false;
             }
 
-            return true;
         }
 
-        function upgrade()
+        function load_script($scenario = '')
         {
-            if (get_option('mm_upgrade_' . $this->version) == 1) {
+            $runtime_path = $this->can_compress();
+            switch ($scenario) {
+                case 'inbox':
+                    wp_enqueue_script('jquery-ui-tooltip');
+                    break;
+                case 'login':
+                    wp_enqueue_style('mm_style', $this->plugin_url . 'assets/main.css', array('ig-packed'), $this->version);
+                    //we need the modal for popup login
+                    wp_enqueue_script('mm_lean_model', $this->plugin_url . 'assets/jquery.leanModal.min.js', array('jquery'), $this->version);
+                    break;
+                case 'backend':
+                    wp_enqueue_script('jquery-ui-tabs');
+                    break;
+                default:
+                    if (is_user_logged_in()) {
+                        if ($runtime_path) {
+                            //still need include core for fonts
+                            wp_enqueue_style('ig-packed');
+                            wp_enqueue_script('jquery');
+                            $this->compress_assets(array('mm_style', 'mm_scroll', 'selectivejs', 'igu-uploader'
+                            ), array(
+                                'mm_scroll', 'selectivejs', 'mm_lean_model', 'jquery-ui-tooltip', 'mm_sceditor', 'mm_sceditor_xhtml', 'popoverasync', 'jquery-frame-transport'
+                            ), $runtime_path);
+                        } else {
+                            //needed everywhere
+                            wp_enqueue_style('mm_style');
+                            wp_enqueue_script('mm_scroll');
+                            wp_enqueue_script('selectivejs');
+                            wp_enqueue_style('selectivejs');
+                            wp_enqueue_script('mm_lean_model');
+                            //wysiwyg
+                            if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
+                                wp_enqueue_script('mm_sceditor');
+                                wp_enqueue_script('mm_sceditor_xhtml');
+                            }
+
+                            if ($this->setting()->allow_attachment == 1) {
+                                wp_enqueue_style('igu-uploader');
+                                wp_enqueue_script('popoverasync');
+                                wp_enqueue_script('jquery-frame-transport');
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+
+        function compress_assets($css = array(), $js = array(), $write_path)
+        {
+            if (defined('DOING_AJAX') && DOING_AJAX)
                 return;
-            }
-            global $wpdb;
-            //upgrade script
-            //check does column status exist
-            $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'status'";
-            $exist = $wpdb->get_var($sql);
-            if (is_null($exist)) {
-                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation ADD COLUMN `status` INT(11) DEFAULT 1;";
-                $wpdb->query($sql);
-            }
-            //rename column
-            $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'date'";
-            $exist = $wpdb->get_var($sql);
-            if (!is_null($exist)) {
-                //change date name
-                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `date` `date_created` DATETIME";
-                $wpdb->query($sql);
-            }
-
-            //rename column
-            $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'count'";
-            $exist = $wpdb->get_var($sql);
-            if (!is_null($exist)) {
-                //change date name
-                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `count` `message_count` TINYINT;";
-                $wpdb->query($sql);
-            }
-
-            //rename column
-            $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'index'";
-            $exist = $wpdb->get_var($sql);
-            if (!is_null($exist)) {
-                //change date name
-                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `index` `message_index` VARCHAR(255);";
-                $wpdb->query($sql);
-            }
-
-            //rename column
-            $sql = "SELECT COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE table_name = '{$wpdb->prefix}mm_conversation'
-AND table_schema = '" . DB_NAME . "'
-AND column_name = 'from'";
-            $exist = $wpdb->get_var($sql);
-            if (!is_null($exist)) {
-                //change date name
-                $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `from` `send_from` TINYINT;";
-                $wpdb->query($sql);
-            }
-            update_option('mm_upgrade_' . $this->version, 1);
+            $css_write_path = $write_path . '/' . implode('-', $css) . '.css';
+            $css_cache = get_option('mm_style_last_cache');
+            if ($css_cache && file_exists($css_write_path) && strtotime('+1 hour', $css_cache) < time()) {
+            //remove cache
+            unlink($css_write_path);
         }
 
-        function install()
+            $js_write_path = $write_path . '/' . implode('-', $js) . '.js';
+            if (!file_exists($css_write_path)) {
+                global $wp_styles;
+                $css_paths = array();
+                //loop twice, position is important
+                foreach ($css as $c) {
+                    foreach ($wp_styles->registered as $style) {
+                        if ($style->handle == $c) {
+                            $css_paths[] = $style->src;
+                        }
+                    }
+                }
+                //started
+                $css_strings = '';
+                foreach ($css_paths as $path) {
+                    //path is an url, we need to changeed it to local
+                    $path = str_replace($this->plugin_url, $this->plugin_path, $path);
+                    $css_strings = $css_strings . PHP_EOL . file_get_contents($path);
+                }
+
+                file_put_contents($css_write_path, trim($css_strings));
+                update_option('mm_style_last_cache', time());
+            }
+            $css_write_path = str_replace($this->plugin_path, $this->plugin_url, $css_write_path);
+            wp_enqueue_style(implode('-', $css), $css_write_path);
+
+            $js_cache = get_option('mm_script_last_cache');
+            if ($js_cache && file_exists($js_write_path) && strtotime('+1 hour', $js_cache) < time()) {
+                //remove cache
+                unlink($js_write_path);
+            }
+            if (!file_exists($js_write_path)) {
+                global $wp_scripts;
+                $js_paths = array();
+                //js
+                foreach ($js as $j) {
+                    foreach ($wp_scripts->registered as $script) {
+                        if ($script->handle == $j) {
+                            $js_paths[] = $script->src;
+                        }
+                    }
+                }
+                $js_strings = '';
+                foreach ($js_paths as $path) {
+                    //path is an url, we need to changeed it to local
+                    $path = str_replace($this->plugin_url, $this->plugin_path, $path);
+                    if (file_exists($path)) {
+                        $js_strings = $js_strings . PHP_EOL . file_get_contents($path);
+                    }
+                }
+
+                file_put_contents($js_write_path, trim($js_strings));
+                update_option('mm_script_last_cache', time());
+            }
+            $js_write_path = str_replace($this->plugin_path, $this->plugin_url, $js_write_path);
+            wp_enqueue_script(implode('-', $js), $js_write_path);
+
+        }
+
+        function compress_css($path)
         {
-            global $wpdb;
 
-            $charset_collate = '';
+        }
 
-            if (!empty($wpdb->charset)) {
-                $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
+        function can_compress()
+        {
+            $runtime_path = $this->plugin_path . 'framework/runtime';
+            $use_compress = false;
+            if (!is_writeable($runtime_path)) {
+                chmod($runtime_path, 775);
             }
-
-            if (!empty($wpdb->collate)) {
-                $charset_collate .= " COLLATE {$wpdb->collate}";
+            if (is_writeable($runtime_path)) {
+                $use_compress = $runtime_path;;
             }
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            $sql = "-- ----------------------------;
-CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date_created` datetime DEFAULT NULL,
-  `message_count` tinyint(3) DEFAULT NULL,
-  `message_index` varchar(255) DEFAULT NULL,
-  `user_index` varchar(255) DEFAULT NULL,
-  `send_from` tinyint(3) DEFAULT NULL,
-  `site_id` tinyint(1) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT 1,
-  UNIQUE KEY id (id)
-) $charset_collate;";
-
-            dbDelta($sql);
-            $sql = "CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_status` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `conversation_id` int(11) DEFAULT NULL,
-  `message_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `status` int(11) DEFAULT NULL,
-  `date_created` datetime DEFAULT NULL,
-  `type` tinyint(4) DEFAULT NULL,
-  UNIQUE KEY id (id)
-) $charset_collate;
-";
-
-            dbDelta($sql);
+            return $use_compress;
         }
 
         function scripts()
         {
-            wp_enqueue_script('jquery');
-            wp_enqueue_script('ig-bootstrap');
-            if (is_admin()) {
-                wp_enqueue_style('ig-bootstrap');
-            } else {
-                wp_enqueue_style(apply_filters('mm_front_theme', 'ig-bootstrap'));
-            }
-            wp_enqueue_style('ig-fontawesome');
-
-            wp_register_style('mm_style', $this->plugin_url . 'assets/main.css', array(), $this->version);
+            wp_register_style('mm_style', $this->plugin_url . 'assets/main.min.css', array('ig-packed'), $this->version);
             wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);
-            wp_enqueue_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array('jquery'), $this->version);
+            wp_register_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array('jquery'), $this->version);
 
             wp_register_script('selectivejs', $this->plugin_url . 'assets/selectivejs/js/standalone/selectize.js', array('jquery'), $this->version);
             wp_register_style('selectivejs', $this->plugin_url . 'assets/selectivejs/css/selectize.bootstrap3.css', array(), $this->version);
 
+            wp_register_script('mm_lean_model', $this->plugin_url . 'assets/jquery.leanModal.min.js', array('jquery'), $this->version);
+
+            $this->load_script();
         }
 
         function dispatch()
@@ -226,7 +240,9 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
                 $front = new MM_Frontend();
             }
             //include components we need to use
-            include $this->plugin_path . 'app/components/ig-uploader.php';
+            if ($this->setting()->allow_attachment == true) {
+                include $this->plugin_path . 'app/components/ig-uploader.php';
+            }
             include $this->plugin_path . 'app/components/mm-addon-table.php';
             //load add on
             $addons = $this->setting()->plugins;
@@ -375,10 +391,55 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
             return $string;
         }
 
+        function install()
+        {
+            global $wpdb;
+
+            $charset_collate = '';
+
+            if (!empty($wpdb->charset)) {
+                $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
+            }
+
+            if (!empty($wpdb->collate)) {
+                $charset_collate .= " COLLATE {$wpdb->collate}";
+            }
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            $sql = "-- ----------------------------;
+CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_created` datetime DEFAULT NULL,
+  `message_count` tinyint(3) DEFAULT NULL,
+  `message_index` varchar(255) DEFAULT NULL,
+  `user_index` varchar(255) DEFAULT NULL,
+  `send_from` tinyint(3) DEFAULT NULL,
+  `site_id` tinyint(1) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1,
+  UNIQUE KEY id (id)
+) $charset_collate;";
+
+            dbDelta($sql);
+            $sql = "CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_status` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `conversation_id` int(11) DEFAULT NULL,
+  `message_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `type` tinyint(4) DEFAULT NULL,
+  UNIQUE KEY id (id)
+) $charset_collate;
+";
+
+            dbDelta($sql);
+        }
+
         function encrypt($text)
         {
             if (function_exists('mcrypt_encrypt')) {
-                return str_replace('fCryptography::symmetric', '', fCryptography::symmetricKeyEncrypt($text, SECURE_AUTH_KEY));
+                $key = SECURE_AUTH_KEY;
+                $encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $text, MCRYPT_MODE_CBC, md5(md5($key))));
+                return $encrypted;
             } else {
                 return $text;
             }
@@ -386,10 +447,10 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
 
         function decrypt($text)
         {
-            if (function_exists('mcrypt_encrypt')) {
-                $text = 'fCryptography::symmetric' . $text;
-
-                return fCryptography::symmetricKeyDecrypt($text, SECURE_AUTH_KEY);
+            if (function_exists('mcrypt_decrypt')) {
+                $key = SECURE_AUTH_KEY;
+                $decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($text), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+                return $decrypted;
             } else {
                 return $text;
             }
@@ -453,7 +514,9 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
 
         function html_beautifier($html)
         {
-            require_once $this->plugin_path . 'vendors/SmartDOMDocument.class.php';
+            if (!class_exists('SmartDOMDocument')) {
+                require_once $this->plugin_path . 'vendors/SmartDOMDocument.class.php';
+            }
             $x = new SmartDOMDocument();
             $x->loadHTML($html);
             $clean = $x->saveHTMLExact();
@@ -469,6 +532,35 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
             $logger = new IG_Logger($type, $location);
 
             return $logger;
+        }
+
+        function get($key, $default = NULL)
+        {
+            $value = isset($_GET[$key]) ? $_GET[$key] : $default;
+            return apply_filters('mm_query_get_' . $key, $value);
+        }
+
+        function post($key, $default = NULL)
+        {
+            $array_dereference = NULL;
+            if (strpos($key, '[')) {
+                $bracket_pos = strpos($key, '[');
+                $array_dereference = substr($key, $bracket_pos);
+                $key = substr($key, 0, $bracket_pos);
+            }
+            $value = isset($_POST[$key]) ? $_POST[$key] : $default;
+            if ($array_dereference) {
+                preg_match_all('#(?<=\[)[^\[\]]+(?=\])#', $array_dereference, $array_keys, PREG_SET_ORDER);
+                $array_keys = array_map('current', $array_keys);
+                foreach ($array_keys as $array_key) {
+                    if (!is_array($value) || !isset($value[$array_key])) {
+                        $value = $default;
+                        break;
+                    }
+                    $value = $value[$array_key];
+                }
+            }
+            return apply_filters('mm_query_post_' . $key, $value);
         }
     }
 
@@ -494,4 +586,9 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
     register_activation_hook(__FILE__, array(mmg(), 'install'));
     include_once mmg()->plugin_path . 'functions.php';
 
+}
+add_action('activated_plugin', 'save_error');
+function save_error()
+{
+    update_option('plugin_error', ob_get_contents());
 }

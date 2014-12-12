@@ -10,15 +10,113 @@ class MM_Upgrade_Controller extends IG_Request
         //add_action('admin_notices', array(&$this, 'admin_notice'));
         add_action('admin_menu', array(&$this, 'admin_menu'));
         add_action('wp_ajax_mm_create_table', array(&$this, 'create_table'));
+        add_action('init', array(&$this, 'check'));
     }
 
-    function create_table()
+    /**
+     * The plugin activate should create necessary tables. This is the case of PM is add-on of another plugins
+     *
+     */
+
+    function check()
     {
-        if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'mm_create_table')) {
-            exit;
-        }
+        //check does main table created
         global $wpdb;
-        $type = fRequest::get('type');
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") == $wpdb->base_prefix . 'mm_conversation') {
+            //check around for update column name
+            $this->fix_column_name();
+        } else {
+            //create new table
+            $this->create_c_table();
+        }
+        //status table
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") !== $wpdb->base_prefix . 'mm_status') {
+            $this->create_s_table();
+        }
+        //if everything ok, we will store in option
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") !== $wpdb->base_prefix . 'mm_conversation'
+            || $wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") !== $wpdb->base_prefix . 'mm_status'
+        ) {
+            return false;
+        }
+        update_option('mm_db_version', mmg()->db_version);
+        //redirect
+        wp_redirect(admin_url('admin.php?page=mm_main'));
+    }
+
+    //fix around for bad naming
+    function fix_column_name()
+    {
+        global $wpdb;
+        //upgrade script
+        //check does column status exist
+        $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'status'";
+        $exist = $wpdb->get_var($sql);
+        if (is_null($exist)) {
+            $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation ADD COLUMN `status` INT(11) DEFAULT 1;";
+            $wpdb->query($sql);
+        }
+        //rename column
+        $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'date'";
+        $exist = $wpdb->get_var($sql);
+        if (!is_null($exist)) {
+            //change date name
+            $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `date` `date_created` DATETIME";
+            $wpdb->query($sql);
+        }
+
+        //rename column
+        $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'count'";
+        $exist = $wpdb->get_var($sql);
+        if (!is_null($exist)) {
+            //change date name
+            $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `count` `message_count` TINYINT;";
+            $wpdb->query($sql);
+        }
+
+        //rename column
+        $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'index'";
+        $exist = $wpdb->get_var($sql);
+        if (!is_null($exist)) {
+            //change date name
+            $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `index` `message_index` VARCHAR(255);";
+            $wpdb->query($sql);
+        }
+
+        //rename column
+        $sql = "SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = '{$wpdb->prefix}mm_conversation'
+AND table_schema = '" . DB_NAME . "'
+AND column_name = 'from'";
+        $exist = $wpdb->get_var($sql);
+        if (!is_null($exist)) {
+            //change date name
+            $sql = "ALTER TABLE {$wpdb->prefix}mm_conversation CHANGE `from` `send_from` TINYINT;";
+            $wpdb->query($sql);
+        }
+    }
+
+    function create_c_table()
+    {
+        global $wpdb;
         $charset_collate = '';
 
         if (!empty($wpdb->charset)) {
@@ -28,9 +126,7 @@ class MM_Upgrade_Controller extends IG_Request
         if (!empty($wpdb->collate)) {
             $charset_collate .= " COLLATE {$wpdb->collate}";
         }
-        if ($type == 'c-table') {
-
-            $sql = "-- ----------------------------;
+        $sql = "-- ----------------------------;
 CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_created` datetime DEFAULT NULL,
@@ -42,20 +138,23 @@ CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
   `status` tinyint(1) DEFAULT 1,
   UNIQUE KEY id (id)
 ) $charset_collate;";
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            dbDelta($sql);
-            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") === $wpdb->base_prefix . 'mm_conversation') {
-                fJSON::output(array(
-                    'status' => 'success'
-                ));
-            } else {
-                fJSON::output(array(
-                    'status' => 'fail',
-                    'error' => __("Can not create table {$wpdb->base_prefix}mm_conversation", mmg()->domain)
-                ));
-            }
-        } elseif ($type == 's-table') {
-            $sql = "CREATE TABLE `{$wpdb->base_prefix}mm_status` (
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    function create_s_table()
+    {
+        global $wpdb;
+        $charset_collate = '';
+
+        if (!empty($wpdb->charset)) {
+            $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
+        }
+
+        if (!empty($wpdb->collate)) {
+            $charset_collate .= " COLLATE {$wpdb->collate}";
+        }
+        $sql = "CREATE TABLE `{$wpdb->base_prefix}mm_status` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `conversation_id` int(11) DEFAULT NULL,
   `message_id` int(11) DEFAULT NULL,
@@ -66,88 +165,44 @@ CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
   UNIQUE KEY id (id)
 ) $charset_collate;
 ";
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            @dbDelta($sql);
-            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") === $wpdb->base_prefix . 'mm_status') {
-                fJSON::output(array(
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        @dbDelta($sql);
+    }
+
+    function create_table()
+    {
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_create_table')) {
+            exit;
+        }
+
+        $type = mmg()->post('type');
+        global $wpdb;
+        if ($type == 'c-table') {
+            $this->create_c_table();
+            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") === $wpdb->base_prefix . 'mm_conversation') {
+                wp_send_json(array(
                     'status' => 'success'
                 ));
             } else {
-                fJSON::output(array(
+                wp_send_json(array(
+                    'status' => 'fail',
+                    'error' => __("Can not create table {$wpdb->base_prefix}mm_conversation", mmg()->domain)
+                ));
+            }
+        } elseif ($type == 's-table') {
+            $this->create_s_table();
+            if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") === $wpdb->base_prefix . 'mm_status') {
+                wp_send_json(array(
+                    'status' => 'success'
+                ));
+            } else {
+                wp_send_json(array(
                     'status' => 'fail',
                     'error' => __("Can not create table {$wpdb->base_prefix}mm_status", mmg()->domain)
                 ));
             }
         }
         exit;
-    }
-
-    function cleanup()
-    {
-        if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'mm_cleanup')) {
-            return;
-        }
-
-        $messages = MM_Message_Model::all_with_condition(array(
-            'nopaging' => true
-        ));
-        foreach ($messages as $m) {
-            $m->delete();
-        }
-
-        $convs = MM_Conversation_Model::all_with_condition();
-        foreach ($convs as $conv) {
-            $conv->delete();
-        }
-    }
-
-    /**
-     * This will backup all the current conversation and messages
-     */
-    function backup()
-    {
-        $data = array();
-        $convs = MM_Conversation_Model::all_with_condition();
-        $messages = MM_Message_Model::all_with_condition(array(
-            'nopaging' => true
-        ));
-        $data['conversations'] = $convs;
-        $data['messages'] = $messages;
-        update_option('mm_backup_' . time(), $data);
-    }
-
-    function import()
-    {
-        if (!wp_verify_nonce(fRequest::get('_wpnonce'), 'mm_import')) {
-            return;
-        }
-
-        if (get_option('messaging_version') >= 1.2) {
-            return;
-        }
-        $this->backup();
-
-        $data = $this->_get_import_data();
-        foreach ($data as $v) {
-            $conv = new MM_Conversation_Model();
-            $conv->save();
-
-            foreach ($v as $m) {
-                $model = new MM_Message_Model();
-                $model->subject = $m['message_subject'];
-                $model->content = $m['message_content'];
-                $model->conversation_id = $conv->id;
-                $model->send_from = $m['message_from_user_ID'];
-                $model->send_to = $m['message_to_user_ID'];
-                $model->status = $m['message_status'];
-                $model->date = date('Y-m-d H:i:s', $m['message_stamp']);
-                $model->save();
-                $conv->update_index($model->id);
-            }
-
-            $conv->update_count();
-        }
-        update_option('messaging_version', '1.2');
     }
 
     function admin_menu()
@@ -157,7 +212,7 @@ CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
 
     function main()
     {
-        wp_enqueue_style('mm_style');
+
         global $wpdb;
         $c_status = false;
         $s_status = false;
@@ -174,58 +229,15 @@ CREATE TABLE `{$wpdb->base_prefix}mm_conversation` (
         ));
     }
 
-    function _get_import_data()
+    static function ready_to_use()
     {
         global $wpdb;
-        $messages = $wpdb->get_results('SELECT * FROM ' . $wpdb->base_prefix . 'messages', ARRAY_A);
-        //guess root message
-        $roots = array();
-        foreach ($messages as $message) {
-            if (!stristr($message['message_subject'], 'Re:')) {
-                $roots[] = $message;
-            }
+        if ($wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_conversation'") !== $wpdb->base_prefix . 'mm_conversation'
+            || $wpdb->get_var("SHOW TABLES LIKE '" . $wpdb->base_prefix . "mm_status'") !== $wpdb->base_prefix . 'mm_status'
+        ) {
+            return false;
         }
-        $data = array();
-        foreach ($roots as $root) {
-            if (!isset($data[$root['message_ID']])) {
-                $data[$root['message_ID']] = array();
-            }
-            $check = 'Re: ' . $root['message_subject'];
-            $sql = 'SELECT * FROM ' . $wpdb->base_prefix . 'messages WHERE message_subject LIKE %s ORDER BY message_stamp';
-            $ms = $wpdb->get_results($wpdb->prepare($sql, '%' . $check), ARRAY_A);
-            //check does the message come from root
-            if (!empty($ms)) {
-                $right = array();
-                $d = array_merge(array($root), $ms);
-                //gett he right message
-                //we will loop throught message, and get all the messages have send to/send from id
-                $check = array($root['message_from_user_ID'], $root['message_to_user_ID']);
-                sort($check);
-                $right = array();
-                foreach ($d as $key => $r) {
-                    $compare = array($r['message_from_user_ID'], $r['message_to_user_ID']);
-                    sort($compare);
 
-                    $is_right = array_diff($check, $compare);
-                    if (empty($is_right)) {
-                        $right[] = $r;
-                    }
-                }
-                $data[$root['message_ID']] = $right;
-            } else {
-                $data[$root['message_ID']] = $root;
-            }
-        }
-        return $data;
-    }
-
-    function admin_notice()
-    {
-        ?>
-        <div class="updated">
-            <p><?php _e(sprintf("There's some issue with your database, Private Messaging can not create necessary tables, please try it <a href=\"%s\">here</a>", admin_url('admin.php?page=mm_main')), mmg()->domain); ?></p>
-        </div>
-    <?php
-
+        return true;
     }
 }

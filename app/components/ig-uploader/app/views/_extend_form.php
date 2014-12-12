@@ -30,7 +30,7 @@ $f_id = uniqid();
 </div>
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
-        $('.dropdown-toggle').dropdown();
+        //$('.dropdown-toggle').dropdown();
         $('#<?php echo $c_id ?> .add-file').popoverasync({
             "placement": "left",
             "trigger": "click",
@@ -190,16 +190,17 @@ $f_id = uniqid();
                             }
                         });
                     }
-                    $('.dropdown-toggle').dropdown();
+                    //$('.dropdown-toggle').dropdown();
                 }
             })
             return false;
         });
 
-        $('body').on('click', '.igu-file-delete', function () {
+        $('body').on('click', '.igu-file-delete', function (e) {
+            e.preventDefault();
             var id = $(this).data('id');
             var that = $(this);
-            var parent = that.closest('div').parent().parent();
+            var parent = that.closest('div').parent().parent().parent();
             $.ajax({
                 type: 'POST',
                 url: '<?php echo admin_url('admin-ajax.php') ?>',

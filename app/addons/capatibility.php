@@ -13,8 +13,37 @@ if (!class_exists('MM_User_Capability')) {
             add_action('mm_setting_menu', array(&$this, 'setting_menu'));
             add_action('mm_setting_cap', array(&$this, 'setting_content'));
             add_action('wp_loaded', array(&$this, 'process_request'));
+            if (is_user_logged_in()) {
+                add_filter('mm_suggest_users_args', array(&$this, 'filter_user_return'));
+                add_filter('mm_send_to_this_users', array(&$this, 'filter_user_reply'));
+            }
+        }
 
-            add_filter('mm_suggest_users_args', array(&$this, 'filter_user_return'));
+        function filter_user_reply($ids)
+        {
+            $data = get_option('mm_user_cap');
+            $user = new WP_User(get_current_user_id());
+            $roles = array();
+            //not init, use default
+            if (!$data) {
+                return $ids;
+            }
+
+            foreach ($user->roles as $role) {
+                if (isset($data[$role])) {
+                    $roles = array_merge($roles, $data[$role]);
+                }
+            }
+            foreach ($ids as $id) {
+                if ($id != get_current_user_id()) {
+                    $send_to = new WP_User($id);
+                    //check if this user role in the list can send
+                    if (count(array_intersect($send_to->roles, $roles)) == 0) {
+                       unset($ids[array_search($id,$ids)]);
+                    }
+                }
+            }
+            return $ids;
         }
 
 
@@ -73,15 +102,16 @@ if (!class_exists('MM_User_Capability')) {
         function process_request()
         {
             if (isset($_POST['mm_user_cap'])) {
-                $data = fRequest::get('mm_role');
+                $data = mmg()->post('mm_role');
                 update_option('mm_user_cap', $data);
                 $this->set_flash('mm_user_cap', __("Settings saved!", mmg()->domain));
-                $this->redirect(fURL::getWithQueryString());
+                $this->redirect($_SERVER['REQUEST_URI']);
             }
         }
 
         function setting_content()
         {
+            wp_enqueue_script('jquery-ui-tabs');
             //wp_enqueue_style('mm_style');
             $roles = get_editable_roles();
             $index = array_keys($roles);
@@ -105,27 +135,23 @@ if (!class_exists('MM_User_Capability')) {
                         <div class="row">
                             <div class="col-md-12">
                                 <form method="post">
-                                    <div class="row">
-                                        <div class="col-md-3" style="padding: 0">
-                                            <ul id="role-list" class="nav nav-tabs tabs-left" role="tablist">
-                                                <?php
-                                                foreach ($roles as $key => $role):
-                                                    ?>
-                                                    <li class="<?php echo array_search($key, $index) == 0 ? 'active' : null ?>">
-                                                        <a
-                                                            href="#tab_<?php echo $key ?>" role="tab"
-                                                            data-toggle="tab">
-                                                            <?php echo $role['name'] ?>
-                                                        </a>
-                                                    </li>
-                                                <?php endforeach; ?>
-                                            </ul>
-                                        </div>
+                                    <div class="row" id="tabs">
+                                        <ul id="role-list" class="nav nav-tabs tabs-left col-md-3" role="tablist">
+                                            <?php
+                                            foreach ($roles as $key => $role):
+                                                ?>
+                                                <li style="float: none;clear: both">
+                                                    <a href="#tab_<?php echo $key ?>">
+                                                        <?php echo $role['name'] ?>
+                                                    </a>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
                                         <div class="col-md-9" style="padding: 0">
                                             <div id="myTabContent" class="tab-content" style="min-height: 200px">
                                                 <?php foreach ($roles as $key => $role): ?>
                                                     <div
-                                                        class="tab-pane <?php echo array_search($key, $index) == 0 ? 'active' : 'fade' ?>"
+                                                        class="tab-pane <?php echo array_search($key, $index) == 0 ? 'active' : '' ?>"
                                                         id="tab_<?php echo $key ?>">
                                                         <?php foreach ($roles as $k => $r): ?>
                                                             <?php if ($k != $key): ?>
@@ -179,6 +205,16 @@ if (!class_exists('MM_User_Capability')) {
             <script type="text/javascript">
                 jQuery(document).ready(function ($) {
                     $('#myTabContent').height($('#role-list').height());
+                    $("#tabs").tabs({
+                        active: 0,
+                        activate: function (event, ui) {
+                            ui.newTab.addClass('active');
+                            ui.oldTab.removeClass('active');
+                        },
+                        create: function (event, ui) {
+                            ui.tab.addClass('active');
+                        }
+                    })
                 })
             </script>
         <?php
@@ -187,7 +223,7 @@ if (!class_exists('MM_User_Capability')) {
         function setting_menu()
         {
             ?>
-            <li class="<?php echo fRequest::get('tab') == 'cap' ? 'active' : null ?>">
+            <li class="<?php echo mmg()->get('tab') == 'cap' ? 'active' : null ?>">
                 <a href="<?php echo add_query_arg('tab', 'cap') ?>">
                     <i class="fa fa-binoculars"></i> <?php _e("Capability Settings", mmg()->domain) ?></a>
             </li>

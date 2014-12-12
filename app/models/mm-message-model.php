@@ -59,7 +59,7 @@ class MM_Message_Model extends IG_Post_Model
 
     public function before_validate()
     {
-        if (fRequest::get('is_reply', 'int', 0) == 1) {
+        if (mmg()->post('is_reply', 0) == 1) {
             $this->rules = array(
                 'content' => 'required',
             );

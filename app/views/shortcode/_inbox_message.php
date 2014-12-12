@@ -6,35 +6,35 @@ if (!isset($render_reply)) {
 ?>
 <section class="message-content">
     <div class="message-content-actions pull-right">
-        <?php if (fRequest::get('box') != 'sent' && $render_reply == true): ?>
-    <?php
-    $from_data = get_userdata($message->send_from);
-    ?>
-        <div class="btn-group btn-group-sm">
-            <?php $conversation = MM_Conversation_Model::model()->find($message->conversation_id);?>
-            <?php if ($conversation->is_archive()): ?>
-                <a href="#" title="<?php echo esc_attr(__("Unarchive", mmg()->domain)) ?>"
-                   data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
-                   data-type="<?php echo MM_Message_Status_Model::STATUS_READ ?>"
-                   class="btn btn-sm btn-default mm-status"><i class="fa fa-undo"></i></a>
-                <a href="#" title="<?php echo esc_attr(__("Delete", mmg()->domain)) ?>"
-                   data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
-                   data-type="<?php echo MM_Message_Status_Model::STATUS_DELETE ?>"
-                   class="btn btn-sm btn-danger mm-status"><i class="fa fa-trash"></i></a>
-            <?php else: ?>
-                <button
-                    data-username="<?php echo esc_attr($from_data->user_login) ?>"
-                    data-parentid="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
-                    data-id="<?php echo esc_attr(mmg()->encrypt($message->id)) ?>" type="button"
-                    class="btn btn-info btn-sm mm-reply">
-                    <i class="fa fa-reply"></i>
-                </button>
-                <a href="#" title="<?php echo esc_attr(__("Archive", mmg()->domain)) ?>"
-                   data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
-                   data-type="<?php echo MM_Message_Status_Model::STATUS_ARCHIVE ?>"
-                   class="btn btn-sm btn-default mm-status"><i class="fa fa-archive"></i></a>
-            <?php endif; ?>
-        </div>
+        <?php if (mmg()->get('box') != 'sent' && $render_reply == true): ?>
+            <?php
+            $from_data = get_userdata($message->send_from);
+            ?>
+            <div class="btn-group btn-group-sm">
+                <?php $conversation = MM_Conversation_Model::model()->find($message->conversation_id); ?>
+                <?php if ($conversation->is_archive()): ?>
+                    <a href="#" title="<?php echo esc_attr(__("Unarchive", mmg()->domain)) ?>"
+                       data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                       data-type="<?php echo MM_Message_Status_Model::STATUS_READ ?>"
+                       class="btn btn-sm btn-default mm-status"><i class="fa fa-undo"></i></a>
+                    <a href="#" title="<?php echo esc_attr(__("Delete", mmg()->domain)) ?>"
+                       data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                       data-type="<?php echo MM_Message_Status_Model::STATUS_DELETE ?>"
+                       class="btn btn-sm btn-danger mm-status"><i class="fa fa-trash"></i></a>
+                <?php else: ?>
+                    <a href="#reply-form-c"
+                       data-username="<?php echo esc_attr($from_data->user_login) ?>"
+                       data-parentid="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                       data-id="<?php echo esc_attr(mmg()->encrypt($message->id)) ?>" type="button"
+                       class="btn btn-info btn-sm mm-reply">
+                        <i class="fa fa-reply"></i>
+                    </a>
+                    <a href="#" title="<?php echo esc_attr(__("Archive", mmg()->domain)) ?>"
+                       data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                       data-type="<?php echo MM_Message_Status_Model::STATUS_ARCHIVE ?>"
+                       class="btn btn-sm btn-default mm-status"><i class="fa fa-archive"></i></a>
+                <?php endif; ?>
+            </div>
 
 
         <?php endif; ?>
@@ -42,6 +42,9 @@ if (!isset($render_reply)) {
             <i class="glyphicon glyphicon-trash"></i>
         </button>-->
     </div>
+    <?php $this->render_partial('shortcode/_reply_form', array(
+        'message' => $message
+    )); ?>
     <div class="clearfix"></div>
     <div class="page-header">
         <h3 class="mm-message-subject"><?php echo $message->subject ?></h3>
@@ -71,7 +74,7 @@ if (!isset($render_reply)) {
     <div class="message-body">
         <?php echo mmg()->html_beautifier($message->content) ?>
     </div>
-    <?php if (!empty($message->attachment)): ?>
+    <?php if (mmg()->setting()->allow_attachment == true && !empty($message->attachment)): ?>
         <?php $ids = explode(',', $message->attachment);
         $ids = array_filter($ids);
         if (count($ids)):?>
@@ -81,16 +84,13 @@ if (!isset($render_reply)) {
                     <?php foreach ($ids as $id): ?>
                         <?php $a_m = IG_Uploader_Model::model()->find($id); ?>
                         <div class="col-md-6 message-attachment">
-                            <a class="load-attachment-info" data-target="#<?php echo $id ?>" href="#">
+                            <a class="load-attachment-info" data-target="#<?php echo $id ?>" href="#<?php echo $id ?>">
                                 <i class="fa fa-paperclip fa-2x pull-left"></i>
                                 test.png </a>
 
                             <div class="clearfix"></div>
                             <!-- Modal -->
-                            <div style="top:10%" class="modal fade" id="<?php echo $id ?>"
-                                 tabindex="-1"
-                                 role="dialog"
-                                 aria-hidden="true">
+                            <div class="modal" id="<?php echo $id ?>">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -162,7 +162,7 @@ if (!isset($render_reply)) {
                                                 <a href="<?php echo $file_url ?>" download
                                                    class="btn btn-info"><?php _e('Download File', mmg()->domain) ?></a>
                                             <?php endif; ?>
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close
+                                            <button type="button" class="btn btn-default attachment-close" data-dismiss="modal">Close
                                             </button>
                                         </div>
                                     </div>
@@ -215,24 +215,17 @@ if (!isset($render_reply)) {
 
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
-        $('body').on('click', '.mm-reply', function () {
-            var that = $(this);
-            var name = that.data('username');
-            var subject = that.closest('section').find('.mm-message-subject').first().text();
-            var modal = $('#reply-form-c').find('form');
-            modal.find('#mm_message_model-send_to').val(name);
-            modal.find('#mm_message_model-subject').val('<?php echo esc_js(__('Reply: ',mmg()->domain)) ?>' + subject);
-            modal.find('.mm_message_id').remove();
-            modal.append('<input type="hidden" class="mm_message_id" name="id" value="' + that.data('id') + '">');
-            modal.find('.mm_message_parent_id').remove();
-            modal.append('<input type="hidden" class="mm_message_parent_id" name="parent_id" value="' + that.data('parentid') + '">');
-            $('#reply-form-c').modal({
-                keyboard: false
-            })
+        $('.mm-reply').leanModal({
+            closeButton: ".compose-close",
+            top: '5%',
+            width:'90%',
+            maxWidth:659
         });
-        $('body').on('click', '.load-attachment-info', function (e) {
-            e.preventDefault();
-            $($(this).data('target')).modal()
-        })
+        $('.load-attachment-info').leanModal({
+            closeButton:'.attachment-close',
+            top: '5%',
+            width:'90%',
+            maxWidth:659
+        });
     })
 </script>

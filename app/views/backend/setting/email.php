@@ -54,9 +54,7 @@
         </div>
         <div class="clearfix"></div>
     </div>
-
-
-
+    <?php wp_nonce_field('mm_settings','_mmnonce') ?>
     <div class="row">
         <div class="col-md-10 col-md-offset-2">
             <button type="submit" class="btn btn-primary"><?php _e("Save Changes", mmg()->domain) ?></button>

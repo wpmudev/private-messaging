@@ -8,19 +8,10 @@ class Admin_Bar_Notification_Controller extends IG_Request
     public function __construct()
     {
         if (is_user_logged_in()) {
-            add_action('wp_enqueue_scripts', array(&$this, 'script'));
-            add_action('admin_enqueue_scripts', array(&$this, 'script'));
             add_action('admin_bar_menu', array(&$this, 'notification_buttons'), 80);
             add_action('wp_footer', array(&$this, 'compose_form_footer'));
             add_action('admin_footer', array(&$this, 'compose_form_footer'));
         }
-    }
-
-    function script()
-    {
-        wp_enqueue_style('selectivejs');
-        wp_enqueue_script('selectivejs');
-        wp_enqueue_style('mm_style');
     }
 
     function compose_form_footer()
@@ -50,7 +41,7 @@ class Admin_Bar_Notification_Controller extends IG_Request
         $args = array(
             'id' => 'mm-compose-button',
             'title' => __("Send New Message", mmg()->domain),
-            'href' => '#',
+            'href' => '#compose-form-container-admin-bar',
             'parent' => 'mm-buttons-group',
             'meta' => array(
                 'class' => 'mm-compose-admin-bar',

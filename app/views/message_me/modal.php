@@ -1,5 +1,5 @@
 <div class="mmessage-container">
-    <div class="modal fade" id="message-me-modal">
+    <div class="modal" id="message-me-modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <?php if (!is_user_logged_in()) {
@@ -65,6 +65,12 @@
 </div>
 <script type="text/javascript">
     jQuery(function ($) {
+        $('.message-me-btn').leanModal({
+            closeButton: ".compose-close",
+            top: '5%',
+            width:'90%',
+            maxWidth:659
+        });
         $('body').on('click', '.message-me-btn', function () {
             var data = $($(this).data('target'));
             var subject = data.find('.subject').first().text();
@@ -78,10 +84,6 @@
                 $('.message-me-no-subject').removeClass('hide').find('input').removeAttr('disabled');
             }
             $('.message-me-send-to').val(send_to);
-
-            $('#message-me-modal').modal({
-                keyboard: false
-            })
         });
         $('body').on('submit', '#message-me-form', function () {
             var that = $(this);

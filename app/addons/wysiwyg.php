@@ -18,30 +18,38 @@ if (!class_exists('MM_WYSIWYG')) {
 
         function footer_scripts()
         {
-            include_once dirname(__FILE__) . '/wysiwyg/Mobile_Detect.php';
+            if (!class_exists('Mobile_Detect')) {
+                include_once dirname(__FILE__) . '/wysiwyg/Mobile_Detect.php';
+            }
             $detect = new Mobile_Detect();
             //because the viewport of mobile, so we minimize the toolbars on mobile
             if ($detect->isMobile()) {
                 ?>
                 <script type="text/javascript">
                     jQuery(document).ready(function ($) {
-                        if ($('.mm_wsysiwyg').size() > 0) {
-                            $('.mm_wsysiwyg').sceditor({
-                                plugins: "xhtml",
-                                autoUpdate: true,
-                                autoExpand:true,
-                                width: '98%',
-                                height:'80%',
-                                resizeMinWidth: '50%',
-                                resizeMaxWidth: '100%',
-                                resizeMaxHeight: '100%',
-                                resizeMinHeight: '50%',
-                                emoticonsEnabled: true,
-                                toolbar: "bold,italic,underline,strike|left,center,right,justify",
-                                emoticonsRoot: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/'?>',
-                                style: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/jquery.sceditor.default.min.css'?>'
-                            });
+                        function load_editor() {
+                            if ($('.mm_wsysiwyg').size() > 0) {
+                                $('.mm_wsysiwyg').sceditor({
+                                    plugins: "bbcode",
+                                    autoUpdate: true,
+                                    autoExpand: true,
+                                    width: '98%',
+                                    height: '80%',
+                                    resizeMinWidth: '50%',
+                                    resizeMaxWidth: '100%',
+                                    resizeMaxHeight: '100%',
+                                    resizeMinHeight: '50%',
+                                    emoticonsEnabled: true,
+                                    toolbar: "bold,italic,underline,strike|left,center,right,justify",
+                                    emoticonsRoot: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/'?>',
+                                    style: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/jquery.sceditor.default.min.css'?>'
+                                });
+                            }
                         }
+                        load_editor();
+                        $('body').on('abc', function () {
+                            load_editor();
+                        });
                     })
                 </script>
             <?php
@@ -49,21 +57,29 @@ if (!class_exists('MM_WYSIWYG')) {
                 ?>
                 <script type="text/javascript">
                     jQuery(document).ready(function ($) {
-                        if ($('.mm_wsysiwyg').size() > 0) {
-                            $('.mm_wsysiwyg').sceditor({
-                                plugins: "xhtml",
-                                autoUpdate: true,
-                                width: '98%',
-                                resizeMinWidth: '-1',
-                                resizeMaxWidth: '100%',
-                                resizeMaxHeight: '100%',
-                                resizeMinHeight: '-1',
-                                emoticonsEnabled: true,
-                                toolbar: "bold,italic,underline,strike|left,center,right,justify|font,size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist,indent,outdent|link,unlink|date,time|emoticon",
-                                emoticonsRoot: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/'?>',
-                                style: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/jquery.sceditor.default.min.css'?>'
-                            });
+                        function load_editor() {
+                            if ($('.mm_wsysiwyg').size() > 0) {
+                                var editors = $('.mm_wsysiwyg').sceditor({
+                                    plugins: "xhtml",
+                                    autoUpdate: true,
+                                    width: '98%',
+                                    resizeMinWidth: '-1',
+                                    resizeMaxWidth: '100%',
+                                    resizeMaxHeight: '100%',
+                                    resizeMinHeight: '-1',
+                                    readOnly: false,
+                                    emoticonsEnabled: true,
+                                    toolbar: "bold,italic,underline,strike|left,center,right,justify|font,size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist,indent,outdent|link,unlink|date,time|emoticon",
+                                    emoticonsRoot: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/'?>',
+                                    style: '<?php echo mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/jquery.sceditor.default.min.css'?>'
+                                });
+                            }
                         }
+                        load_editor();
+
+                        $('body').on('abc', function () {
+                            load_editor();
+                        });
                     })
                 </script>
             <?php
@@ -72,9 +88,11 @@ if (!class_exists('MM_WYSIWYG')) {
 
         function scripts()
         {
-            wp_enqueue_script('mm_sceditor', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/jquery.sceditor.min.js', array('jquery'));
-            wp_enqueue_script('mm_sceditor_xhtml', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/plugins/xhtml.js', array('jquery', 'mm_sceditor'));
+            wp_register_script('mm_sceditor', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/jquery.sceditor.min.js', array('jquery'));
+            wp_register_script('mm_sceditor_xhtml', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/plugins/bbcode.js', array('jquery', 'mm_sceditor'));
+            //cause the adminbar needed from anywhere,so we bind it
             wp_enqueue_style('mm_sceditor', mmg()->plugin_url . 'app/addons/wysiwyg/sceditor/minified/themes/default.min.css');
+
         }
     }
 }

@@ -16,10 +16,10 @@
     <div class="row">
         <div class="col-md-5 col-sm-3 col-xs-3 no-padding">
             <div class="message-list">
-                <form class="mm-search-form" method="get" action="<?php echo fURL::get() ?>">
+                <form class="mm-search-form" method="get" action="<?php echo parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>">
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control"
-                               value="<?php echo fRequest::get('query', 'string', '') ?>" name="query"
+                               value="<?php echo mmg()->get('query', '') ?>" name="query"
                                placeholder="<?php _e("Search", mmg()->domain) ?>">
                         <button class="btn btn-link" type="submit">
                             <i class="fa fa-search"></i>
@@ -126,6 +126,7 @@
                         $('#mmessage-content').perfectScrollbar({
                             suppressScrollX: true
                         });
+                        $('body').trigger('abc');
                     }
                 })
             });
@@ -173,7 +174,14 @@
                     })
                 }
 
-            })
+            });
+            $('#mmessage-list').perfectScrollbar({
+                suppressScrollX: true
+            });
+            $('#mmessage-content').perfectScrollbar({
+                suppressScrollX: true
+            });
+
         })
     </script>
 <?php else: ?>
@@ -186,3 +194,45 @@
         </div>
     </div>
 <?php endif; ?>
+<script type="text/javascript">
+    jQuery(function ($) {
+        $(".mm-compose").leanModal({
+            closeButton: ".compose-close",
+            top:'5%',
+            width:'90%',
+            maxWidth:659
+        });
+
+        $('body').on('submit', '.compose-form', function () {
+            var that = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                data: $(that).find(":input").serialize(),
+                beforeSend: function () {
+                    that.parent().parent().find('button').attr('disabled', 'disabled');
+                },
+                success: function (data) {
+                    that.find('.form-group').removeClass('has-error has-success');
+                    that.parent().parent().find('button').removeAttr('disabled');
+                    if (data.status == 'success') {
+                        that.find('.form-control').val('');
+                        location.reload();
+                    } else {
+                        $.each(data.errors, function (i, v) {
+                            var element = that.find('.error-' + i);
+                            element.parent().parent().addClass('has-error');
+                            element.html(v);
+                        });
+                        that.find('.form-group').each(function () {
+                            if (!$(this).hasClass('has-error')) {
+                                $(this).addClass('has-success');
+                            }
+                        })
+                    }
+                }
+            })
+            return false;
+        });
+    })
+</script>

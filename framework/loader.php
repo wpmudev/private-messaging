@@ -24,23 +24,10 @@ if (!function_exists('ig_loader')) {
 
         if (isset($classes[$class])) {
             require_once $classes[$class];
-        } else {
-            // Customize this to your root Flourish directory
-            $flourish_root = dirname(__FILE__) . '/vendors/flourishlib/';
-
-            $file = $flourish_root . $class . '.php';
-
-            if (file_exists($file)) {
-                include $file;
-
-                return;
-            }
         }
     }
 
     spl_autoload_register('ig_loader');
-
-    include_once dirname(__FILE__) . '/vendors/Container.php';
 
     if (!function_exists('ig_enqueue_scripts')) {
         add_action('wp_enqueue_scripts', 'ig_enqueue_scripts');
@@ -48,14 +35,17 @@ if (!function_exists('ig_loader')) {
         function ig_enqueue_scripts()
         {
             $url = plugin_dir_url(__FILE__);
-
-            wp_register_style('ig-bootstrap', $url . 'assets/bootstrap.css');
-            wp_register_style('ig-bootstrap-lumen', $url . 'assets/lumen.css');
+            if (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG == true) {
+                wp_register_style('ig-packed', $url . 'assets/ig-packed.css');
+            } else {
+                wp_register_style('ig-packed', $url . 'assets/ig-packed.min.css');
+            }
+            /*wp_register_style('ig-bootstrap-lumen', $url . 'assets/lumen.css');
             wp_register_style('ig-bootstrap-flaty', $url . 'assets/flaty.css');
             wp_register_style('ig-bootstrap-paper', $url . 'assets/paper.css');
             wp_register_style('ig-bootstrap-united', $url . 'assets/united.css');
             wp_register_script('ig-bootstrap', $url . 'assets/bootstrap.min.js', array('jquery'));
-            wp_register_style('ig-fontawesome', $url . 'assets/fa/css/font-awesome.css');
+            wp_register_style('ig-fontawesome', $url . 'assets/fa/css/font-awesome.css');*/
         }
     }
 }

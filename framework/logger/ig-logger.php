@@ -43,11 +43,15 @@ if (!class_exists('IG_Logger')) {
         private function _file_log($message)
         {
             if (!file_exists($this->location)) {
-                fFile::create($this->location, '');
+                $handle = fopen($this->location, 'w');
+            } else {
+                $handle = fopen($this->location, 'a');
             }
 
-            $file = new fFile($this->location);
-            $file->append($message);
+            if ($handle) {
+                fwrite($handle, $message);
+                fclose($handle);
+            }
         }
     }
 }

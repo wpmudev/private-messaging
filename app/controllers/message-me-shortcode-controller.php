@@ -39,9 +39,11 @@ class Message_Me_Shortcode_Controller extends IG_Request
         if (!isset($user) || !is_object($user))
             return '';
 
-        wp_enqueue_style('mm_style');
+        if (!is_user_logged_in()) {
+            mmg()->load_script('login');
+        }
+        //add modal in footer,only if user logged in
 
-        //add modal in footer
         add_action('wp_footer', array(&$this, 'message_me_modal'));
         return $this->render('message_me/buttons', array(
             'a' => $a,

@@ -53,7 +53,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     {
         global $wpdb;
         $per_page = mmg()->setting()->per_page;
-        $paged = fRequest::get('mpaged', 'int', 1);
+        $paged = mmg()->get('mpaged',1);
 
         $offset = ($paged - 1) * $per_page;
 
@@ -84,7 +84,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     {
         global $wpdb;
         $per_page = mmg()->setting()->per_page;
-        $paged = fRequest::get('mpaged', 'int', 1);
+        $paged = mmg()->get('mpaged',1);
 
         $offset = ($paged - 1) * $per_page;
 
@@ -225,7 +225,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
         }
         global $wpdb;
         $per_page = mmg()->setting()->per_page;
-        $paged = fRequest::get('mpaged', 'int', 1);
+        $paged = mmg()->get('mpaged',1);
 
         $offset = ($paged - 1) * $per_page;
         $total_pages = ceil(self::count_unread() / $per_page);
@@ -254,7 +254,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     public static function get_read()
     {
         $per_page = mmg()->setting()->per_page;
-        $paged = fRequest::get('mpaged', 'int', 1);
+        $paged = mmg()->get('mpaged',1);
 
         $offset = ($paged - 1) * $per_page;
         $total_pages = ceil(self::count_read() / $per_page);
@@ -284,7 +284,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     public static function get_sent()
     {
         $per_page = mmg()->setting()->per_page;
-        $paged = fRequest::get('mpaged', 'int', 1);
+        $paged = mmg()->get('mpaged',1);
 
         $offset = ($paged - 1) * $per_page;
         $total_pages = ceil(self::count_all() / $per_page);
@@ -298,6 +298,9 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
             $ids[] = $message->conversation_id;
         }
         $ids = array_unique(array_filter($ids));
+        if(empty($ids)){
+            return array();
+        }
 
         $model = new MM_Conversation_Model();
         global $wpdb;
@@ -403,7 +406,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
             if (!$per_page) {
                 $per_page = mmg()->setting()->per_page;
             }
-            $paged = fRequest::get('mpaged', 'int', 1);
+            $paged = mmg()->get('mpaged',1);
 
             $offset = ($paged - 1) * $per_page;
             $total_pages = ceil(self::count_all() / $per_page);

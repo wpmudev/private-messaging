@@ -19,12 +19,12 @@ class Inbox_Shortcode_Controller extends IG_Request
 
     function change_status()
     {
-        if (!wp_verify_nonce(FRequest::get('_wpnonce'), 'mm_status')) {
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_status')) {
             exit;
         }
-        $id = fRequest::get('id', 'string');
+        $id = mmg()->post('id');
         $id = mmg()->decrypt($id);
-        $type = fRequest::get('type', 'string', null);
+        $type = mmg()->post('type');
         $model = MM_Conversation_Model::model()->find($id);
         if (is_object($model) && !is_null($type)) {
             $status = $model->get_current_status();
@@ -37,7 +37,7 @@ class Inbox_Shortcode_Controller extends IG_Request
     function process_request()
     {
         if (isset($_POST['mm_user_setting']) && $_POST['mm_user_setting'] == 1) {
-            if (!wp_verify_nonce(FRequest::get('_wpnonce'), 'mm_user_setting')) {
+            if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_user_setting_' . get_current_user_id())) {
                 exit;
             }
 
@@ -52,20 +52,20 @@ class Inbox_Shortcode_Controller extends IG_Request
             $setting['prevent_receipt'] = $prevent_receipt;
 
             update_user_meta($user_id, '_messages_setting', $setting);
-            do_action('mm_user_setting_saved', $setting);
+            do_action('mm_user_setting_saved', $setting, get_current_user_id());
             $this->set_flash('user_setting_' . $user_id, __("Your settings have been successfully updated", mmg()->domain));
-            wp_redirect(fURL::getWithQueryString());
+            wp_redirect($_SERVER['REQUEST_URI']);
             exit;
         }
     }
 
     function load_conversation()
     {
-        if (!wp_verify_nonce(FRequest::get('_wpnonce'), 'mm_load_conversation')) {
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'mm_load_conversation')) {
             exit;
         }
 
-        $id = mmg()->decrypt(fRequest::get('id'));
+        $id = mmg()->decrypt(mmg()->post('id'));
         $model = MM_Conversation_Model::model()->find($id);
         $html = $this->render_inbox_message($model);
 
@@ -74,7 +74,7 @@ class Inbox_Shortcode_Controller extends IG_Request
             do_action('mm_conversation_read', $model);
         }
 
-        fJSON::output(array(
+        wp_send_json(array(
             'html' => $html,
             'count_unread' => MM_Conversation_Model::count_unread(true),
             'count_read' => MM_Conversation_Model::count_read(true)
@@ -84,19 +84,14 @@ class Inbox_Shortcode_Controller extends IG_Request
 
     function inbox($atts)
     {
-        wp_enqueue_style('mm_style');
-        wp_enqueue_script('mm_scroll');
-        wp_enqueue_style('mm_scroll');
-
-        wp_enqueue_style('selectivejs');
-        wp_enqueue_script('selectivejs');
-
         if (!is_user_logged_in()) {
+            mmg()->load_script('login');
             return $this->render('shortcode/login', array(), false);
         }
+        mmg()->load_script('inbox');
         add_action('wp_footer', array(&$this, 'render_compose_form'));
         //$a = shortcode_atts($atts, array());
-        $type = fRequest::get('box', 'string', 'inbox');
+        $type = mmg()->get('box', 'inbox');
         if (isset($_GET['query']) && !empty($_GET['query'])) {
             $type = 'search';
         }
@@ -126,7 +121,7 @@ class Inbox_Shortcode_Controller extends IG_Request
                 return $this->render('shortcode/setting', array(), false);
                 break;
             case 'search':
-                $models = MM_Conversation_Model::search(fRequest::get('query'));
+                $models = MM_Conversation_Model::search(mmg()->get('query'));
                 $total_pages = mmg()->global['conversation_total_pages'];
                 break;
         }
@@ -134,25 +129,23 @@ class Inbox_Shortcode_Controller extends IG_Request
         return $this->render('shortcode/inbox', array(
             'models' => $models,
             'total_pages' => $total_pages,
-            'paged' => fRequest::get('mpaged', 'int', 1)
+            'paged' => mmg()->get('mpaged', 'int', 1)
         ), false);
     }
 
     function render_compose_form()
     {
-
         $this->render_partial('shortcode/_compose_form');
-        $this->render_partial('shortcode/_reply_form');
     }
 
     function suggest_users()
     {
-        if (!wp_verify_nonce(FRequest::get('_wpnonce'), 'mm_suggest_users')) {
+        if (!wp_verify_nonce(mmg()->get('_wpnonce'), 'mm_suggest_users')) {
             exit;
         }
 
         $query = new WP_User_Query(apply_filters('mm_suggest_users_args', array(
-            'search' => '*' . fRequest::get('query') . '*',
+            'search' => '*' . mmg()->post('query') . '*',
             'search_columns' => array('user_login'),
             'exclude' => array(get_current_user_id()),
             'number' => 10,
@@ -170,25 +163,25 @@ class Inbox_Shortcode_Controller extends IG_Request
 
         $data = apply_filters('mm_suggest_users_result', $data);
 
-        fJSON::output($data);
+        wp_send_json($data);
 
         exit;
     }
 
     function send_message()
     {
-        if (!wp_verify_nonce(FRequest::get('_wpnonce'), 'compose_message')) {
+        if (!wp_verify_nonce(mmg()->post('_wpnonce'), 'compose_message')) {
             exit;
         }
 
         $model = new MM_Message_Model();
-        $model->import(fRequest::get('MM_Message_Model', 'array'));
+        $model->import(mmg()->post('MM_Message_Model'));
 
         if ($model->validate()) {
-            if (fRequest::get('is_reply', 'int', 0) == 1) {
+            if (mmg()->post('is_reply', 0) == 1) {
                 //reply case, we will send message to all users, but not the sender
-                $message_id = mmg()->decrypt(fRequest::get('id', 'string', null));
-                $conv_id = mmg()->decrypt(fRequest::get('parent_id', 'string', null));
+                $message_id = mmg()->decrypt(mmg()->post('id'));
+                $conv_id = mmg()->decrypt(mmg()->post('parent_id'));
 
                 $c_model = MM_Conversation_Model::model()->find($conv_id);
                 $user_ids = $c_model->user_index;
@@ -201,11 +194,11 @@ class Inbox_Shortcode_Controller extends IG_Request
                     }
                 }
                 $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
-                fJSON::output(array(
+                wp_send_json(array(
                     'status' => 'success'
                 ));
             } else {
-                $users = fRequest::get('MM_Message_Model[send_to]');
+                $users = mmg()->post('MM_Message_Model[send_to]');
                 $user_ids = $this->logins_to_ids($users);
 
                 $is_single = true;
@@ -219,12 +212,12 @@ class Inbox_Shortcode_Controller extends IG_Request
                     //todo update group conversation
                 }
                 $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
-                fJSON::output(array(
+                wp_send_json(array(
                     'status' => 'success'
                 ));
             }
         } else {
-            fJSON::output(array(
+            wp_send_json(array(
                 'status' => 'fail',
                 'errors' => $model->get_errors()
             ));

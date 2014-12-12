@@ -33,6 +33,20 @@
         </div>
         <div class="clearfix"></div>
     </div>
+    <div class="form-group <?php echo $model->has_error("allow_attachment") ? "has-error" : null ?>">
+        <?php $form->label("allow_attachment", array("text" => __("Allow users can upload attachments", mmg()->domain), "attributes" => array("class" => "col-lg-2 control-label"))) ?>
+        <div class="col-lg-10">
+            <div class="checkbox">
+                <label>
+                    <?php
+                    $form->hidden('allow_attachment', array('value' => 0));
+                    $form->checkbox("allow_attachment", array("attributes" => array("class" => "", "value" => 1))) ?>
+                    <?php _e("This will allow every user can upload attachments", mmg()->domain) ?>
+                </label>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
     <div class="page-header" style="margin-top: 0">
         <h4><?php _e('Create Page', mmg()->domain) ?></h4>
     </div>
@@ -59,6 +73,7 @@
         </div>
         <div class="clearfix"></div>
     </div>
+    <?php wp_nonce_field('mm_settings','_mmnonce') ?>
     <div class="page-header" style="margin-top: 0">
         <h4><?php _e('Add-ons', mmg()->domain) ?></h4>
     </div>

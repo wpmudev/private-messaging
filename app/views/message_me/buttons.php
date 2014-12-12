@@ -6,9 +6,9 @@ if (!is_user_logged_in()) {
     $disabled = 'disabled';
 } ?>
 <div class="mmessage-container">
-    <button type="button" data-target="#<?php echo $this->button_id ?>" <?php echo $disabled ?>
+    <a href="#message-me-modal" type="button" data-target="#<?php echo $this->button_id ?>" <?php echo $disabled ?>
             class="<?php echo $a['class'] ?> message-me-btn"><?php echo $a['text'] ?>
-    </button>
+    </a>
     <div id="<?php echo $this->button_id ?>" class="hide">
         <span class="subject"><?php echo $a['subject'] ?></span>
         <span class="send_to"><?php echo $user->user_login ?></span>
