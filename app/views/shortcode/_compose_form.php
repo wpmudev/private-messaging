@@ -60,7 +60,7 @@
                         <?php echo wp_nonce_field('compose_message') ?>
                         <?php echo $form->hidden('attachment') ?>
                         <input type="hidden" name="action" value="mm_send_message">
-                        <?php if (mmg()->setting()->allow_attachment == true) {
+                        <?php if (mmg()->can_upload() == true) {
                             ig_uploader()->show_upload_control($model, 'attachment', "compose-modal");
                         } ?>
                     </div>

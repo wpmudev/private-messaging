@@ -102,7 +102,7 @@ if (!class_exists('MMessaging')) {
                             $csses = array('mm_style', 'mm_scroll', 'selectivejs');
                             $jses = array(
                                 'mm_scroll', 'selectivejs', 'mm_lean_model', 'jquery-ui-tooltip');
-                            if ($this->setting()->allow_attachment == 1) {
+                            if ($this->can_upload() == true) {
                                 $csses[] = 'igu-uploader';
                                 $jses = array_merge($jses, array('popoverasync', 'jquery-frame-transport'));
                             }
@@ -135,9 +135,24 @@ if (!class_exists('MMessaging')) {
             }
         }
 
-        function clear_assets()
+        function can_upload()
         {
+            if (!is_user_logged_in()) {
+                return false;
+            }
 
+            $allowed = $this->setting()->allow_attachment;
+            if (!is_array($allowed)) {
+                $allowed = array();
+            }
+            $allowed = array_filter($allowed);
+            $user = new WP_User(get_current_user_id());
+            foreach ($user->roles as $role) {
+                if (in_array($role, $allowed)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         function compress_assets($css = array(), $js = array(), $write_path)
@@ -259,9 +274,10 @@ if (!class_exists('MMessaging')) {
                 $front = new MM_Frontend();
             }
             //include components we need to use
-            if ($this->setting()->allow_attachment == true) {
-                include $this->plugin_path . 'app/components/ig-uploader.php';
-            }
+            include $this->plugin_path . 'app/components/ig-uploader.php';
+            //init uploader controller, if user can not upload, we only let it display attachment files
+            ig_uploader()->init_uploader($this->can_upload());
+
             include $this->plugin_path . 'app/components/mm-addon-table.php';
             //load add on
             $addons = $this->setting()->plugins;

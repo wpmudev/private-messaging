@@ -73,7 +73,6 @@ class MMessage_Backend_Controller extends IG_Request
             $model->load();
             $model->import($_POST['MM_Setting_Model']);
             $model->save();
-
             $this->set_flash('setting_save', __("Your settings have been successfully updated.", mmg()->domain));
             wp_redirect($_SERVER['REQUEST_URI']);
             exit;
@@ -99,6 +98,7 @@ class MMessage_Backend_Controller extends IG_Request
         add_action('mm_setting_general', array(&$this, 'general_view'));
         add_action('mm_setting_email', array(&$this, 'email_view'));
         add_action('mm_setting_shortcode', array(&$this, 'shortcode_view'));
+        add_action('mm_setting_attachment', array(&$this, 'attachment_view'));
         $model = new MM_Setting_Model();
         $model->load();
 
@@ -122,6 +122,16 @@ class MMessage_Backend_Controller extends IG_Request
     function email_view($model)
     {
         $this->render('backend/setting/email', array(
+            'model' => $model
+        ));
+    }
+
+    function attachment_view($model)
+    {
+        if (!is_array($model->allow_attachment)) {
+            $model->allow_attachment = array();
+        }
+        $this->render('backend/setting/attachment', array(
             'model' => $model
         ));
     }

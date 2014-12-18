@@ -40,7 +40,7 @@
                     <?php $form->hidden('attachment');
                     ?>
 
-                    <?php if (mmg()->setting()->allow_attachment == true) {
+                    <?php if (mmg()->can_upload() == true) {
                         ig_uploader()->show_upload_control($model, 'attachment', "reply-compose");
                     } ?>
                 </div>

@@ -74,7 +74,7 @@ if (!isset($render_reply)) {
     <div class="message-body">
         <?php echo mmg()->html_beautifier($message->content) ?>
     </div>
-    <?php if (mmg()->setting()->allow_attachment == true && !empty($message->attachment)): ?>
+    <?php if (mmg()->can_upload()): ?>
         <?php $ids = explode(',', $message->attachment);
         $ids = array_filter($ids);
         if (count($ids)):?>

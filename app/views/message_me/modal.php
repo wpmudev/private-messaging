@@ -49,7 +49,10 @@
                         <?php wp_nonce_field('compose_message') ?>
                         <input type="hidden" name="action" value="mm_send_message">
                         <?php $form->hidden('attachment') ?>
-                        <?php ig_uploader()->show_upload_control($model, 'attachment', 'message-me-modal') ?>
+                        <?php
+                        if (mmg()->can_upload()) {
+                            ig_uploader()->show_upload_control($model, 'attachment', 'message-me-modal');
+                        }?>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default"
@@ -68,8 +71,8 @@
         $('.message-me-btn').leanModal({
             closeButton: ".compose-close",
             top: '5%',
-            width:'90%',
-            maxWidth:659
+            width: '90%',
+            maxWidth: 659
         });
         $('body').on('click', '.message-me-btn', function () {
             var data = $($(this).data('target'));

@@ -25,6 +25,10 @@
                         <a href="<?php echo add_query_arg('tab', 'shortcode') ?>">
                             <i class="glyphicon glyphicon-cog"></i> <?php _e("Shortcodes", mmg()->domain) ?></a>
                     </li>
+                    <li class="<?php echo mmg()->get('tab') == 'attachment' ? 'active' : null ?>">
+                        <a href="<?php echo add_query_arg('tab', 'attachment') ?>">
+                            <i class="glyphicon glyphicon-paperclip"></i> <?php _e("Attachments", mmg()->domain) ?></a>
+                    </li>
                     <?php do_action('mm_setting_menu', $model) ?>
                 </ul>
                 <div class="tab-content col-md-9">

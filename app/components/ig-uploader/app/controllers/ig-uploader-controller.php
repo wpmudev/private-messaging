@@ -5,12 +5,17 @@
 if (!class_exists('IG_Uploader_Controller')) {
     class IG_Uploader_Controller extends IG_Request
     {
-        public function __construct()
+        public function __construct($can_upload = false)
         {
-            add_action('wp_loaded', array(&$this, 'handler_upload'));
-            add_action('wp_ajax_igu_file_delete', array(&$this, 'delete_file'));
-            add_action('wp_ajax_iup_load_upload_form', array(&$this, 'load_upload_form'));
-            add_filter('igu_single_file_template', array(&$this, 'single_file_template'));
+            if (is_user_logged_in()) {
+                if ($can_upload) {
+                    add_action('wp_loaded', array(&$this, 'handler_upload'));
+                    add_action('wp_ajax_igu_file_delete', array(&$this, 'delete_file'));
+                    add_action('wp_ajax_iup_load_upload_form', array(&$this, 'load_upload_form'));
+                } else {
+                    add_filter('igu_single_file_template', array(&$this, 'single_file_template'));
+                }
+            }
         }
 
         function single_file_template()
@@ -91,7 +96,7 @@ if (!class_exists('IG_Uploader_Controller')) {
 
         public function upload_form($attribute, $target_model, $container)
         {
-            $runtime_path=mmg()->can_compress();
+            $runtime_path = mmg()->can_compress();
 
             /*if ($runtime_path) {
                 mmg()->compress_assets(array('igu-uploader'), array('popoverasync', 'jquery-frame-transport'), $runtime_path);
