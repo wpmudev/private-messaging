@@ -37,15 +37,11 @@ if (!function_exists('ig_loader')) {
             $url = plugin_dir_url(__FILE__);
             if (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG == true) {
                 wp_register_style('ig-packed', $url . 'assets/ig-packed.css');
+                wp_register_script('ig-packed', $url . 'assets/main.js');
             } else {
                 wp_register_style('ig-packed', $url . 'assets/ig-packed.min.css');
+                wp_register_script('ig-packed', $url . 'assets/main.js');
             }
-            /*wp_register_style('ig-bootstrap-lumen', $url . 'assets/lumen.css');
-            wp_register_style('ig-bootstrap-flaty', $url . 'assets/flaty.css');
-            wp_register_style('ig-bootstrap-paper', $url . 'assets/paper.css');
-            wp_register_style('ig-bootstrap-united', $url . 'assets/united.css');
-            wp_register_script('ig-bootstrap', $url . 'assets/bootstrap.min.js', array('jquery'));
-            wp_register_style('ig-fontawesome', $url . 'assets/fa/css/font-awesome.css');*/
         }
     }
 }

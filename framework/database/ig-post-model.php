@@ -99,7 +99,7 @@ if (!class_exists('IG_Post_Model')) {
                                 //include to the tax array
                                 $term = get_term($tax, $relation['key']);
                                 if (is_object($term)) {
-                                    $taxs[] = $term->tern_name;
+                                    $taxs[] = $term->name;
                                 } else {
                                     var_dump($term);
                                 }
@@ -109,11 +109,41 @@ if (!class_exists('IG_Post_Model')) {
                         }
                         //now we got the ids, assign post to this tax
                         wp_set_object_terms($id, $taxs, $relation['key']);
+                    } elseif ($relation['type'] == 'meta_array') {
+                        $data = array();
+                        $format = explode('|', $relation['array_key']);
+                        $fields = explode('|', $relation['map']);
+                        $map = array_combine($format, $fields);
+                        foreach ($map as $key => $val) {
+                            $data[$key] = $this->$val;
+                        }
+
+                        if ($relation['format'] == 'json') {
+                            json_encode($data);
+                        }
+                        update_post_meta($this->id, $relation['key'], $data);
                     }
                 }
 
                 return $id;
             }
+        }
+
+        function find_by_slug($slug, $status = 'publish')
+        {
+            $posts = new WP_Query(array(
+                'name' => $slug,
+                'post_type' => $this->table,
+                'post_status' => $status
+            ));
+            wp_reset_query();
+            $model = null;
+            if ($posts->post_count > 0) {
+                $post = $posts->posts[0];
+                $model = $this->find($post);
+                return $model;
+            }
+            return null;
         }
 
         /**
@@ -156,7 +186,7 @@ if (!class_exists('IG_Post_Model')) {
                                 //include to the tax array
                                 $term = get_term($tax, $relation['key']);
                                 if (is_object($term)) {
-                                    $taxs[] = $term->tern_name;
+                                    $taxs[] = $term->name;
                                 } else {
                                     var_dump($term);
                                 }
@@ -166,6 +196,19 @@ if (!class_exists('IG_Post_Model')) {
                         }
                         //now we got the ids, assign post to this tax
                         wp_set_object_terms($id, $taxs, $relation['key']);
+                    } elseif ($relation['type'] == 'meta_array') {
+                        $data = array();
+                        $format = explode('|', $relation['array_key']);
+                        $fields = explode('|', $relation['map']);
+                        $map = array_combine($format, $fields);
+                        foreach ($map as $key => $val) {
+                            $data[$key] = $this->$val;
+                        }
+
+                        if ($relation['format'] == 'json') {
+                            $data = json_encode($data);
+                        }
+                        update_post_meta($id, $relation['key'], $data);
                     }
                 }
 
@@ -241,11 +284,32 @@ if (!class_exists('IG_Post_Model')) {
                 $prop = $val['map'];
                 if ($val['type'] == 'meta') {
                     $model->$prop = get_post_meta($model->id, $val['key'], true);
-                } else {
+                } elseif ($val['type'] == 'taxonomy') {
                     $ts = wp_get_object_terms($model->id, $val['key']);
                     $model->$prop = array();
                     foreach ($ts as $t) {
                         array_push($model->$prop, $t->name);
+                    }
+                } elseif ($val['type'] == 'meta_array') {
+                    $data = get_post_meta($model->id, $val['key'], true);
+                    //check for serialize
+                    if (!is_array($data)) {
+                        $data = maybe_unserialize($data);
+                    }
+                    if (!is_array($data)) {
+                        $data = json_decode($data, true);
+                    }
+                    if (!is_array($data)) {
+                        break;
+                    }
+                    $format = explode('|', $val['array_key']);
+                    $fields = explode('|', $val['map']);
+                    $map = array_combine($format, $fields);
+                    foreach ($data as $k => $v) {
+                        $p = isset($map[$k]) ? $map[$k] : null;
+                        if ($p) {
+                            $model->$p = $v;
+                        }
                     }
                 }
             }
@@ -298,12 +362,15 @@ if (!class_exists('IG_Post_Model')) {
             }
 
             $query['posts_per_page'] = 1;
-            $query['paged']=1;
+            $query['paged'] = 1;
             $query = new WP_Query(apply_filters($this->table . 'find_one_by_attributes', $query, $params));
 
             wp_reset_query();
-            $post = $query->posts[0];
-            $model = $this->find($post);
+            $model = null;
+            if ($query->post_count > 0) {
+                $post = $query->posts[0];
+                $model = $this->find($post);
+            }
             return $model;
         }
 
@@ -318,7 +385,11 @@ if (!class_exists('IG_Post_Model')) {
 
             foreach ($params as $key => $val) {
                 if (isset($this->mapped[$key])) {
-                    $query[$this->mapped[$key]] = $val;
+                    $post_field = $this->mapped[$key];
+                    if ($post_field == 'post_author') {
+                        $post_field = 'author';
+                    }
+                    $query[$post_field] = $val;
                 } else {
                     $re = $this->_relation($key);
                     if ($re['type'] == 'meta') {
@@ -354,9 +425,9 @@ if (!class_exists('IG_Post_Model')) {
                     $query['orderby'] = $order;
                 }
             }
+
             $query = new WP_Query(apply_filters($this->table . 'find_by_attributes', $query, $params));
             wp_reset_query();
-
             $models = array();
             foreach ($query->posts as $post_id) {
                 $model = $this->find($post_id);
@@ -459,7 +530,7 @@ if (!class_exists('IG_Post_Model')) {
          *
          * @return array
          */
-        public function all_with_condition($args = array())
+        public function all_with_condition($args = array(), &$instance = null)
         {
             //get only need to get ids
             $args['fields'] = 'ids';
@@ -475,7 +546,9 @@ if (!class_exists('IG_Post_Model')) {
                 }
             }
             wp_reset_query();
-
+            if (!is_null($instance)) {
+                $instance->global['wp_query'] = $query;;
+            }
             return $data;
         }
 

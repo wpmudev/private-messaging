@@ -22,7 +22,7 @@ $color = $colors[array_rand($colors)];
                     <?php echo $model->mime_to_icon() ?>
                 </div>
                 <div class="igu-media-file-meta">
-                    <h5><?php echo mmg()->trim_text($model->name, 17) ?></h5>
+                    <h5><?php echo wp_trim_words($model->name,6) ?></h5>
 
                     <p class="text-muted small"><?php echo get_the_date(null, $model->id) ?></p>
                 </div>
@@ -37,7 +37,7 @@ $color = $colors[array_rand($colors)];
                     </button>
                     <button data-id="<?php echo $model->id ?>" type="button"
                        class="igu-file-delete btn btn-xs btn-danger">
-                        <i class="fa fa-trash"></i>
+                        <i class="glyphicon glyphicon-trash"></i>
                     </button>
                 </div>
             </div>

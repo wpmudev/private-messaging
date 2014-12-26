@@ -1,67 +1,71 @@
-<div class="mmessage-container">
-    <div class="modal" id="message-me-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <?php if (!is_user_logged_in()) {
-                    ?>
-                    <div class="modal-body text-left">
-                        <?php $this->render_partial('shortcode/login') ?>
-                    </div>
-                <?php
-                } else {
-                    $model = new MM_Message_Model();
-                    $model = apply_filters('mm_message_me_before_init', $model);
-                    ?>
-                    <?php $form = new IG_Active_Form($model);
-                    ?>
-                    <?php $form->open(array("attributes" => array("class" => "", "id" => 'message-me-form'))); ?>
-                    <div class="modal-header">
-                        <h4 class="modal-title text-left"><?php _e("Compose Message", mmg()->domain) ?></h4>
-                    </div>
-                    <div class="modal-body text-left">
-                        <div class="alert alert-success hide mm-notice">
-                            <?php _e("Your message has been sent", mmg()->domain) ?>
+<div class="ig-container">
+    <div class="mmessage-container">
+        <div class="modal" id="message-me-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <?php if (!is_user_logged_in()) {
+                        ?>
+                        <div class="modal-body text-left">
+                            <?php $this->render_partial('shortcode/login') ?>
                         </div>
-                        <div class="message-me-has-subject hide">
-                            <?php $form->hidden('subject') ?>
+                    <?php
+                    } else {
+                        $model = new MM_Message_Model();
+                        $model = apply_filters('mm_message_me_before_init', $model);
+                        ?>
+                        <?php $form = new IG_Active_Form($model);
+                        ?>
+                        <?php $form->open(array("attributes" => array("class" => "", "id" => 'message-me-form'))); ?>
+                        <div class="modal-header">
+                            <h4 class="modal-title text-left"><?php _e("Compose Message", mmg()->domain) ?></h4>
                         </div>
-                        <div class="message-me-no-subject hide">
-                            <div class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
-                                <?php $form->label("subject", array("text" => "Subject", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
-                                <div class="col-lg-10">
-                                    <?php $form->text("subject", array("attributes" => array("class" => "form-control", "disabled" => "disabled"))) ?>
-                                    <span
-                                        class="help-block m-b-none error-subject"><?php $form->error("subject") ?></span>
+                        <div class="modal-body text-left">
+                            <div class="alert alert-success hide mm-notice">
+                                <?php _e("Your message has been sent", mmg()->domain) ?>
+                            </div>
+                            <div class="message-me-has-subject hide">
+                                <?php $form->hidden('subject') ?>
+                            </div>
+                            <div class="message-me-no-subject hide">
+                                <div class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
+                                    <?php $form->label("subject", array("text" => "Subject", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
+                                    <div class="col-lg-10">
+                                        <?php $form->text("subject", array("attributes" => array("class" => "form-control", "disabled" => "disabled"))) ?>
+                                        <span
+                                            class="help-block m-b-none error-subject"><?php $form->error("subject") ?></span>
+                                    </div>
+                                    <div class="clearfix"></div>
                                 </div>
+                            </div>
+                            <?php $form->hidden('send_to', array('attributes' => array(
+                                'class' => 'message-me-send-to'
+                            ))); ?>
+                            <div style="margin-bottom: 0"
+                                 class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
+                                <?php $form->text_area("content", array("attributes" => array("class" => "form-control mm_wsysiwyg", "style" => "height:100px", "id" => "mm_compose_content"))) ?>
+                                <span class="help-block m-b-none error-content"><?php $form->error("content") ?></span>
+
                                 <div class="clearfix"></div>
                             </div>
+                            <?php wp_nonce_field('compose_message') ?>
+                            <input type="hidden" name="action" value="mm_send_message">
+                            <?php $form->hidden('attachment') ?>
+                            <?php
+                            if (mmg()->can_upload()) {
+                                ig_uploader()->show_upload_control($model, 'attachment',false, array(
+                                    'title' => __("Attach media or other files.", mmg()->domain)
+                                ));
+                            } ?>
                         </div>
-                        <?php $form->hidden('send_to', array('attributes' => array(
-                            'class' => 'message-me-send-to'
-                        ))); ?>
-                        <div style="margin-bottom: 0"
-                             class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
-                            <?php $form->text_area("content", array("attributes" => array("class" => "form-control mm_wsysiwyg", "style" => "height:100px", "id" => "mm_compose_content"))) ?>
-                            <span class="help-block m-b-none error-content"><?php $form->error("content") ?></span>
-
-                            <div class="clearfix"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default"
+                                    data-dismiss="modal"><?php _e("Close", mmg()->domain) ?></button>
+                            <button type="submit"
+                                    class="btn btn-primary reply-submit"><?php _e("Send", mmg()->domain) ?></button>
                         </div>
-                        <?php wp_nonce_field('compose_message') ?>
-                        <input type="hidden" name="action" value="mm_send_message">
-                        <?php $form->hidden('attachment') ?>
-                        <?php
-                        if (mmg()->can_upload()) {
-                            ig_uploader()->show_upload_control($model, 'attachment', 'message-me-modal');
-                        }?>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default"
-                                data-dismiss="modal"><?php _e("Close", mmg()->domain) ?></button>
-                        <button type="submit"
-                                class="btn btn-primary reply-submit"><?php _e("Send", mmg()->domain) ?></button>
-                    </div>
-                    <?php $form->close(); ?>
-                <?php } ?>
+                        <?php $form->close(); ?>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </div>

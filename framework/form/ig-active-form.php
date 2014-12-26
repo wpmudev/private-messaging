@@ -98,9 +98,11 @@ if (!class_exists('IG_Active_Form')) {
         public function radio($field, $args = array())
         {
             $args['name'] = $this->build_name($field);
-            $args['value'] = array($this->model->$field);
+            //$args['value'] =$this->model->$field;
             $args['attributes']['id'] = isset($args['attributes']['id']) ? $args['attributes']['id'] : $this->build_id($field);
-
+            if ($this->model->$field == $args['value']) {
+                $args['checked'] = true;
+            }
             echo IG_Form::radio($args);
         }
 

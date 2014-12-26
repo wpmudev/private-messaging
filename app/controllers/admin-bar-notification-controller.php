@@ -25,7 +25,7 @@ class Admin_Bar_Notification_Controller extends IG_Request
         $unread = MM_Conversation_Model::count_unread();
         $args = array(
             'id' => 'mm-button',
-            'title' => __('<div class="mmessage-container mm-admin-bar"><i class="fa fa-envelope"></i>&nbsp;<span>' . $unread . '</span>
+            'title' => __('<div class="ig-container mm-admin-bar"><i class="fa fa-envelope"></i>&nbsp;<span>' . $unread . '</span>
 </div>', mmg()->domain),
             'href' => '#',
         );

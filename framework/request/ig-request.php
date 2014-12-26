@@ -7,6 +7,7 @@ if (!class_exists('IG_Request')) {
     class IG_Request
     {
         protected $layout;
+        protected $flash_key = 'ig_flash';
 
         /**
          * @param $view
@@ -44,7 +45,7 @@ if (!class_exists('IG_Request')) {
         {
             //we will get the path below the controller
             $reflector = new ReflectionClass(get_class($this));
-            
+
             $base_path = substr($reflector->getFileName(), 0, stripos($reflector->getFileName(), 'controllers'));
             $view_path = $base_path . '/views/' . $view . '.php';
 
@@ -70,33 +71,30 @@ if (!class_exists('IG_Request')) {
 
         public function set_flash($key, $message)
         {
-            $class = get_class($this);
-            $db = get_option('ig_flash');
+            $db = get_option($this->flash_key);
             if (!is_array($db)) {
                 $db = array();
             }
             //save the flash
-            $db[$class . '_' . $key] = $message;
-            update_option('ig_flash', $db);
+            $db[$key] = $message;
+            update_option($this->flash_key, $db);
         }
 
         public function has_flash($key)
         {
-            $db = get_option('ig_flash');
-            $class = get_class($this);
-            $index = $class . '_' . $key;
+            $db = get_option($this->flash_key);
+            $index = $key;
             return isset($db[$index]);
         }
 
         public function get_flash($key)
         {
-            $db = get_option('ig_flash');
-            $class = get_class($this);
-            $index = $class . '_' . $key;
+            $db = get_option($this->flash_key);
+            $index = $key;
             if (isset($db[$index])) {
                 $msg = $db[$index];
                 unset($db[$index]);
-                update_option('ig_flash', $db);
+                update_option($this->flash_key, $db);
                 return $msg;
             }
             return null;

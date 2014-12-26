@@ -2,92 +2,93 @@
 
 ?>
 <div class="wrap">
-    <div class="mmessage-container">
-        <div class="page-header">
-            <h2><?php echo sprintf(__("Diagnose Center", mmg()->domain)) ?></h2>
-        </div>
-        <div class="row no-margin">
-            <div class="alert alert-danger hide">
-
+    <div class="ig-container">
+        <div class="mmessage-container">
+            <div class="page-header">
+                <h2><?php echo sprintf(__("Diagnose Center", mmg()->domain)) ?></h2>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="col-md-4">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th><?php _e("Table", mmg()->domain) ?></th>
-                                <th><?php _e("Status", mmg()->domain) ?></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td><strong><?php echo $wpdb->base_prefix ?>mm_conversation</strong></td>
-                                <td>
-                                    <?php if ($c_status == true): ?>
-                                        <span class="label label-success">
+            <div class="row no-margin">
+                <div class="alert alert-danger hide">
+
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-md-4">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th><?php _e("Table", mmg()->domain) ?></th>
+                                    <th><?php _e("Status", mmg()->domain) ?></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><strong><?php echo $wpdb->base_prefix ?>mm_conversation</strong></td>
+                                    <td>
+                                        <?php if ($c_status == true): ?>
+                                            <span class="label label-success">
                                             <?php _e("Healthy", mmg()->domain) ?>
                                         </span>
-                                    <?php else: ?>
-                                        <span class="label label-danger">
+                                        <?php else: ?>
+                                            <span class="label label-danger">
                                             <?php _e("Fail", mmg()->domain) ?>
                                         </span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if ($c_status == false): ?>
-                                        <button type="button" data-type="c-table"
-                                                class="btn btn-warning btn-xs fix-table"><?php _e("Fix", mmg()->domain) ?></button>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong><?php echo $wpdb->base_prefix ?>mm_status</strong></td>
-                                <td>
-                                    <?php if ($s_status == true): ?>
-                                        <span class="label label-success">
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($c_status == false): ?>
+                                            <button type="button" data-type="c-table"
+                                                    class="btn btn-warning btn-xs fix-table"><?php _e("Fix", mmg()->domain) ?></button>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong><?php echo $wpdb->base_prefix ?>mm_status</strong></td>
+                                    <td>
+                                        <?php if ($s_status == true): ?>
+                                            <span class="label label-success">
                                             <?php _e("Healthy", mmg()->domain) ?>
                                         </span>
-                                    <?php else: ?>
-                                        <span class="label label-danger">
+                                        <?php else: ?>
+                                            <span class="label label-danger">
                                             <?php _e("Fail", mmg()->domain) ?>
                                         </span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if ($s_status == false): ?>
-                                        <button type="button" data-type="s-table"
-                                                class="btn btn-warning btn-xs fix-table"><?php _e("Fix", mmg()->domain) ?></button>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-8">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th><?php _e("Note:", mmg()->domain) ?></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <?php _e("If the diagnose tool cannot create table, that means the database user doesn't have enough permission to do that, you will need to copy the below sql code to create the tables.", mmg()->domain) ?>
-                                    <?php
-                                    $charset_collate = '';
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($s_status == false): ?>
+                                            <button type="button" data-type="s-table"
+                                                    class="btn btn-warning btn-xs fix-table"><?php _e("Fix", mmg()->domain) ?></button>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-8">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th><?php _e("Note:", mmg()->domain) ?></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <?php _e("If the diagnose tool cannot create table, that means the database user doesn't have enough permission to do that, you will need to copy the below sql code to create the tables.", mmg()->domain) ?>
+                                        <?php
+                                        $charset_collate = '';
 
-                                    if (!empty($wpdb->charset)) {
-                                        $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
-                                    }
+                                        if (!empty($wpdb->charset)) {
+                                            $charset_collate = "DEFAULT CHARACTER SET {$wpdb->charset}";
+                                        }
 
-                                    if (!empty($wpdb->collate)) {
-                                        $charset_collate .= " COLLATE {$wpdb->collate}";
-                                    }
+                                        if (!empty($wpdb->collate)) {
+                                            $charset_collate .= " COLLATE {$wpdb->collate}";
+                                        }
 
-                                    $sql = "-- ----------------------------;<br/>
+                                        $sql = "-- ----------------------------;<br/>
 CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (<br/>
   `id` int(11) NOT NULL AUTO_INCREMENT,<br/>
   `date_created` datetime DEFAULT NULL,<br/>
@@ -109,19 +110,20 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_status` (<br/>
   `type` tinyint(4) DEFAULT NULL,<br/>
   PRIMARY KEY (id)<br/>
 ) $charset_collate;";
-                                    ?><br/><br/>
-                                    <code>
-                                        <?php echo $sql; ?>
-                                    </code>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                        ?><br/><br/>
+                                        <code>
+                                            <?php echo $sql; ?>
+                                        </code>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="clearfix"></div>
                     </div>
-                    <div class="clearfix"></div>
                 </div>
+                <div class="clearfix"></div>
             </div>
-            <div class="clearfix"></div>
         </div>
     </div>
 </div>

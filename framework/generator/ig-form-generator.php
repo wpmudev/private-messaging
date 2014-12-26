@@ -87,7 +87,7 @@ if (!class_exists('IG_Form_Generator')) {
                           <div class="clearfix"></div>
                         </div>';
                     $field = sprintf($field, $key, $key, ucwords(str_replace('_', ' ', $key)), $key, $key, $key);
-                } else {
+                } elseif ($val['type'] == 'taxonomy') {
                     $field = '<div class="form-group <?php echo $model->has_error("%s")?"has-error":null ?>">
                             <?php $form->label("%s",array("text"=>"%s","attributes"=>array("class"=>"col-lg-2 control-label"))) ?>
                           <div class="col-lg-10">
@@ -101,6 +101,22 @@ if (!class_exists('IG_Form_Generator')) {
                     $terms = ' array_combine(wp_list_pluck(get_terms("' . $taxonomy . '", array("hide_empty" => "false")), "term_id"), wp_list_pluck(get_terms("' . $taxonomy . '", array("hide_empty" => "false")), "name"))';
 
                     $field = sprintf($field, $key, $key, ucwords(str_replace('_', ' ', $key)), $key, $terms, $key, $key);
+                } elseif ($val['type'] == 'meta_array') {
+                    $fields = explode('|', $val['map']);
+                    $html = '';
+                    foreach ($fields as $v) {
+                        $h = '<div class="form-group <?php echo $model->has_error("%s")?"has-error":null ?>">
+                            <?php $form->label("%s",array("text"=>"%s","attributes"=>array("class"=>"col-lg-2 control-label"))) ?>
+                          <div class="col-lg-10">
+                            <?php $form->text("%s",array("attributes"=>array("class"=>"form-control"))) ?>
+                           <span class="help-block m-b-none error-%s"><?php $form->error("%s") ?></span>
+                          </div>
+                          <div class="clearfix"></div>
+                        </div>';
+                        $h = sprintf($h, $v, $v, ucwords(str_replace('_', ' ', $v)), $v, $v, $v);
+                        $html .= $h;
+                    }
+                    $field = $html;
                 }
 
                 $form .= $field . PHP_EOL;

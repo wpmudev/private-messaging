@@ -393,7 +393,7 @@ if (!class_exists('GUMP')) {
          * @return array
          * @return string
          */
-        public function get_readable_errors($convert_to_string = false, $field_class = "field", $error_class = "error-message")
+        public function get_readable_errors($convert_to_string = false, $field_class = "ig-error-field", $error_class = "error-message")
         {
             if (empty($this->errors)) {
                 return ($convert_to_string) ? null : array();
