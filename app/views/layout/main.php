@@ -1,4 +1,5 @@
 <div class="ig-container">
+    <?php do_action('mm_before_layout') ?>
     <div class="mmessage-container">
         <div class="row">
             <div class="col-md-10 co-sm-12 col-xs-12 no-padding mm-toolbar-btn">
@@ -80,7 +81,7 @@
                         console.log(ui);
                     }
                 },
-                tooltipClass: 'mmessage-container'
+                tooltipClass: 'ig-container'
             });
         }
     })

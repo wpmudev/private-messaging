@@ -1,6 +1,9 @@
 jQuery(function ($) {
     var file_port;
+    var igu_uploader;
     $('body').on('mouseenter', '.add-file', function () {
+        var key = 'igu_uploader_' + $(this).parent().parent().parent().attr('id');
+        igu_uploader = window[key];
         $(this).webuiPopover({
             type: 'async',
             width: 'auto',
@@ -25,6 +28,8 @@ jQuery(function ($) {
         })
     });
     $('body').on('mouseenter', '.igu-file-update', function () {
+        var key = 'igu_uploader_' + $(this).closest('section').parent().parent().attr('id');
+        igu_uploader = window[key];
         $(this).webuiPopover({
             type: 'async',
             width: 'auto',
@@ -48,7 +53,7 @@ jQuery(function ($) {
             file_port = that.closest('section');
         });
     })
-    if (igu_uploader.is_admin) {
+    if (igu_uploader != undefined && igu_uploader.is_admin == 1) {
         $('body').on('submit', '.igu-upload-form', function () {
             var that = $(this);
             $.ajax(igu_uploader.form_submit_url, {
@@ -71,10 +76,22 @@ jQuery(function ($) {
                             $('#igu-media-file-' + data.id).html(html.html());
                         } else {
                             var file_view_port = file_port;
+                            var att = $(data.html);
+                            att.css('display', 'none');
 
                             file_view_port.find('.no-file').remove();
-                            file_view_port.prepend(data.html);
+                            file_view_port.prepend(att);
+                            att.css('display', 'none');
 
+                            file_view_port.find('.no-file').remove();
+                            file_view_port.prepend(att);
+                            if (file_view_port.width() <= (180 * 3)) {
+                                att.css('width', '49%');
+                            }
+                            if (file_view_port.width() >= (180 * 4)) {
+                                att.css('width', '25%');
+                            }
+                            att.css('display', 'block');
                             var input = file_view_port.closest('form').find('#' + igu_uploader.target_id);
                             input.val(input.val() + ',' + data.id);
                             that.find(':input:not([type=hidden])').val('');
@@ -99,6 +116,7 @@ jQuery(function ($) {
             return false;
         });
         var file_frame;
+
         $('body').on('click', '.upload_image_button', function () {
             if (file_frame) {
                 // Open frame
@@ -149,12 +167,19 @@ jQuery(function ($) {
                             $('#igu-media-file-' + data.id).html(html.html());
                         } else {
                             var file_view_port = file_port;
+                            var att = $(data.html);
+                            att.css('display', 'none');
 
                             file_view_port.find('.no-file').remove();
-                            file_view_port.prepend(data.html);
-
+                            file_view_port.prepend(att);
+                            if (file_view_port.width() <= (180 * 3)) {
+                                att.css('width', '49%');
+                            }
+                            if (file_view_port.width() >= (180 * 4)) {
+                                att.css('width', '25%');
+                            }
+                            att.css('display', 'block');
                             var input = file_view_port.closest('form').find('#' + igu_uploader.target_id);
-                            console.log(input);
                             input.val(input.val() + ',' + data.id);
                             that.find(':input:not([type=hidden])').val('');
                             igu_uploader.instance.webuiPopover('destroy');
@@ -204,4 +229,12 @@ jQuery(function ($) {
             }
         })
     });
+    $('.file-view-port').each(function () {
+        if ($(this).width() >= (180 * 4)) {
+            $(this).find('.igu-media-file-land').css('width', '25%');
+        }
+        if ($(this).width() <= (180 * 3)) {
+            $(this).find('.igu-media-file-land').css('width', '49%');
+        }
+    })
 })

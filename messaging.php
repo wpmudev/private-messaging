@@ -246,6 +246,7 @@ if (!class_exists('MMessaging')) {
             if (is_writeable($runtime_path)) {
                 $use_compress = $runtime_path;;
             }
+            return false;
             return $use_compress;
         }
 
@@ -274,7 +275,7 @@ if (!class_exists('MMessaging')) {
                 $front = new MM_Frontend();
             }
             //include components we need to use
-            include $this->plugin_path . 'app/components/ig-uploader.php';
+            include ($this->plugin_path . 'app/components/ig-uploader.php');
             //init uploader controller, if user can not upload, we only let it display attachment files
             ig_uploader()->init_uploader($this->can_upload());
 

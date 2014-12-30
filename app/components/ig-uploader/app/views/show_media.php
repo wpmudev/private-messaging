@@ -1,12 +1,14 @@
 <?php if (is_array($models) && count($models)): ?>
-    <?php foreach ($models as $model): ?>
-        <?php $this->render_partial(apply_filters('igu_icon_file_template', '_single_icon'), array(
-            'model' => $model
-        )) ?>
-        <?php
-        $this->footer_model[] = $model;
-        add_action('wp_footer', array(&$this, 'footer_modal')) ?>
-    <?php endforeach; ?>
+    <div class="file-view-port">
+        <?php foreach ($models as $model): ?>
+            <?php $this->render_partial(apply_filters('igu_icon_file_template', '_single_icon'), array(
+                'model' => $model
+            )) ?>
+            <?php
+            $this->footer_model[] = $model;
+            add_action('wp_footer', array(&$this, 'footer_modal')) ?>
+        <?php endforeach; ?>
+    </div>
     <script type="text/javascript">
         jQuery(function ($) {
             $('.igu-media-icon').mouseenter(function () {

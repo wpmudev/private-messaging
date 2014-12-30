@@ -27,7 +27,6 @@ if (!class_exists('IG_Uploader')) {
             add_action('init', array(&$this, 'custom_content'));
             add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
             add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
-
         }
 
         public function init_uploader($can_upload = false)
