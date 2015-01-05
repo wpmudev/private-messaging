@@ -1,6 +1,6 @@
 <h4><?php _e("Which roles can upload attachments", mmg()->domain) ?></h4>
 <?php $form = new IG_Active_Form($model);
-$form->open(array("attributes" => array("class" => "form-horizontal")));?>
+$form->open(array("attributes" => array("class" => "form-horizontal"))); ?>
 <input type="hidden" name="<?php echo $form->build_name('allow_attachment') ?>[]" value="">
 <table class="table table-condensed table-hover">
     <thead>
@@ -13,20 +13,22 @@ $form->open(array("attributes" => array("class" => "form-horizontal")));?>
     <?php
     $roles = get_editable_roles();
     foreach ($roles as $key => $role): ?>
-        <?php $is = in_array($key, $model->allow_attachment); ?>
-        <tr>
-            <td><?php echo $role['name'] ?></td>
-            <td>
-                <?php
-                $form->checkbox('allow_attachment', array(
-                    'multiple' => true,
-                    'checked' => $is,
-                    'attributes' => array(
-                        'value' => $key
-                    )
-                )) ?>
-            </td>
-        </tr>
+        <?php if (isset($role['capabilities']['upload_files']) && $role['capabilities']['upload_files'] == false || !isset($role['capabilities']['upload_files'])): ?>
+            <?php $is = in_array($key, $model->allow_attachment); ?>
+            <tr>
+                <td><?php echo $role['name'] ?></td>
+                <td>
+                    <?php
+                    $form->checkbox('allow_attachment', array(
+                        'multiple' => true,
+                        'checked' => $is,
+                        'attributes' => array(
+                            'value' => $key
+                        )
+                    )) ?>
+                </td>
+            </tr>
+        <?php endif; ?>
     <?php endforeach; ?>
     </tbody>
 </table>

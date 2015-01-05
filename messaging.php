@@ -141,6 +141,9 @@ if (!class_exists('MMessaging')) {
                 return false;
             }
 
+            if (current_user_can('upload_files'))
+                return true;
+
             $allowed = $this->setting()->allow_attachment;
             if (!is_array($allowed)) {
                 $allowed = array();
@@ -275,7 +278,7 @@ if (!class_exists('MMessaging')) {
                 $front = new MM_Frontend();
             }
             //include components we need to use
-            include ($this->plugin_path . 'app/components/ig-uploader.php');
+            include($this->plugin_path . 'app/components/ig-uploader.php');
             //init uploader controller, if user can not upload, we only let it display attachment files
             ig_uploader()->init_uploader($this->can_upload());
 
