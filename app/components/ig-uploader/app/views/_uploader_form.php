@@ -10,14 +10,10 @@
         $form->hidden('id');
     }?>
     <div style="margin-bottom: 0" class="form-group <?php echo $model->has_error("file") ? "has-error" : null ?>">
-        <?php if (ig_uploader()->get('is_admin',0)==false): ?>
-            <?php $form->label("file", array("text" => "File", "attributes" => array("class" => "control-label hidden-xs hidden-sm"))) ?>
-            <?php $form->file("file", array("attributes" => array("class" => "form-control input-sm"))) ?>
-        <?php else: ?>
-            <button type="button"
-                    class="btn btn-default upload_image_button btn-xs"><?php _e("Chose File", ig_uploader()->domain) ?></button>
-            <?php $form->hidden('file', array('attributes' => array('id' => 'attachment'))) ?>
-        <?php endif; ?>
+        <button type="button"
+                class="btn btn-default upload_image_button btn-xs"><?php _e("Chose File", ig_uploader()->domain) ?></button>
+        <span class="file-upload-name"></span>
+        <?php $form->hidden('file', array('attributes' => array('id' => 'attachment'))) ?>
         <?php if ($model->exist && $model->file) : ?>
             <span
                 class="help-block m-b-none"><?php _e("File attached, upload new file will replace the current file.", ig_uploader()->domain) ?></span>
@@ -40,7 +36,7 @@
 
         <div class="clearfix"></div>
     </div>
-<?php echo wp_nonce_field('igu_uploading') ?>
+    <?php echo wp_nonce_field('igu_uploading') ?>
     <div class="row">
         <div class="col-md-12">
             <button class="btn btn-default btn-sm igu-close-uploader"

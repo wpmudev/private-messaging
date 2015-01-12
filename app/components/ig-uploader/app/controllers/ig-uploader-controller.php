@@ -23,6 +23,15 @@ if (!class_exists('IG_Uploader_Controller')) {
                 }
             }
             add_filter('igu_single_file_template', array(&$this, 'single_file_template'));
+            add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
+            add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
+        }
+
+        function scripts()
+        {
+            if ($this->can_upload) {
+                wp_enqueue_media();
+            }
         }
 
         function single_file_template()
@@ -43,6 +52,7 @@ if (!class_exists('IG_Uploader_Controller')) {
             if (!is_object($model)) {
                 $model = new IG_Uploader_Model();
             }
+
             $this->render_partial('_uploader_form', array(
                 'model' => $model
             ));
@@ -86,7 +96,6 @@ if (!class_exists('IG_Uploader_Controller')) {
                     }
                 }
                 if ($model->validate()) {
-
                     $model->save();
                     wp_send_json(array(
                         'status' => 'success',
@@ -109,11 +118,7 @@ if (!class_exists('IG_Uploader_Controller')) {
                 wp_enqueue_style('igu-uploader');
                 wp_enqueue_script('webuipopover');
                 wp_enqueue_style('webuipopover');
-                wp_enqueue_script('jquery-frame-transport');
 
-                if (is_admin()) {
-                    wp_enqueue_media();
-                }
                 $ids = $target_model->$attribute;
                 $models = array();
                 if (!is_array($ids)) {
@@ -128,6 +133,7 @@ if (!class_exists('IG_Uploader_Controller')) {
                 }
 
                 //$models[]=IG_Uploader_Model::model()->find(8);
+
                 $mode = IG_Uploader_Model::MODE_EXTEND;
 
                 if ($mode == IG_Uploader_Model::MODE_LITE) {
@@ -179,18 +185,17 @@ if (!class_exists('IG_Uploader_Controller')) {
         public function _extend_form($models, $attribute, $target_model, $is_admin, $attributes = array())
         {
             $c_id = uniqid();
-
+            //place a cookie with hash for the upload can know this come from the component
             wp_localize_script('igu-uploader', 'igu_uploader_' . $c_id, array(
                 'title' => __("Upload Attachment", ig_uploader()->domain),
                 'add_url' => admin_url('admin-ajax.php?action=iup_load_upload_form&is_admin=' . $is_admin . '&_wpnonce=' . wp_create_nonce('iup_load_upload_form')),
                 'edit_url' => admin_url('admin-ajax.php?action=iup_load_upload_form&is_admin=' . $is_admin . '&_wpnonce=' . wp_create_nonce('iup_load_upload_form')) . '&id=',
                 'instance' => '',
-                'is_admin' => $is_admin == true ? 1 : 0,
                 'form_submit_url' => add_query_arg('igu_uploading', 1),
                 'target_id' => $this->build_id($target_model, $attribute),
                 'c_id' => $c_id,
                 'ajax_url' => admin_url('admin-ajax.php'),
-                'delete_nonce' => wp_create_nonce('igu_file_delete')
+                'delete_nonce' => wp_create_nonce('igu_file_delete'),
             ));
             wp_enqueue_script('igu-uploader');
 

@@ -124,8 +124,8 @@ if (!isset($render_reply)) {
                                                             $tfile = get_attached_file($file);
                                                             //check does this files has deleted
                                                             if ($tfile) {
-                                                                $f = new fFile(get_attached_file($file));
-                                                                echo $f->getSize(true);
+                                                                $size = @filesize($tfile);
+                                                                echo $size === false ? 'N/A' : $size;
                                                             } else {
                                                                 echo __("N/A", mmg()->domain);
                                                             }

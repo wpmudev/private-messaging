@@ -126,28 +126,12 @@ if (!class_exists('IG_Uploader_Model')) {
 
         protected function after_validate()
         {
-            if (is_admin()) {
-
-            } else {
-                if ($this->mode == self::MODE_EXTEND) {
-                    //only apply for case new model or model exist but only have link
-                    if (($this->exist && empty($this->file)) || !$this->exist) {
-                        //we require neither url or file
-                        if (empty($this->url) && empty($this->file_upload)) {
-                            $this->set_error('file', __("Url or File required", ig_uploader()->domain));
-                            $this->set_error('url', __("Url or File required", ig_uploader()->domain));
-                        } elseif (!empty($this->file_upload) && is_uploaded_file($this->file_upload['file']['tmp_name'])) {
-                            //case the file has been filled
-                            $allowed = array_values(get_allowed_mime_types());
-                            if (!in_array($this->file_upload['file']['type'], $allowed)) {
-                                $this->set_error('file', __('File type not allow', ig_uploader()->domain));
-                            } elseif ($this->file_upload['file']['size'] > $this->get_max_file_upload() * 1000000) {
-                                $this->set_error('file', __('File too large!', ig_uploader()->domain));
-                            }
-                        } elseif (empty($this->url)) {
-                            //the upload is not good, also, url is empty, throw error
-                            $this->set_error('id', __('Can not upload the <strong>file</strong>, also <strong>url</strong> is empty!', ig_uploader()->domain));
-                        }
+            if ($this->mode == self::MODE_EXTEND) {
+                if (($this->exist && empty($this->file)) || !$this->exist) {
+                    //we require neither url or file
+                    if (empty($this->url) && empty($this->file)) {
+                        $this->set_error('file', __("Url or File required", ig_uploader()->domain));
+                        $this->set_error('url', __("Url or File required", ig_uploader()->domain));
                     }
                 }
             }

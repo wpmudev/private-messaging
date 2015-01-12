@@ -27,6 +27,7 @@ if (!class_exists('IG_Uploader')) {
             add_action('init', array(&$this, 'custom_content'));
             add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
             add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
+
         }
 
         public function init_uploader($can_upload = false)
@@ -36,6 +37,7 @@ if (!class_exists('IG_Uploader')) {
 
         function scripts()
         {
+            wp_enqueue_script('jquery');
             wp_register_style('igu-uploader', $this->plugin_url . 'assets/style.css');
             wp_register_script('webuipopover', $this->plugin_url . 'assets/popover/webuipopover.js', array('jquery'));
             wp_register_style('webuipopover', $this->plugin_url . 'assets/popover/webuipopover.css');
