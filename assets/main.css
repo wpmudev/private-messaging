@@ -144,6 +144,7 @@
     overflow-y: scroll;
     padding: 5px;
 }
+
 @media screen and (max-width: 767px) {
     .mmessage-container .file-view-port {
         max-height: 200px;
@@ -153,6 +154,7 @@
     }
 
 }
+
 .mmessage-container .mm_setting_menu a {
     color: #333;
 }
@@ -172,6 +174,11 @@
     border-radius: 10px !important;
     background: #d9534f;
 }
-.mm-paging{
+
+.mm-paging {
     margin: 10px 0;
+}
+
+.ui-helper-hidden-accessible {
+    display: none;
 }
