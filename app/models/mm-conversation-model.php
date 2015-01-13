@@ -53,7 +53,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     {
         global $wpdb;
         $per_page = mmg()->setting()->per_page;
-        $paged = mmg()->get('mpaged',1);
+        $paged = mmg()->get('mpaged', 1);
 
         $offset = ($paged - 1) * $per_page;
 
@@ -67,9 +67,9 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
                 INNER JOIN " . $wpdb->postmeta . " meta ON meta.meta_key='_conversation_id' AND meta.meta_value=conversation.id
                 INNER JOIN " . $wpdb->postmeta . " send_to ON send_to.meta_key='_send_to' AND send_to.post_id=meta.post_id
                 WHERE mstat.user_id = %d AND mstat.status IN (" . implode(',', array(MM_Message_Status_Model::STATUS_READ, MM_Message_Status_Model::STATUS_UNREAD)) . ")
-                AND send_to.meta_value = %d
+                AND send_to.meta_value = %d AND site_id=%d
                 GROUP BY conversation.id ORDER BY conversation.date_created DESC LIMIT %d,%d";
-        $sql = $wpdb->prepare($sql, get_current_user_id(), get_current_user_id(), $offset, $per_page);
+        $sql = $wpdb->prepare($sql, get_current_user_id(), get_current_user_id(), get_current_blog_id(), $offset, $per_page);
 
         $ids = $wpdb->get_col($sql);
 
@@ -84,7 +84,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     {
         global $wpdb;
         $per_page = mmg()->setting()->per_page;
-        $paged = mmg()->get('mpaged',1);
+        $paged = mmg()->get('mpaged', 1);
 
         $offset = ($paged - 1) * $per_page;
 
@@ -225,7 +225,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
         }
         global $wpdb;
         $per_page = mmg()->setting()->per_page;
-        $paged = mmg()->get('mpaged',1);
+        $paged = mmg()->get('mpaged', 1);
 
         $offset = ($paged - 1) * $per_page;
         $total_pages = ceil(self::count_unread() / $per_page);
@@ -254,7 +254,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     public static function get_read()
     {
         $per_page = mmg()->setting()->per_page;
-        $paged = mmg()->get('mpaged',1);
+        $paged = mmg()->get('mpaged', 1);
 
         $offset = ($paged - 1) * $per_page;
         $total_pages = ceil(self::count_read() / $per_page);
@@ -284,7 +284,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     public static function get_sent()
     {
         $per_page = mmg()->setting()->per_page;
-        $paged = mmg()->get('mpaged',1);
+        $paged = mmg()->get('mpaged', 1);
 
         $offset = ($paged - 1) * $per_page;
         $total_pages = ceil(self::count_all() / $per_page);
@@ -298,7 +298,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
             $ids[] = $message->conversation_id;
         }
         $ids = array_unique(array_filter($ids));
-        if(empty($ids)){
+        if (empty($ids)) {
             return array();
         }
 
@@ -406,7 +406,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
             if (!$per_page) {
                 $per_page = mmg()->setting()->per_page;
             }
-            $paged = mmg()->get('mpaged',1);
+            $paged = mmg()->get('mpaged', 1);
 
             $offset = ($paged - 1) * $per_page;
             $total_pages = ceil(self::count_all() / $per_page);

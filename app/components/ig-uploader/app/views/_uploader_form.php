@@ -11,7 +11,7 @@
     }?>
     <div style="margin-bottom: 0" class="form-group <?php echo $model->has_error("file") ? "has-error" : null ?>">
         <button type="button"
-                class="btn btn-default upload_image_button btn-xs"><?php _e("Chose File", ig_uploader()->domain) ?></button>
+                class="btn btn-default upload_image_button btn-xs"><?php _e("Choose File", ig_uploader()->domain) ?></button>
         <span class="file-upload-name"></span>
         <?php $form->hidden('file', array('attributes' => array('id' => 'attachment'))) ?>
         <?php if ($model->exist && $model->file) : ?>

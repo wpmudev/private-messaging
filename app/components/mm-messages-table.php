@@ -77,7 +77,7 @@ class MM_Messages_Table extends WP_List_Table
     {
         global $wpdb;
 
-        $totals = $wpdb->get_var('SELECT COUNT(id) from ' . $wpdb->prefix . 'mm_conversation');
+        $totals = $wpdb->get_var($wpdb->prepare('SELECT COUNT(id) from ' . $wpdb->prefix . 'mm_conversation WHERE site_id=%d', get_current_blog_id()));
 
         //How many to display per page?
         $perpage = 10;
@@ -117,7 +117,9 @@ class MM_Messages_Table extends WP_List_Table
                 ));
             }
         } else {
-            $this->items = MM_Conversation_Model::model()->find_all('', array(), $perpage, $offset);
+            $this->items = MM_Conversation_Model::model()->find_all('site_id=%d', array(
+                get_current_blog_id()
+            ), $perpage, $offset);
         }
     }
 

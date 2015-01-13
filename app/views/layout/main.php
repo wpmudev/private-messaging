@@ -83,6 +83,51 @@
                 },
                 tooltipClass: 'ig-container'
             });
-        }
+        };
+    })
+</script>
+<script type="text/javascript">
+    jQuery(function ($) {
+        $(".mm-compose").leanModal({
+            closeButton: ".compose-close",
+            top:'0%',
+            width:'95%',
+            maxWidth:659
+        });
+
+        $('body').on('submit', '.compose-form', function () {
+            var that = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                data: $(that).find(":input").serialize(),
+                beforeSend: function () {
+                    that.parent().parent().find('button').attr('disabled', 'disabled');
+                },
+                success: function (data) {
+                    that.find('.form-group').removeClass('has-error has-success');
+                    that.parent().parent().find('button').removeAttr('disabled');
+                    if (data.status == 'success') {
+                        that.find('.form-control').val('');
+                        location.reload();
+                    } else {
+                        $.each(data.errors, function (i, v) {
+                            var element = that.find('.error-' + i);
+                            element.parent().parent().addClass('has-error');
+                            element.html(v);
+                        });
+                        that.find('.form-group').each(function () {
+                            if (!$(this).hasClass('has-error')) {
+                                $(this).addClass('has-success');
+                            }
+                        })
+                    }
+                }
+            })
+            return false;
+        });
+        $('body').on('modal.hidden', function () {
+            $('.webui-popover').remove();
+        });
     })
 </script>

@@ -3,7 +3,6 @@ jQuery(function ($) {
     var igu_uploader;
     $('body').on('mouseenter', '.add-file', function () {
         var key = 'igu_uploader_' + $(this).parent().parent().parent().attr('id');
-        console.log(key);
         igu_uploader = window[key];
         $(this).webuiPopover({
             type: 'async',
@@ -26,6 +25,7 @@ jQuery(function ($) {
             }
             igu_uploader.instance = that;
             file_port = that.parent().parent().find('.file-view-port');
+            //make as fixed
         })
     });
     $('body').on('mouseenter', '.igu-file-update', function () {
@@ -64,7 +64,7 @@ jQuery(function ($) {
 
         // Create the media frame.
         file_frame = wp.media.frames.file_frame = wp.media({
-            //title: igu_uploader.file_frame_title,
+            title: igu_uploader.file_frame_title,
             multiple: false  // Set to true to allow multiple files to be selected
         });
         // When an image is selected, run a callback.
@@ -174,6 +174,14 @@ jQuery(function ($) {
         }
         if ($(this).width() <= (180 * 3)) {
             $(this).find('.igu-media-file-land').css('width', '49%');
+        }
+    })
+    $(window).scroll(function () {
+        if (igu_uploader != undefined && igu_uploader.instance != undefined && typeof igu_uploader.instance == 'object') {
+            var pop = igu_uploader.instance.data('plugin_webuiPopover');
+            if (pop!=undefined && pop.$target.is(':visible')) {
+                igu_uploader.instance.webuiPopover('reposition');
+            }
         }
     })
 })

@@ -10,7 +10,17 @@ class MM_Backend
         new MMessage_Backend_Controller();
         add_action('wp_ajax_mm_create_message_page', array(&$this, 'create_page'));
         add_filter('user_has_cap', array(&$this, 'update_cap'), 10, 4);
+        add_filter('ajax_query_attachments_args', array(&$this, 'restrict_user'));
     }
+
+    function restrict_user($args)
+    {
+        if (!current_user_can('manage_options')) {
+            $args['author'] = get_current_user_id();
+        }
+        return $args;
+    }
+
     function update_cap($allcaps, $caps, $args, $user)
     {
         if (in_array('upload_files', $caps)) {
