@@ -15,6 +15,8 @@ if (!class_exists('IG_Request')) {
          */
         public function render($view, $params = array(), $output = true)
         {
+            $ig_request_params_cache = $params;
+            extract($params);
             $pool = explode('\\', dirname(__FILE__));
             //we will get the path below the controller
             $reflector = new ReflectionClass(get_class($this));
@@ -26,7 +28,7 @@ if (!class_exists('IG_Request')) {
                 $layout_path = $base_path . '/views/layout/' . $this->layout . '.php';
             }
 
-            $content = $this->render_partial($view, $params, false);
+            $content = $this->render_partial($view, $ig_request_params_cache, false);
 
             if ($this->layout) {
                 ob_start();

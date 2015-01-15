@@ -84,9 +84,15 @@ class Inbox_Shortcode_Controller extends IG_Request
 
     function inbox($atts)
     {
+        $a = wp_parse_args($atts, array(
+            'nav_view' => 'both'
+        ));
+
         if (!is_user_logged_in()) {
             mmg()->load_script('login');
-            return $this->render('shortcode/login', array(), false);
+            return $this->render('shortcode/login', array(
+                'show_nav' => $this->can_show_nav($a['nav_view'])
+            ), false);
         }
         mmg()->load_script('inbox');
         add_action('wp_footer', array(&$this, 'render_compose_form'));
@@ -129,7 +135,8 @@ class Inbox_Shortcode_Controller extends IG_Request
         return $this->render('shortcode/inbox', array(
             'models' => $models,
             'total_pages' => $total_pages,
-            'paged' => mmg()->get('mpaged', 'int', 1)
+            'paged' => mmg()->get('mpaged', 'int', 1),
+            'show_nav' => $this->can_show_nav($a['nav_view'])
         ), false);
     }
 
@@ -321,5 +328,18 @@ class Inbox_Shortcode_Controller extends IG_Request
         return $this->render_partial('shortcode/_inbox_message', array(
             'messages' => $messages
         ), false);
+    }
+
+    public function can_show_nav($condition)
+    {
+        if ($condition == 'both') {
+            return true;
+        }
+        if ($condition == 'loggedin') {
+            return is_user_logged_in();
+        }
+        if ($condition == 'loggedout') {
+            return !is_user_logged_in();
+        }
     }
 }
