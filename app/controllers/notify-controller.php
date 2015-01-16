@@ -26,6 +26,20 @@ class Notify_Controller extends IG_Request {
 		if ( ! $is_send ) {
 			return;
 		}
+
+		//check does the recieve allow tracking or not, if not, we don't send
+		$reciver_setting = get_user_meta( $messeger->send_to, 'messages_user_setting', true );
+		if ( ! $reciver_setting ) {
+			$reciver_setting = array(
+				'enable_receipt'  => 1,
+				'prevent_receipt' => 0
+			);
+		}
+		if ( $reciver_setting['prevent_receipt'] == true ) {
+			//this user has block it, return
+			return;
+		}
+
 		if ( $setting->user_receipt == true ) {
 			//check does user enable
 			$sender_setting = get_user_meta( $messeger->send_from, 'messages_user_setting', true );
@@ -40,17 +54,6 @@ class Notify_Controller extends IG_Request {
 				return;
 			}
 			//user enable it, checking does the receiver block it
-			$reciver_setting = get_user_meta( $messeger->send_to, 'messages_user_setting', true );
-			if ( ! $reciver_setting ) {
-				$reciver_setting = array(
-					'enable_receipt'  => 1,
-					'prevent_receipt' => 0
-				);
-			}
-			if ( $reciver_setting['prevent_receipt'] == true ) {
-				//this user has block it, return
-				return;
-			}
 		}
 
 		//from here, we can send notification

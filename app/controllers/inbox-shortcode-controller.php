@@ -124,7 +124,9 @@ class Inbox_Shortcode_Controller extends IG_Request
                 $total_pages = mmg()->global['conversation_total_pages'];
                 break;
             case'setting':
-                return $this->render('shortcode/setting', array(), false);
+                return $this->render('shortcode/setting', array(
+                    'show_nav' => $this->can_show_nav($a['nav_view'])
+                ), false);
                 break;
             case 'search':
                 $models = MM_Conversation_Model::search(mmg()->get('query'));
