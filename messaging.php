@@ -624,5 +624,11 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
 //init once
     register_activation_hook(__FILE__, array(mmg(), 'install'));
     include_once mmg()->plugin_path . 'functions.php';
+    //add action to load language
+    add_action('plugins_loaded', 'mmg_load_languages');
+    function mmg_load_languages()
+    {
+        load_plugin_textdomain(mmg()->domain, false, plugin_basename(mmg()->plugin_path . 'languages/'));
+    }
 
 }
