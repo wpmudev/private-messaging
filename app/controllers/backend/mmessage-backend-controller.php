@@ -10,6 +10,45 @@ class MMessage_Backend_Controller extends IG_Request
         add_action('admin_menu', array(&$this, 'admin_menu'));
         add_action('wp_loaded', array(&$this, 'process_request'));
         add_action('wp_ajax_mm_plugin_action', array(&$this, 'plugins_action'));
+        $dismissed = explode(',', (string)get_user_meta(get_current_user_id(), 'dismissed_wp_pointers', true));
+        if (!array_search('mmg_pointer', $dismissed)) {
+            add_action('admin_enqueue_scripts', array(&$this, 'scripts'));
+            add_action('admin_footer', array(&$this, 'footer_scripts'));
+        }
+    }
+
+    function footer_scripts()
+    {
+        $pointer_content = "<p>" . __("Please visit settings > messaging to choose your inbox page and complete setup", mmg()->domain) . "</p>";
+        ?>
+        <script type="text/javascript">
+            //<![CDATA[
+            jQuery(document).ready(function ($) {
+                //jQuery selector to point to
+                var pointer = $('#toplevel_page_mm_main').pointer({
+                    content: '<?php echo $pointer_content; ?>',
+                    position: {
+                        edge: 'left',
+                        align: 'center'
+                    },
+                    pointerClass: 'mmg-pointer',
+                    close: function () {
+                        $.post(ajaxurl, {
+                            pointer: 'mmg_pointer',
+                            action: 'dismiss-wp-pointer'
+                        });
+                    }
+                }).pointer('open');
+            });
+            //]]>
+        </script>
+    <?php
+    }
+
+    function scripts()
+    {
+        wp_enqueue_style('wp-pointer');
+        wp_enqueue_script('wp-pointer');
     }
 
     function plugins_action()

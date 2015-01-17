@@ -27,7 +27,7 @@
                     <?php
                     $form->hidden('user_receipt', array('value' => 0));
                     $form->checkbox("user_receipt", array("attributes" => array("class" => "", "value" => 1))) ?>
-                    <?php _e("This will let the user turn off or on", mmg()->domain) ?>
+                    <?php _e("This will allow the user to enable or disable read receipts.", mmg()->domain) ?>
                 </label>
             </div>
         </div>
