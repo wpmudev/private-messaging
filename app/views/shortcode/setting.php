@@ -10,7 +10,13 @@ if (!$user_setting) {
 $setting = new MM_Setting_Model();
 $setting->load();
 if ($setting->user_receipt == false) {
-    _e("This feature has been disabled by admin", mmg()->domain);
+    ?>
+    <br/>
+
+    <div class="well well-sm row">
+        <?php _e("This feature has been disabled by admin", mmg()->domain); ?>
+    </div>
+    <?php
     return;
 } else {
     ?>

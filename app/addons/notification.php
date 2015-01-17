@@ -101,10 +101,15 @@ if (!class_exists('MM_Push_Notification')) {
                                                         {
                                                             addClass: 'btn btn-primary btn-xs',
                                                             text: 'View', onClick: function ($noty) {
-                                                            $noty.close();
                                                             var url = '<?php echo get_permalink(mmg()->setting()->inbox_page) ?>?box=unread';
                                                             location.href = url;
                                                         }
+                                                        },
+                                                        {
+                                                            addClass: 'btn btn-danger btn-xs',
+                                                            text: 'Close', onClick: function ($noty) {
+                                                            $noty.close();
+                                                            }
                                                         }
                                                     ],
                                                     animation: {
@@ -115,7 +120,7 @@ if (!class_exists('MM_Push_Notification')) {
                                                     },
                                                     callback: {
                                                         onShow: function() {
-                                                            $('.noty_buttons').addClass('mmessage-container');
+                                                            $('.noty_buttons').addClass('ig-container');
                                                         }
                                                     }
                                                 });
