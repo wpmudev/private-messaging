@@ -114,6 +114,8 @@
                         that.find('.form-control').val('');
                         location.reload();
                     } else {
+                        //clear errors
+                        that.find('.m-b-none').html('');
                         $.each(data.errors, function (i, v) {
                             var element = that.find('.error-' + i);
                             element.parent().parent().addClass('has-error');

@@ -119,8 +119,8 @@
                         $('.load-conv').removeClass('active');
                         that.addClass('active read');
                         $('.mm-admin-bar span').text(data.count_unread);
-                        $('.unread-count').attr('data-original-title', data.count_unread + ' ' + $('.unread-count').data('text'));
-                        $('.read-count').attr('data-original-title', data.count_read + ' ' + $('.read-count').data('text'));
+                        $('.unread-count').attr('title',data.count_unread + ' ' + $('.unread-count').data('text'));
+                        $('.read-count').attr('title',data.count_read + ' ' + $('.unread-count').data('text'));
                         $('#mmessage-content').html(data.html);
                         $('#mmessage-content').perfectScrollbar('destroy');
                         $('#mmessage-content').perfectScrollbar({

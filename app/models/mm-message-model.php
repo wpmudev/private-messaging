@@ -85,7 +85,7 @@ class MM_Message_Model extends IG_Post_Model
     public function get_name($user_id)
     {
         $userdata = get_userdata($user_id);
-        $name = $userdata->user_info . ' ' . $userdata->last_name;
+        $name = $userdata->first_name . ' ' . $userdata->last_name;
         $name = trim($name);
         if (!empty($name)) {
             return $name;

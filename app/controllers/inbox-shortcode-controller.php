@@ -150,7 +150,7 @@ class Inbox_Shortcode_Controller extends IG_Request
         if (!wp_verify_nonce(mmg()->get('_wpnonce'), 'mm_suggest_users')) {
             exit;
         }
-
+        $query_string = mmg()->post('query');
         $query = new WP_User_Query(apply_filters('mm_suggest_users_args', array(
             'search' => '*' . mmg()->post('query') . '*',
             'search_columns' => array('user_login'),
@@ -159,12 +159,38 @@ class Inbox_Shortcode_Controller extends IG_Request
             'orderby' => 'user_login',
             'order' => 'ASC'
         )));
+        $name_query = new WP_User_Query(apply_filters('mm_suggest_users_first_last_args', array(
+            'exclude' => array(get_current_user_id()),
+            'number' => 10,
+            'orderby' => 'user_login',
+            'order' => 'ASC',
+            'meta_query' => array(
+                'relation' => 'OR',
+                array(
+                    'key' => 'first_name',
+                    'value' => $query_string,
+                    'compare' => 'LIKE'
+                ),
+                array(
+                    'key' => 'last_name',
+                    'value' => $query_string,
+                    'compare' => 'LIKE'
+                )
+            )
+        )));
+        $results = array_merge($query->get_results(), $name_query->get_results());
 
         $data = array();
-        foreach ($query->get_results() as $user) {
+        foreach ($results as $user) {
+            $userdata = get_userdata($user->ID);
+            $name = $user->user_login;
+            $full_name = trim($userdata->first_name . ' ' . $userdata->last_name);
+            if (strlen($full_name)) {
+                $name = $user->user_login . ' - ' . $full_name;
+            }
             $obj = new stdClass();
             $obj->id = $user->ID;
-            $obj->name = $user->user_login;
+            $obj->name = $name;
             $data[] = $obj;
         }
 
@@ -183,6 +209,7 @@ class Inbox_Shortcode_Controller extends IG_Request
 
         $model = new MM_Message_Model();
         $model->import(mmg()->post('MM_Message_Model'));
+        $model = apply_filters('mm_before_send_message', $model);
 
         if ($model->validate()) {
             if (mmg()->post('is_reply', 0) == 1) {
@@ -205,7 +232,7 @@ class Inbox_Shortcode_Controller extends IG_Request
                     'status' => 'success'
                 ));
             } else {
-                $users = mmg()->post('MM_Message_Model[send_to]');
+                $users = $model->send_to;
                 $user_ids = $this->logins_to_ids($users);
 
                 $is_single = true;

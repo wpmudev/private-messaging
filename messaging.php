@@ -4,7 +4,7 @@ Plugin Name: Private Messaging
 Plugin URI: https://premium.wpmudev.org/project/private-messaging
 Description: Private user-to-user communication for placing bids, sharing project specs and hidden internal communication. Complete with front end integration, guarded contact information and protected file sharing.
 Author: WPMU DEV
-Version: 1.0
+Version: 1.0.1
 Author URI: http://premium.wpmudev.org
 WDP ID: 938495
 Text Domain: private_messaging
@@ -249,7 +249,6 @@ if (!class_exists('MMessaging')) {
             if (is_writeable($runtime_path)) {
                 $use_compress = $runtime_path;;
             }
-            return false;
             return $use_compress;
         }
 
@@ -298,6 +297,7 @@ if (!class_exists('MMessaging')) {
             $this->global['inbox_sc'] = new Inbox_Shortcode_Controller();
             $this->global['messge_me_sc'] = new Message_Me_Shortcode_Controller();
             $this->global['admin_bar_notification'] = new Admin_Bar_Notification_Controller();
+            new MM_BroadCast_Messages();
         }
 
         function load_post_type()
@@ -340,11 +340,10 @@ if (!class_exists('MMessaging')) {
                         break;
                     }
                 }
-            } else {
-                //include normal file inside app folder
-                if (file_exists($this->plugin_path . 'app/' . $filename)) {
-                    include_once $this->plugin_path . 'app/' . $filename;
-                }
+            } elseif (file_exists($this->plugin_path . 'app/' . $filename)) {
+                include_once $this->plugin_path . 'app/' . $filename;
+            } elseif (file_exists($this->plugin_path . 'app/components/' . $filename)) {
+                include_once $this->plugin_path . 'app/components/' . $filename;
             }
         }
 
@@ -606,7 +605,7 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
 //include dashboard
     global $wpmudev_notices;
     $wpmudev_notices[] = array(
-        'id' => '',
+        'id' => '938495',
         'name' => 'Private Messaging',
         'screens' => array(
             'toplevel_page_mm_main',

@@ -12,4 +12,5 @@ Change Log:
 
 1.0.1.0
 - Bug fixes
-1.0.1.
+- Add: admin now can broadcast messages
+- Add: smarter user suggestion
