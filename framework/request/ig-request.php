@@ -17,6 +17,7 @@ if (!class_exists('IG_Request')) {
         {
             $ig_request_params_cache = $params;
             extract($params);
+            $layout = apply_filters('ig_view_layout', $this->layout);
             $pool = explode('\\', dirname(__FILE__));
             //we will get the path below the controller
             $reflector = new ReflectionClass(get_class($this));
@@ -32,7 +33,7 @@ if (!class_exists('IG_Request')) {
 
             if ($this->layout) {
                 ob_start();
-                include $layout_path;
+                include apply_filters('ig_layout_path', $layout_path);
                 $content = ob_get_clean();
             }
 
@@ -50,6 +51,7 @@ if (!class_exists('IG_Request')) {
 
             $base_path = substr($reflector->getFileName(), 0, stripos($reflector->getFileName(), 'controllers'));
             $view_path = $base_path . '/views/' . $view . '.php';
+            $view_path = apply_filters('ig_view_file', $view_path, $view);
 
             if (file_exists($view_path)) {
                 extract($params);

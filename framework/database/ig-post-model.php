@@ -240,7 +240,7 @@ if (!class_exists('IG_Post_Model')) {
          */
         protected function before_save()
         {
-            do_action($this->get_table() . '_before_save');
+            do_action($this->get_table() . '_before_save',$this);
         }
 
         /**
@@ -248,7 +248,7 @@ if (!class_exists('IG_Post_Model')) {
          */
         protected function after_save()
         {
-            do_action($this->get_table() . '_after_save');
+            do_action($this->get_table() . '_after_save',$this);
         }
 
         public static function model($class_name = __CLASS__)

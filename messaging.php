@@ -297,7 +297,6 @@ if (!class_exists('MMessaging')) {
             $this->global['inbox_sc'] = new Inbox_Shortcode_Controller();
             $this->global['messge_me_sc'] = new Message_Me_Shortcode_Controller();
             $this->global['admin_bar_notification'] = new Admin_Bar_Notification_Controller();
-            new MM_BroadCast_Messages();
         }
 
         function load_post_type()

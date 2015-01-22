@@ -20,6 +20,7 @@ if (!function_exists('ig_loader')) {
             'IG_Form_Generator' => dirname(__FILE__) . '/generator/ig-form-generator.php',
             'IG_Request' => dirname(__FILE__) . '/request/ig-request.php',
             'IG_Logger' => dirname(__FILE__) . '/logger/ig-logger.php',
+            'GUMP' => dirname(__FILE__) . '/vendors/gump.class.php'
         );
 
         if (isset($classes[$class])) {

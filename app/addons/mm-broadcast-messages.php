@@ -1,7 +1,9 @@
 <?php
 
 /**
- * @author:Hoang Ngo
+ * Author: WPMU DEV
+ * Name: Broadcast
+ * Description: Admin can broadcast messages
  */
 class MM_BroadCast_Messages
 {
@@ -54,3 +56,4 @@ class MM_BroadCast_Messages
     <?php
     }
 }
+new MM_BroadCast_Messages();
