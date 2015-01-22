@@ -3,7 +3,7 @@
 /**
  * Author: WPMU DEV
  * Name: Broadcast
- * Description: Admin can broadcast messages
+ * Description: As the administrator send a message to all users at the same time.
  */
 class MM_BroadCast_Messages
 {
@@ -52,7 +52,7 @@ class MM_BroadCast_Messages
     {
         ?>
         <label><input type="checkbox" name="broadcast" id="mmg-broadcast">
-            <?php _e("Broadcast this message", mmg()->domain) ?></label>
+            <?php _e("Send this message to all users", mmg()->domain) ?></label>
     <?php
     }
 }
