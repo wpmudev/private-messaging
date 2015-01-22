@@ -89,6 +89,7 @@ class Inbox_Shortcode_Controller extends IG_Request
         ));
 
         if (!is_user_logged_in()) {
+            do_action('mmg_before_load_login_form');
             mmg()->load_script('login');
             return $this->render('shortcode/login', array(
                 'show_nav' => $this->can_show_nav($a['nav_view'])
