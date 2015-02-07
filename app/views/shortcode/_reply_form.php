@@ -17,8 +17,8 @@
                         )
                     )); ?>
                     <div class="modal-body">
+                        <?php do_action('mm_before_reply_form', $message, $form) ?>
                         <div class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
-                            <?php /*$form->label("content", array("text" => "Content", "attributes" => array("class" => "col-lg-2 control-label"))) */ ?>
                             <div class="col-lg-12">
                                 <?php $form->text_area("content", array(
                                     "attributes" => array(

@@ -223,28 +223,24 @@ class Inbox_Shortcode_Controller extends IG_Request
 
                 $user_ids = $this->logins_to_ids($user_ids);
 
-                foreach ($user_ids as $user_id) {
-                    if ($user_id != get_current_user_id()) {
-                        $this->_reply_message($conv_id, $message_id, $user_id, $model);
-                    }
-                }
+                $this->_reply_message($conv_id, $message_id, implode(',', $user_ids), $model);
+
                 $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
                 wp_send_json(array(
                     'status' => 'success'
                 ));
             } else {
-                $users = $model->send_to;
-                $user_ids = $this->logins_to_ids($users);
+                $send_to = $model->send_to;
+                $user_ids = $this->logins_to_ids($send_to);
 
-                $is_single = true;
-                if ($is_single) {
+                $is_group = mmg()->post('is_group', 0);
+                if (!$is_group) {
                     //create message
                     foreach ($user_ids as $user_id) {
                         $this->_send_message($user_id, $model);
-                        //check does this is new message or reply
                     }
                 } else {
-                    //todo update group conversation
+                    $this->_send_message_group($user_ids, $model);
                 }
                 $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
                 wp_send_json(array(
@@ -264,65 +260,37 @@ class Inbox_Shortcode_Controller extends IG_Request
     {
         //load conversation
         $conversation = MM_Conversation_Model::model()->find($conv_id);
-        $conversation->status = MM_Message_Status_Model::STATUS_UNREAD;
-        //we will add new message to this conversation
-        $conversation->save();
-        //update users from this conversation, now save the message
-        $m = new MM_Message_Model();
-        $m->import($model->export());
-        $m->send_to = $user_id;
-        $m->conversation_id = $conversation->id;
-        $m->status = MM_Message_Model::UNREAD;
-        $mess = MM_Message_Model::model()->find($message_id);
-        $m->subject = __("Re:", mmg()->domain) . ' ' . $mess->subject;
-
-        $m->save();
-        //update status for send to
-        $status = MM_Message_Status_Model::model()->find_one_with_attributes(array(
-            'conversation_id' => $conversation->id,
-            'user_id' => $user_id
-        ));
-        if (is_object($status)) {
-            $status->status = MM_Message_Status_Model::STATUS_UNREAD;
-            $status->save();
-        }
-
+        MM_Message_Status_Model::model()->status($conversation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
+        $id = MM_Message_Model::reply($user_id, $message_id, $conv_id, $model->export());
         //update index
-        $conversation->update_index($m->id);
-        do_action('mm_message_sent', $m);
+        $conversation->update_index($id);
     }
 
     function _send_message($user_id, $model)
     {
         //create new conservation
         $conservation = new MM_Conversation_Model();
-        $conservation->status = MM_Message_Status_Model::STATUS_UNREAD;
         $conservation->save();
-        //save message
-        $m = new MM_Message_Model();
-        $m->import($model->export());
-        $m->send_to = $user_id;
-        $m->conversation_id = $conservation->id;
-        $m->status = MM_Message_Model::UNREAD;
-        $m->save();
-        //update index
-        $conservation->update_index($m->id);
-        do_action('mm_message_sent', $m);
-        //update status
-        $model = new MM_Message_Status_Model();
-        $model->user_id = $user_id;
-        $model->conversation_id = $conservation->id;
-        $model->status = MM_Message_Status_Model::STATUS_UNREAD;
-        $model->type = MM_Message_Status_Model::TYPE_CONVERSATION;
-        $model->save();
-        //we need both for each sender & reciver
-        $model = new MM_Message_Status_Model();
-        $model->user_id = get_current_user_id();
-        $model->conversation_id = $conservation->id;
-        //because we send so status should be read
-        $model->status = MM_Message_Status_Model::STATUS_READ;
-        $model->type = MM_Message_Status_Model::TYPE_CONVERSATION;
-        $model->save();
+        //apply status of this conversation for sender and receive
+        MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_READ, get_current_user_id());
+        //apply status for receive
+        MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
+        $id = MM_Message_Model::send($user_id, $conservation->id, $model->export());
+        $conservation->update_index($id);
+    }
+
+    function _send_message_group($user_ids, $model)
+    {
+        //create new conservation
+        $conservation = new MM_Conversation_Model();
+        $conservation->save();
+        //apply status of this conversation for sender and receive
+        MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_READ, get_current_user_id());
+        foreach ($user_ids as $user_id) {
+            MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
+        }
+        $message_id = MM_Message_Model::send(implode(',', $user_ids), $conservation->id, $model->export());
+        $conservation->update_index($message_id);
     }
 
     function logins_to_ids($users)

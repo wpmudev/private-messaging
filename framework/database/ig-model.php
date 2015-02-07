@@ -244,6 +244,18 @@ if (!class_exists('IG_Model')) {
             return $data;
         }
 
+        function fetch_array($data)
+        {
+            $class = get_class($this);
+            $results = array();
+            foreach ($data as $row) {
+                $model = new $class;
+                $model->import($row);
+                $results[] = $model;
+            }
+            return $results;
+        }
+
         /**
          * @param bool $exist
          */

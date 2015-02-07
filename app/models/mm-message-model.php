@@ -23,7 +23,6 @@ class MM_Message_Model extends IG_Post_Model
 
     public $conversation_id;
 
-
     protected $mapped = array(
         'id' => 'ID',
         'subject' => 'post_title',
@@ -93,27 +92,34 @@ class MM_Message_Model extends IG_Post_Model
         return $userdata->user_login;
     }
 
-    /*function after_save()
+    public static function send($user_id, $conversation_id, $data)
     {
-        $c = MM_Conversation_Model::model()->find($this->conversation_id);
-        //clear cache
-        //create status for this message
-        $sent_status = new MM_Message_Status_Model();
-        $sent_status->conversation_id = $c->id;
-        $sent_status->message_id = $this->id;
-        $sent_status->status = MM_Message_Status_Model::STATUS_UNREAD;
-        $sent_status->user_id = $this->send_to;
-        $sent_status->type = MM_Message_Status_Model::TYPE_MESSAGE;
-        $sent_status->save();
-        //
-        $from_status = new MM_Message_Status_Model();
-        $from_status->conversation_id = $c->id;
-        $from_status->message_id = $this->id;
-        $from_status->status = MM_Message_Status_Model::STATUS_UNREAD;
-        $from_status->user_id = $this->send_from;
-        $from_status->type = MM_Message_Status_Model::TYPE_MESSAGE;
-        $from_status->save();
-    }*/
+        //save message
+        $m = new MM_Message_Model();
+        $m->import($data);
+        $m->send_to = $user_id;
+        $m->conversation_id = $conversation_id;
+        $m->status = MM_Message_Model::UNREAD;
+        $m->save();
+        //update index
+        do_action('mm_message_sent', $m);
+        return $m->id;
+    }
+
+    public static function reply($user_id, $message_id, $conversation_id, $data)
+    {
+        $m = new MM_Message_Model();
+        $m->import($data);
+        $m->send_to = $user_id;
+        $m->conversation_id = $conversation_id;
+        $m->status = MM_Message_Model::UNREAD;
+        $mess = MM_Message_Model::model()->find($message_id);
+        $m->subject = __("Re:", mmg()->domain) . ' ' . $mess->subject;
+
+        $m->save();
+        do_action('mm_message_sent', $m);
+        return $m->id;
+    }
 
     public static function model($class_name = __CLASS__)
     {

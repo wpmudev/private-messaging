@@ -27,6 +27,17 @@
                                     </div>
                                     <div class="clearfix"></div>
                                 </div>
+                                <div class="form-group">
+                                    <div class="col-md-10 col-sm-12 col-xs-12 col-md-offset-2">
+                                        <div style="margin-top: 0" class="checkbox">
+                                            <label>
+                                                <input name="is_group" value="1" type="checkbox">
+                                                <?php _e("This is group conversation", mmg()->domain) ?>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
                                 <div style="margin-bottom: 0"
                                      class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
                                     <?php $form->label("subject", array(

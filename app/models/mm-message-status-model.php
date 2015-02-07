@@ -30,6 +30,21 @@ class MM_Message_Status_Model extends IG_DB_Model_Ex
         $this->date_created = date('Y-m-d H:i:s');
     }
 
+    function status($conversation_id, $status, $user_id)
+    {
+        $model = $this->find_one_with_attributes(array(
+            'conversation_id' => $conversation_id,
+            'user_id' => $user_id
+        ));
+        if (!is_object($model)) {
+            $model = new MM_Message_Status_Model();
+        }
+        $model->conversation_id = $conversation_id;
+        $model->status = $status;
+        $model->user_id = $user_id;
+        $model->save();
+    }
+
     public static function model($class_name = __CLASS__)
     {
         return parent::model($class_name);
