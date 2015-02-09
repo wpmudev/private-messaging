@@ -222,8 +222,20 @@ class Inbox_Shortcode_Controller extends IG_Request
                 $user_ids = $c_model->user_index;
 
                 $user_ids = $this->logins_to_ids($user_ids);
+                //we will need to explude the sender
+                unset($user_ids[array_search(get_current_user_id(), $user_ids)]);
+                //we will check does any one included
+                $included = mmg()->post('user_include');
+                if (!empty($included)) {
+                    $included = $this->logins_to_ids($included);
+                }
+                if ($included) {
+                    $user_ids = array_merge($user_ids, $included);
+                }
 
-                $this->_reply_message($conv_id, $message_id, implode(',', $user_ids), $model);
+                $user_ids = apply_filters('mm_reply_user_ids', $user_ids);
+
+                $this->_reply_message($conv_id, $message_id, $user_ids, $model);
 
                 $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
                 wp_send_json(array(
@@ -256,12 +268,14 @@ class Inbox_Shortcode_Controller extends IG_Request
         exit;
     }
 
-    function _reply_message($conv_id, $message_id, $user_id, $model)
+    function _reply_message($conv_id, $message_id, $user_ids, $model)
     {
         //load conversation
         $conversation = MM_Conversation_Model::model()->find($conv_id);
-        MM_Message_Status_Model::model()->status($conversation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
-        $id = MM_Message_Model::reply($user_id, $message_id, $conv_id, $model->export());
+        foreach ($user_ids as $user_id) {
+            MM_Message_Status_Model::model()->status($conversation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
+        }
+        $id = MM_Message_Model::reply(implode(',', $user_ids), $message_id, $conv_id, $model->export());
         //update index
         $conversation->update_index($id);
     }

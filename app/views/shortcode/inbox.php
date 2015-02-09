@@ -31,7 +31,7 @@
                 <div class="ps-container ps-active-x ps-active-y" id="mmessage-list">
                     <ul class="list-group no-margin">
                         <?php foreach ($models as $key => $model): ?>
-                            <?php $message = $model->get_last_message(); ?>
+                            <?php $message = $model->get_last_message();?>
                             <li data-id="<?php echo mmg()->encrypt($model->id) ?>"
                                 class="load-conv <?php echo $model->has_unread() == false ? 'read' : null ?> list-group-item <?php echo $key == 0 ? 'active' : null ?>">
                                 <div class="row">

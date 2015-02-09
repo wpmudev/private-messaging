@@ -10,7 +10,7 @@
                             <h4 class="modal-title"><?php _e("Compose Message", mmg()->domain) ?></h4>
                         </div>
                         <?php $form = new IG_Active_Form($model);
-                        $form->open(array("attributes" => array("class" => "compose-form form-horizontal", "id" => "compose-form-admin-bar"))); ?>
+                        $form->open(array("attributes" => array("class" => "form-horizontal", "id" => "compose-form-admin-bar"))); ?>
                         <div class="modal-body">
 
                             <div style="margin-bottom: 0"
@@ -28,6 +28,7 @@
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
+                            <?php do_action('mm_before_subject_field', $model, $form) ?>
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
                                 <?php $form->label("subject", array(
