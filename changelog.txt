@@ -14,3 +14,7 @@ Change Log:
 - Bug fixes
 - Add: Broadcast add-on
 - Add: smarter user suggestion
+
+1.0.1.1
+- Fix bug email notification link always go to last conversation
+- New add-on: group conversation
