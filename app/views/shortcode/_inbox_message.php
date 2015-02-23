@@ -86,7 +86,7 @@ if (!isset($render_reply)) {
                         <div class="col-md-6 message-attachment">
                             <a class="load-attachment-info" data-target="#<?php echo $id ?>" href="#<?php echo $id ?>">
                                 <i class="fa fa-paperclip fa-2x pull-left"></i>
-                                test.png </a>
+                                <?php echo $a_m->name ?> </a>
 
                             <div class="clearfix"></div>
                             <!-- Modal -->
