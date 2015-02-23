@@ -16,7 +16,8 @@
     <div class="row">
         <div class="col-md-5 col-sm-3 col-xs-3 no-padding">
             <div class="message-list">
-                <form class="mm-search-form" method="get" action="<?php echo parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>">
+                <form class="mm-search-form" method="get"
+                      action="<?php echo parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>">
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control"
                                value="<?php echo mmg()->get('query', '') ?>" name="query"
@@ -31,9 +32,17 @@
                 <div class="ps-container ps-active-x ps-active-y" id="mmessage-list">
                     <ul class="list-group no-margin">
                         <?php foreach ($models as $key => $model): ?>
-                            <?php $message = $model->get_last_message();?>
+                            <?php $active_conversation = $key == 0 ? true : false;
+                            if (mmg()->get('message_id', -1) != -1) {
+                                $checked_message = MM_Message_Model::model()->find(mmg()->get('message_id'));
+                                if (is_object($checked_message)) {
+                                    $active_conversation = $checked_message->conversation_id == $model->id ? true : false;
+                                }
+                            }
+                            ?>
+                            <?php $message = $model->get_last_message(); ?>
                             <li data-id="<?php echo mmg()->encrypt($model->id) ?>"
-                                class="load-conv <?php echo $model->has_unread() == false ? 'read' : null ?> list-group-item <?php echo $key == 0 ? 'active' : null ?>">
+                                class="load-conv <?php echo $model->has_unread() == false ? 'read' : null ?> list-group-item <?php echo $active_conversation == true ? 'active' : null ?>">
                                 <div class="row">
                                     <div class="col-md-3 no-padding">
                                         <img style="width: 90%" class="img-responsive img-circle center-block"
@@ -119,8 +128,8 @@
                         $('.load-conv').removeClass('active');
                         that.addClass('active read');
                         $('.mm-admin-bar span').text(data.count_unread);
-                        $('.unread-count').attr('title',data.count_unread + ' ' + $('.unread-count').data('text'));
-                        $('.read-count').attr('title',data.count_read + ' ' + $('.unread-count').data('text'));
+                        $('.unread-count').attr('title', data.count_unread + ' ' + $('.unread-count').data('text'));
+                        $('.read-count').attr('title', data.count_read + ' ' + $('.unread-count').data('text'));
                         $('#mmessage-content').html(data.html);
                         $('#mmessage-content').perfectScrollbar('destroy');
                         $('#mmessage-content').perfectScrollbar({
@@ -154,7 +163,7 @@
                             }
                         })
                     }
-                }else{
+                } else {
                     $.ajax({
                         type: 'POST',
                         url: '<?php echo admin_url('admin-ajax.php') ?>',
@@ -181,7 +190,10 @@
             $('#mmessage-content').perfectScrollbar({
                 suppressScrollX: true
             });
-
+            //trigger read
+            if ($('.load-conv.active').size() > 0) {
+                $('.load-conv.active').first().trigger('click');
+            }
         })
     </script>
 <?php else: ?>

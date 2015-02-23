@@ -8,6 +8,7 @@ if (!class_exists('IG_Request')) {
     {
         protected $layout;
         protected $flash_key = 'ig_flash';
+        protected $base_path = null;
 
         /**
          * @param $view
@@ -21,17 +22,20 @@ if (!class_exists('IG_Request')) {
             $pool = explode('\\', dirname(__FILE__));
             //we will get the path below the controller
             $reflector = new ReflectionClass(get_class($this));
-
-            $base_path = substr($reflector->getFileName(), 0, stripos($reflector->getFileName(), 'controllers'));
+            if (is_null($this->base_path)) {
+                $base_path = substr($reflector->getFileName(), 0, stripos($reflector->getFileName(), 'controllers'));
+            } else {
+                $base_path = $this->base_path;
+            }
 
             $layout_path = '';
-            if ($this->layout != null) {
-                $layout_path = $base_path . '/views/layout/' . $this->layout . '.php';
+            if ($layout != null) {
+                $layout_path = $base_path . '/views/layout/' . $layout. '.php';
             }
 
             $content = $this->render_partial($view, $ig_request_params_cache, false);
 
-            if ($this->layout) {
+            if ($layout) {
                 ob_start();
                 include apply_filters('ig_layout_path', $layout_path);
                 $content = ob_get_clean();
@@ -49,7 +53,11 @@ if (!class_exists('IG_Request')) {
             //we will get the path below the controller
             $reflector = new ReflectionClass(get_class($this));
 
-            $base_path = substr($reflector->getFileName(), 0, stripos($reflector->getFileName(), 'controllers'));
+            if (is_null($this->base_path)) {
+                $base_path = substr($reflector->getFileName(), 0, stripos($reflector->getFileName(), 'controllers'));
+            } else {
+                $base_path = $this->base_path;
+            }
             $view_path = $base_path . '/views/' . $view . '.php';
             $view_path = apply_filters('ig_view_file', $view_path, $view);
 
