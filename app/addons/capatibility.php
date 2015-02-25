@@ -32,20 +32,22 @@ if (!class_exists('MM_User_Capability')) {
             foreach ($user->roles as $role) {
                 if (isset($data[$role])) {
                     $roles = array_merge($roles, $data[$role]);
+                    //we will need to add this roles
+                    $roles[] = $role;
                 }
             }
+            $roles = array_unique($roles);
             foreach ($ids as $id) {
                 if ($id != get_current_user_id()) {
                     $send_to = new WP_User($id);
                     //check if this user role in the list can send
                     if (count(array_intersect($send_to->roles, $roles)) == 0) {
-                       unset($ids[array_search($id,$ids)]);
+                        unset($ids[array_search($id, $ids)]);
                     }
                 }
             }
             return $ids;
         }
-
 
         function filter_user_return($args)
         {
