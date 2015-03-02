@@ -37,15 +37,14 @@ if (!isset($render_reply)) {
                     <?php endif; ?>
                 </div>
 
-
             <?php endif; ?>
             <!--<button type="button" class="btn btn-danger btn-sm">
                 <i class="glyphicon glyphicon-trash"></i>
             </button>-->
         </div>
-        <?php $this->render_partial('shortcode/_reply_form', array(
+        <?php /*$this->render_partial('shortcode/_reply_form', array(
             'message' => $message
-        )); ?>
+        )); */?>
         <div class="clearfix"></div>
         <div class="page-header">
             <h3 class="mm-message-subject"><?php echo $message->subject ?></h3>

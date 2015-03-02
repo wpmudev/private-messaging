@@ -7,6 +7,8 @@ class Inbox_Shortcode_Controller extends IG_Request
 {
     protected $layout = 'main';
 
+    protected $messages;
+
     public function __construct()
     {
         add_shortcode('message_inbox', array(&$this, 'inbox'));
@@ -73,9 +75,15 @@ class Inbox_Shortcode_Controller extends IG_Request
             $model->mark_as_read();
             do_action('mm_conversation_read', $model);
         }
+        $messages = $model->get_messages();
+        //update replace form
+        $reply_form = $this->render_partial('shortcode/_reply_form', array(
+            'message' => array_shift($messages)
+        ), false);
 
         wp_send_json(array(
             'html' => $html,
+            'reply_form' => $reply_form,
             'count_unread' => MM_Conversation_Model::count_unread(true),
             'count_read' => MM_Conversation_Model::count_read(true)
         ));
@@ -144,6 +152,10 @@ class Inbox_Shortcode_Controller extends IG_Request
     function render_compose_form()
     {
         $this->render_partial('shortcode/_compose_form');
+        $messages = array_values($this->messages);
+        $this->render_partial('shortcode/_reply_form', array(
+            'message' => array_shift($messages)
+        ));
     }
 
     function suggest_users()
@@ -334,7 +346,7 @@ class Inbox_Shortcode_Controller extends IG_Request
     {
         //get all the message from this conversation
         $messages = $model->get_messages();
-
+        $this->messages = $messages;
         return $this->render_partial('shortcode/_inbox_message', array(
             'messages' => $messages
         ), false);

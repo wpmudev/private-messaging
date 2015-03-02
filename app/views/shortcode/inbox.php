@@ -136,6 +136,9 @@
                             suppressScrollX: true
                         });
                         $('body').trigger('abc');
+                        //reply form
+                        var reply_form = $(data.reply_form);
+                        $('#reply-form-c').html(reply_form.find('#reply-form-c').html());
                     }
                 })
             });

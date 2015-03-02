@@ -1,4 +1,9 @@
-<?php $c_id = uniqid(); ?>
+<?php $c_id = uniqid();
+if (!isset($message)) {
+    //get the current
+    $message = $this->message;
+}
+?>
 <div class="ig-container">
     <div class="mmessage-container">
         <div class="modal" id="reply-form-c">
