@@ -2,7 +2,7 @@
 
 /**
  * Author: WPMU DEV
- * Name: Notification (Beta)
+ * Name: Notification
  * Description: Display a visual notification for users when a new message is received.
  */
 if (!class_exists('MM_Push_Notification')) {

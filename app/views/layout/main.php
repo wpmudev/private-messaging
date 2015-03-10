@@ -58,8 +58,9 @@
             </div>
         <?php endif; ?>
         <?php echo $content; ?>
-
+        <div class="clearfix"></div>
     </div>
+    <div class="clearfix"></div>
 </div>
 <?php if ($show_nav): ?>
     <script type="text/javascript">
@@ -85,7 +86,6 @@
                     tooltipClass: 'ig-container'
                 });
             }
-            ;
         })
     </script>
 <?php endif; ?>
@@ -134,5 +134,26 @@
         $('body').on('modal.hidden', function () {
             $('.webui-popover').remove();
         });
+        $('body').on('click', '.load-attachment-info', function (e) {
+            e.preventDefault();
+            $('.attachments-footer').html('');
+            //move the html to footer
+            var html = $('[data-id="' + $(this).data('target') + '"]').first().html();
+            var element = $('<div/>').attr({
+                'class': 'modal',
+                'id': $(this).data('target')
+            });
+            element.html(html);
+            $('.attachments-footer').append(element);
+            var a = $('<a/>').attr('href', '#' + $(this).data('target'));
+            $('.attachments-footer').append(a);
+            a.leanModal({
+                closeButton: '.attachment-close',
+                top: '5%',
+                width: '90%',
+                maxWidth: 659
+            });
+            a.trigger('click');
+        })
     })
 </script>

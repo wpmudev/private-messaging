@@ -153,7 +153,7 @@ if (!class_exists('MM_User_Capability')) {
                                             <div id="myTabContent" class="tab-content" style="min-height: 200px">
                                                 <?php foreach ($roles as $key => $role): ?>
                                                     <div
-                                                        class="tab-pane <?php echo array_search($key, $index) == 0 ? 'active' : '' ?>"
+                                                        class=" <?php echo array_search($key, $index) == 0 ? 'active' : '' ?>"
                                                         id="tab_<?php echo $key ?>">
                                                         <?php foreach ($roles as $k => $r): ?>
                                                             <?php if ($k != $key): ?>

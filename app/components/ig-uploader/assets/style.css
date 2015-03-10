@@ -136,11 +136,10 @@
     margin: 0 auto;
 }
 
-.modal .sample-pop img{
+.modal .sample-pop img {
     width: 100%;
     height: auto;
 }
-
 
 .upload-item {
     font-family: "Open Sans", sans-serif;
@@ -258,6 +257,7 @@
 
 .igu-media-file-land .igu-media-file-meta h5, .igu-media-file-land .igu-media-file-meta p {
     margin: 0;
+    word-break: break-all;
 }
 
 .igu-media-file-land .igu-media-file-meta h5 {
@@ -5312,5 +5312,5 @@ Copyright (c) 2014 Daniel Eden
 
 .igu-media-info a i {
     position: relative;
-    top:24%;
+    top: 24%;
 }

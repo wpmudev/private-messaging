@@ -91,7 +91,9 @@ if (!class_exists('IG_Active_Form')) {
                 $selected = explode(',', $selected);
             }
             $args['selected'] = array_filter($selected);
-
+            if (isset($args['attributes']['multiple']) && $args['attributes']['multiple'] == 'multiple') {
+                $args['name'] .= '[]';
+            }
             echo IG_Form::select($args);
         }
 
@@ -120,7 +122,7 @@ if (!class_exists('IG_Active_Form')) {
         public function number($field, $args = array())
         {
             $args['name'] = $this->build_name($field);
-            $args['value'] = array($this->model->$field);
+            $args['value'] = !isset($args['value']) ? $this->model->$field : $args['value'];
             $args['attributes']['id'] = isset($args['attributes']['id']) ? $args['attributes']['id'] : $this->build_id($field);
 
             echo IG_Form::number($args);

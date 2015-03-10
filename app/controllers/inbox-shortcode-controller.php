@@ -17,6 +17,14 @@ class Inbox_Shortcode_Controller extends IG_Request
         add_action('wp_ajax_mm_suggest_users', array(&$this, 'suggest_users'));
         add_action('wp_ajax_mm_load_conversation', array(&$this, 'load_conversation'));
         add_action('wp_ajax_mm_status', array(&$this, 'change_status'));
+        add_action('wp_footer', array(&$this, 'footer'));
+    }
+
+    function footer()
+    {
+        ?>
+        <div class="ig-container attachments-footer"></div>
+    <?php
     }
 
     function change_status()

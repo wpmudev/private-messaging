@@ -5,6 +5,7 @@
                 <div class="modal-content">
                     <?php if (!is_user_logged_in()) {
                         ?>
+                        <button type="button" class="compose-close btn btn-xs" style="position: absolute;top:5px;right:5px;z-index:999">x</button>
                         <div class="modal-body text-left">
                             <?php $this->render_partial('shortcode/login') ?>
                         </div>

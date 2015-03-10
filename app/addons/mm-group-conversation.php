@@ -2,7 +2,7 @@
 
 /**
  * Author: WPMU DEV
- * Name: Group Conversation
+ * Name: Group Conversation (Beta)
  * Description: Enable include more people to a conversation
  */
 class MM_Group_Conversation

@@ -10,7 +10,7 @@ class MM_Upgrade_Controller extends IG_Request
         //add_action('admin_notices', array(&$this, 'admin_notice'));
         add_action('admin_menu', array(&$this, 'admin_menu'));
         add_action('wp_ajax_mm_create_table', array(&$this, 'create_table'));
-        add_action('init', array(&$this, 'check'));
+        add_action('wp_loaded', array(&$this, 'check'));
     }
 
     /**

@@ -116,5 +116,10 @@ if (!class_exists('IG_Request')) {
         {
 
         }
+
+        public function refresh()
+        {
+            $this->redirect($_SERVER['REQUEST_URI']);
+        }
     }
 }
