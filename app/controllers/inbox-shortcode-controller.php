@@ -7,7 +7,7 @@ class Inbox_Shortcode_Controller extends IG_Request
 {
     protected $layout = 'main';
 
-    protected $messages;
+    protected $messages = array();
 
     public function __construct()
     {

@@ -1,7 +1,11 @@
 <?php $c_id = uniqid();
 if (!isset($message)) {
     //get the current
-    $message = $this->message;
+    $messages = $this->messages;
+    $message = array_shift($messages);
+    if (!is_object($message)) {
+        return;
+    }
 }
 ?>
 <div class="ig-container">
