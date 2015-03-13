@@ -130,7 +130,7 @@
             return false;
         });
 
-        $('#admin-bar-mm-send-to').selectize({
+        var admin_bar_seletize = $('#admin-bar-mm-send-to').selectize({
             valueField: 'name',
             labelField: 'name',
             searchField: 'name',
@@ -138,7 +138,7 @@
             create: false,
             load: function (query, callback) {
                 if (!query.length) return callback();
-
+                var instance = admin_bar_seletize[0].selectize;
                 $.ajax({
                     type: 'POST',
                     url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_users&_wpnonce='.wp_create_nonce('mm_suggest_users')) ?>',
@@ -146,10 +146,10 @@
                         'query': query
                     },
                     beforeSend: function () {
-                        $('.selectize-input').append('<i style="position: absolute;right: 10px;" class="fa fa-circle-o-notch fa-spin"></i>');
+                        instance.$control.append('<i style="position: absolute;right: 10px;" class="fa fa-circle-o-notch fa-spin"></i>');
                     },
                     success: function (data) {
-                        $('.selectize-input').find('i').remove();
+                        instance.$control.find('i').remove();
                         callback(data);
                     }
                 });

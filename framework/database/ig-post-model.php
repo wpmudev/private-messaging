@@ -11,6 +11,8 @@ if (!class_exists('IG_Post_Model')) {
     {
         private static $_models = array();
 
+        public $wp_post;
+
         /**
          * Default value of Wordpress post
          * @var array
@@ -36,7 +38,8 @@ if (!class_exists('IG_Post_Model')) {
             } else {
                 $saved = $this->perform_insert();
             }
-
+            //todo clear the cache
+            $this->clear_caches();
             if ($saved) {
                 return $this->finish_save($saved, $after_save);
             }
@@ -240,7 +243,7 @@ if (!class_exists('IG_Post_Model')) {
          */
         protected function before_save()
         {
-            do_action($this->get_table() . '_before_save',$this);
+            do_action($this->get_table() . '_before_save', $this);
         }
 
         /**
@@ -248,7 +251,7 @@ if (!class_exists('IG_Post_Model')) {
          */
         protected function after_save()
         {
-            do_action($this->get_table() . '_after_save',$this);
+            do_action($this->get_table() . '_after_save', $this);
         }
 
         public static function model($class_name = __CLASS__)
@@ -269,6 +272,13 @@ if (!class_exists('IG_Post_Model')) {
          */
         public function find($id)
         {
+            //$cache_id = $this->cache_prefix() . '_' . $id;
+
+            /*$model = get_transient($cache_id);
+            if (is_object($model)) {
+                return apply_filters($this->get_table() . '_model_find', $model, get_class($this), $id);
+            }*/
+
             //first we need to get the post
             $post = get_post($id);
             if (!is_object($post)) {
@@ -314,6 +324,8 @@ if (!class_exists('IG_Post_Model')) {
                 }
             }
             $model->set_exist(true);
+            $model->wp_post = get_post($model->id);
+            // set_transient($cache_id, $model, 60 * 60 * 12);
 
             return apply_filters($this->get_table() . '_model_find', $model, $class, $id);
         }
@@ -535,6 +547,17 @@ if (!class_exists('IG_Post_Model')) {
             //get only need to get ids
             $args['fields'] = 'ids';
             $args['post_type'] = $this->get_table();
+
+            //build the cache id
+            $cache_id = $this->cache_prefix() . substr(md5('-all_with_condition-' . $this->multi_implode($args, '-')), 0, 8);
+            $cache = get_transient($cache_id);
+            if ($cache) {
+                if (!is_null($instance)) {
+                    $instance->global['wp_query'] = $cache['query'];
+                }
+                return $cache['data'];
+            }
+
             $query = new WP_Query($args);
 
             $data = array();
@@ -549,7 +572,27 @@ if (!class_exists('IG_Post_Model')) {
             if (!is_null($instance)) {
                 $instance->global['wp_query'] = $query;;
             }
+
+            set_transient($cache_id, array(
+                'data' => $data,
+                'query' => $query
+            ), 60 * 60 * 12);
             return $data;
+        }
+
+        function clear_caches()
+        {
+            global $wpdb;
+            $sql = "SELECT option_name FROM " . $wpdb->options . " WHERE option_name LIKE %s";
+            $caches_key = $wpdb->get_col($wpdb->prepare($sql, '%' . $this->get_table() . '-cache-%'), 0);
+            foreach ($caches_key as $key) {
+                delete_option($key);
+            }
+        }
+
+        function cache_prefix()
+        {
+            return $this->get_table() . '-cache-';
         }
 
         /**
