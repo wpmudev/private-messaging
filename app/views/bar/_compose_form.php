@@ -16,7 +16,7 @@
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("send_to") ? "has-error" : null ?>">
                                 <?php $form->label("send_to", array(
-                                    "text" => "Send To",
+                                    "text" => __("Send To", mmg()->domain),
                                     "attributes" => array("class" => "control-label col-sm-2 hidden-xs hidden-sm")
                                 )) ?>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
@@ -28,11 +28,11 @@
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
-                            <?php do_action('mm_before_subject_field', $model, $form) ?>
+                            <?php do_action('mm_before_subject_field', $model, $form, 'admin-bar') ?>
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
                                 <?php $form->label("subject", array(
-                                    "text" => "Subject",
+                                    "text" => __("Subject", mmg()->domain),
                                     "attributes" => array("class" => "control-label col-sm-2 hidden-xs hidden-sm")
                                 )) ?>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
@@ -45,7 +45,7 @@
                             <div style="margin-bottom: 0"
                                  class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
                                 <?php $form->label("content", array(
-                                    "text" => "Content",
+                                    "text" => __("Content", mmg()->domain),
                                     "attributes" => array("class" => "control-label col-sm-2 hidden-xs hidden-sm")
                                 )) ?>
                                 <div class="col-md-10 col-sm-12 col-xs-12">
@@ -66,7 +66,7 @@
                             <?php echo $form->hidden('attachment') ?>
                             <input type="hidden" name="action" value="mm_send_message">
                             <?php if (mmg()->can_upload() == true) {
-                                ig_uploader()->show_upload_control($model, 'attachment',false, array(
+                                ig_uploader()->show_upload_control($model, 'attachment', false, array(
                                     'title' => __("Attach media or other files.", mmg()->domain)
                                 ));
                             } ?>

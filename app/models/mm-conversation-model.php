@@ -68,6 +68,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
                 GROUP BY conversation.id ORDER BY conversation.date_created DESC LIMIT %d,%d
         ";
         $sql = $wpdb->prepare($sql, get_current_user_id(), get_current_blog_id(), get_current_user_id(), $offset, $per_page);
+
         $results = $wpdb->get_results($sql, ARRAY_A);
         $models = $model->fetch_array($results);
         return $models;

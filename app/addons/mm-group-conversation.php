@@ -11,23 +11,83 @@ class MM_Group_Conversation
     {
         add_action('mm_before_reply_form', array(&$this, 'include_textbox'));
         add_action('wp_ajax_mm_suggest_include_users', array(&$this, 'mm_suggest_include_users'));
-        add_action('mm_before_subject_field', array(&$this, 'append_group_checkbox'));
+        add_action('mm_before_subject_field', array(&$this, 'append_cc_textbox'), 10, 3);
+        add_action('wp_footer', array(&$this, 'cc_suggest_script'));
+        add_action('message_content_meta', array(&$this, 'show_user_list'));
     }
 
-    function append_group_checkbox()
+    function show_user_list($message)
+    {
+        $conversation = MM_Conversation_Model::model()->find($message->conversation_id);
+        if (!is_object($conversation)) {
+            return;
+        }
+
+        //todo remove user from conversation for owner
+        $users = get_users(array(
+            'include' => $conversation->users_index
+        ));
+
+        foreach ($users as $user) {
+            $name = $user->first_name . ' ' . $user->last_name;
+            if (strlen(trim($name)) == 0) {
+                $name = $user->user_login;
+            }
+            echo '<span class="label label-default">' . $name . '</span> ';
+        }
+    }
+
+    function append_cc_textbox($model, $form, $scenario)
+    {
+        switch ($scenario) {
+            case 'compose_form':
+                $this->_compose_form_cc();
+                break;
+        }
+    }
+
+    function _compose_form_cc()
     {
         ?>
+        <div class="clearfix"></div>
         <div class="form-group">
-            <div class="col-md-10 col-sm-12 col-xs-12 col-md-offset-2">
-                <div style="margin-top: 0" class="checkbox">
-                    <label>
-                        <input name="is_group" value="1" type="checkbox">
-                        <?php _e("This is group conversation", mmg()->domain) ?>
-                    </label>
-                </div>
+            <label class="control-label col-sm-2"><?php _e("Cc", mmg()->domain) ?></label>
+
+            <div class="col-md-10 col-sm-12 col-xs-12">
+                <input type="text" name="cc" id="mmg-cc-input" class="form-control cc-input"
+                       placeholder="<?php esc_attr_e("Cc users", mmg()->domain) ?>">
             </div>
             <div class="clearfix"></div>
         </div>
+        <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                window.mm_cc_input = $('#mmg-cc-input').selectize({
+                    valueField: 'id',
+                    labelField: 'name',
+                    searchField: 'name',
+                    options: [],
+                    create: false,
+                    load: function (query, callback) {
+                        if (!query.length) return callback();
+                        var instance = window.mm_cc_input[0].selectize;
+                        $.ajax({
+                            type: 'POST',
+                            url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_users&_wpnonce='.wp_create_nonce('mm_suggest_users')) ?>',
+                            data: {
+                                'query': query
+                            },
+                            beforeSend: function () {
+                                instance.$control.append('<i style="position: absolute;right: 10px;" class="fa fa-circle-o-notch fa-spin"></i>');
+                            },
+                            success: function (data) {
+                                instance.$control.find('i').remove();
+                                callback(data);
+                            }
+                        });
+                    }
+                });
+            })
+        </script>
     <?php
     }
 
@@ -133,6 +193,13 @@ class MM_Group_Conversation
                 });
             })
         </script>
+    <?php
+    }
+
+    function cc_suggest_script()
+    {
+        ?>
+
     <?php
     }
 }

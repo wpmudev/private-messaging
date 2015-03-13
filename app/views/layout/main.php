@@ -39,12 +39,15 @@
                         </a>
                     </div>
                 </div>
+                <?php if(is_user_logged_in()): ?>
                 <div class="col-md-2 hidden-xs hidden-sm no-padding text-right">
                     <a class="btn btn-primary btn-sm mm-compose" href="#compose-form-container">
                         <?php _e("Compose", mmg()->domain) ?>
                     </a>
                 </div>
+                <?php endif; ?>
                 <!--For small viewport-->
+                <?php if(is_user_logged_in()): ?>
                 <div class="col-sm-12 col-xs-12 hidden-md hidden-lg no-padding">
                     <br/>
                     <a class="btn btn-default btn-sm" href="<?php echo add_query_arg('box', 'setting') ?>">
@@ -55,6 +58,7 @@
                     </a>
                 </div>
                 <div class="clearfix"></div>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
         <?php echo $content; ?>

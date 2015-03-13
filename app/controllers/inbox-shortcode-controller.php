@@ -265,15 +265,22 @@ class Inbox_Shortcode_Controller extends IG_Request
                 $send_to = $model->send_to;
                 $user_ids = $this->logins_to_ids($send_to);
 
-                $is_group = mmg()->post('is_group', 0);
-                if (!$is_group) {
+                $cc_list = mmg()->post('cc');
+                $cc_list = explode(',', $cc_list);
+                $cc_list = array_filter($cc_list);
+                if (empty($cc_list)) {
                     //create message
                     foreach ($user_ids as $user_id) {
                         $this->_send_message($user_id, $model);
                     }
                 } else {
-                    $this->_send_message_group($user_ids, $model);
+                    foreach ($user_ids as $user_id) {
+                        $send_to_lists = array($user_id);
+                        $send_to_lists = array_merge($send_to_lists, $cc_list);
+                        $this->_send_message_group($send_to_lists, $model);
+                    }
                 }
+
                 $this->set_flash('mm_sent_' . get_current_user_id(), __("Your message has been sent.", mmg()->domain));
                 wp_send_json(array(
                     'status' => 'success'
@@ -311,6 +318,7 @@ class Inbox_Shortcode_Controller extends IG_Request
         MM_Message_Status_Model::model()->status($conservation->id, MM_Message_Status_Model::STATUS_UNREAD, $user_id);
         $id = MM_Message_Model::send($user_id, $conservation->id, $model->export());
         $conservation->update_index($id);
+        return $id;
     }
 
     function _send_message_group($user_ids, $model)

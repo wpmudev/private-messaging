@@ -6,6 +6,9 @@ if (!isset($render_reply)) {
 ?>
 <div class="ig-container">
     <section class="message-content">
+        <div class="message-content-meta pull-left">
+            <?php do_action('message_content_meta', $message) ?>
+        </div>
         <div class="message-content-actions pull-right">
             <?php if (mmg()->get('box') != 'sent' && $render_reply == true): ?>
                 <?php
@@ -226,7 +229,8 @@ if (!isset($render_reply)) {
                                                     <div class="modal-header">
                                                         <h4 class="modal-title"><?php echo $a_m->name ?></h4>
                                                     </div>
-                                                    <div class="modal-body sample-pop" style="max-height:450px;overflow-y:scroll">
+                                                    <div class="modal-body sample-pop"
+                                                         style="max-height:450px;overflow-y:scroll">
                                                         <?php
                                                         $file = $a_m->file;
                                                         //check does this file exist
