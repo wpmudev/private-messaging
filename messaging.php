@@ -107,7 +107,7 @@ if (!class_exists('MMessaging')) {
                                 $jses = array_merge($jses, array('popoverasync', 'jquery-frame-transport'));
                             }
                             if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
-                                $jses = array_merge($jses, array('mm_sceditor', 'mm_sceditor_xhtml'));
+                                $jses = array_merge($jses, array('mm_sceditor','mm_sceditor_translate', 'mm_sceditor_xhtml'));
                             }
 
                             $this->compress_assets($csses, $jses, $runtime_path);
@@ -121,6 +121,7 @@ if (!class_exists('MMessaging')) {
                             //wysiwyg
                             if (wp_script_is('mm_sceditor', 'registered') && wp_script_is('mm_sceditor_xhtml', 'registered')) {
                                 wp_enqueue_script('mm_sceditor');
+                                wp_enqueue_script('mm_sceditor_translate');
                                 wp_enqueue_script('mm_sceditor_xhtml');
                             }
 
@@ -279,7 +280,7 @@ if (!class_exists('MMessaging')) {
             //include components we need to use
             include($this->plugin_path . 'app/components/ig-uploader.php');
             //init uploader controller, if user can not upload, we only let it display attachment files
-            ig_uploader()->init_uploader($this->can_upload());
+            ig_uploader()->init_uploader($this->can_upload(), $this->domain);
 
             include $this->plugin_path . 'app/components/mm-addon-table.php';
             //load add on

@@ -36,7 +36,7 @@ if ($setting->user_receipt == false) {
                                 type="checkbox" name="receipt" value="1"
                                 class="enable_receipt"> <?php _e("Email me when my sent messages are read", mmg()->domain) ?>
                             <span
-                                class="help-block"><?php _e("An email will be sent to you when a user reads your message, this functionality won’t work, if they have disabled tracking within their account.", mmg()->domain) ?></span>
+                                class="help-block"><?php _e("An email will be sent to you when a user reads your message, this functionality won?t work, if they have disabled tracking within their account.", mmg()->domain) ?></span>
                         </label>
                     </div>
                     <div class="checkbox">

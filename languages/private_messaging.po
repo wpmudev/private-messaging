@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Private Messaging\n"
-"POT-Creation-Date: 2014-11-12 23:42+0700\n"
-"PO-Revision-Date: 2014-11-12 23:43+0700\n"
+"POT-Creation-Date: 2015-03-15 13:57+0700\n"
+"PO-Revision-Date: 2015-03-15 13:57+0700\n"
 "Last-Translator: \n"
 "Language-Team: WPMU DEV\n"
 "Language: en\n"
@@ -10,447 +10,879 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.6.9\n"
-"X-Poedit-Basepath: /Users/hoangngo/Work/WPMUDEV/wp-content/plugins/"
-"messaging/\n"
+"X-Poedit-Basepath: /Users/hoangngo/Work/WPMUDEV/wp-content/plugins\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: __;_e\n"
-"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-0: private-messaging\n"
 
-#: app/addons/bbpress-intergration/app/controllers/mm-bbpress-controller.php:36
-msgid "Send New Message"
-msgstr ""
-
-#: app/addons/bbpress-intergration/app/views/_compose_form.php:8
-#: app/views/shortcode/_compose_form.php:7
-#: app/views/shortcode/message_me.php:27
-msgid "Compose Message"
-msgstr ""
-
-#: app/addons/bbpress-intergration/app/views/_compose_form.php:14
-#: app/controllers/inbox-shortcode-controller.php:159
-#: app/controllers/inbox-shortcode-controller.php:177
-msgid "Your message has been sent."
-msgstr ""
-
-#: app/addons/bbpress-intergration/app/views/_compose_form.php:50
-#: app/views/shortcode/_compose_form.php:41
-#: app/views/shortcode/_reply_form.php:31
-#: app/views/shortcode/message_me.php:59
-msgid "Close"
-msgstr ""
-
-#: app/addons/bbpress-intergration/app/views/_compose_form.php:52
-#: app/views/shortcode/_compose_form.php:42
-#: app/views/shortcode/_reply_form.php:33
-#: app/views/shortcode/message_me.php:61
-msgid "Send"
-msgstr ""
-
-#: app/addons/block-list.php:66
+#: private-messaging/app/addons/block-list.php:102
 msgid "Block users list, separate by commas"
 msgstr ""
 
-#: app/addons/capatibility.php:77
+#: private-messaging/app/addons/capatibility.php:109
 msgid "Settings saved!"
 msgstr ""
 
-#: app/addons/capatibility.php:96 app/addons/capatibility.php:190
+#: private-messaging/app/addons/capatibility.php:129
+#: private-messaging/app/addons/capatibility.php:230
 msgid "Capability Settings"
 msgstr ""
 
-#: app/addons/capatibility.php:165 app/views/backend/setting/email.php:60
-#: app/views/backend/setting/general.php:74 app/views/shortcode/setting.php:53
+#: private-messaging/app/addons/capatibility.php:195
+#: private-messaging/app/views/backend/setting/attachment.php:36
+#: private-messaging/app/views/backend/setting/email.php:60
+#: private-messaging/app/views/backend/setting/general.php:75
+#: private-messaging/app/views/shortcode/setting.php:59
 msgid "Save Changes"
 msgstr ""
 
-#: app/components/ig-uploader/app/models/ig-uploader-model.php:123
-#: app/views/shortcode/_inbox_message.php:119
-msgid "Link"
+#: private-messaging/app/addons/mm-broadcast-messages.php:55
+msgid "Send this message to all users"
 msgstr ""
 
-#: app/components/ig-uploader/app/models/ig-uploader-model.php:137
-#: app/components/ig-uploader/app/models/ig-uploader-model.php:138
-msgid "Url or File required"
+#: private-messaging/app/addons/mm-group-conversation.php:31
+msgid "You can't drop your self!"
 msgstr ""
 
-#: app/components/ig-uploader/app/models/ig-uploader-model.php:143
-msgid "File type not allow"
+#: private-messaging/app/addons/mm-group-conversation.php:48
+#, php-format
+msgid "You has dropped user %s out of this conversation."
 msgstr ""
 
-#: app/components/ig-uploader/app/models/ig-uploader-model.php:145
-msgid "File too large!"
+#: private-messaging/app/addons/mm-group-conversation.php:99
+#: private-messaging/app/addons/mm-group-conversation.php:144
+msgid "Cc"
 msgstr ""
 
-#: app/components/ig-uploader/app/models/ig-uploader-model.php:149
+#: private-messaging/app/addons/mm-group-conversation.php:249
+msgid "Include more:"
+msgstr ""
+
+#: private-messaging/app/addons/mm-group-conversation.php:292
+#: private-messaging/app/views/shortcode/inbox.php:150
+msgid "Are you sure?"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:22
+msgid "Bold"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:23
+msgid "Italic"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:24
+msgid "Underline"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:25
+msgid "Strikethrough"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:26
+msgid "Subscript"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:27
+msgid "Superscript"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:28
+msgid "Align left"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:29
+msgid "Center"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:30
+msgid "Align right"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:31
+msgid "Justify"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:32
+msgid "Font Name"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:33
+msgid "Font Size"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:34
+msgid "Font Color"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:35
+msgid "Remove Formatting"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:36
+msgid "Cut"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:37
 msgid ""
-"Can not upload the <strong>file</strong>, also <strong>url</strong> is empty!"
+"Your browser does not allow the cut command. Please use the keyboard "
+"shortcut Ctrl/Cmd-X"
 msgstr ""
 
-#: app/components/ig-uploader/app/views/_extend_form.php:9
-msgid "Attach images or files for extra information"
+#: private-messaging/app/addons/wysiwyg.php:38
+msgid "Copy"
 msgstr ""
 
-#: app/components/ig-uploader/app/views/_extend_form.php:12
-msgid "Add"
+#: private-messaging/app/addons/wysiwyg.php:39
+msgid ""
+"Your browser does not allow the copy command. Please use the keyboard "
+"shortcut Ctrl/Cmd-C"
 msgstr ""
 
-#: app/components/ig-uploader/app/views/_extend_form.php:25
-msgid "No sample file."
+#: private-messaging/app/addons/wysiwyg.php:40
+msgid "Paste"
 msgstr ""
 
-#: app/components/ig-uploader/app/views/_extend_form.php:35
-#: app/components/ig-uploader/app/views/_extend_form.php:89
+#: private-messaging/app/addons/wysiwyg.php:41
+msgid ""
+"Your browser does not allow the paste command. Please use the keyboard "
+"shortcut Ctrl/Cmd-V"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:42
+msgid "Paste your text inside the following box"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:43
+msgid "Paste Text"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:44
+msgid "Bullet list"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:45
+msgid "Numbered list"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:46
+msgid "Undo"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:47
+msgid "Redo"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:48
+msgid "Rows"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:49
+msgid "Cols"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:50
+msgid "Insert a table"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:51
+msgid "Insert a horizontal rule"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:52
+msgid "Code"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:53
+msgid "Width (optional)"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:54
+msgid "Height (optional)"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:55
+msgid "Insert an image"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:56
+msgid "E-mail"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:57
+msgid "Insert an email"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:58
+msgid "URL"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:59
+msgid "Insert a link"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:60
+msgid "Unlink"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:61
+msgid "More"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:62
+msgid "Insert an emoticon"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:63
+msgid "Video URL"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:64
+msgid "Insert"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:65
+msgid "Insert a YouTube video"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:66
+msgid "Insert current date"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:67
+msgid "Insert current time"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:68
+msgid "Print"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:69
+msgid "View source"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:70
+msgid "Description (optional)"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:71
+msgid "Enter the image URL"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:72
+msgid "Enter the e-mail address"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:73
+msgid "Enter the displayed text"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:74
+msgid "Enter URL"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:75
+msgid "Enter the YouTube video URL or ID"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:76
+msgid "Insert a Quote"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:77
+msgid "Invalid YouTube video"
+msgstr ""
+
+#: private-messaging/app/addons/wysiwyg.php:78
+msgid "dateFormat"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/controllers/ig-uploader-controller.php:193
 msgid "Upload Attachment"
 msgstr ""
 
-#: app/components/ig-uploader/app/views/_uploader_form.php:16
+#: private-messaging/app/components/ig-uploader/app/controllers/ig-uploader-controller.php:212
+msgid "Please select a file"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/models/ig-uploader-model.php:123
+#: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:56
+#: private-messaging/app/views/shortcode/_inbox_message.php:148
+#: private-messaging/app/views/shortcode/_inbox_message.php:280
+msgid "Link"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/models/ig-uploader-model.php:133
+#: private-messaging/app/components/ig-uploader/app/models/ig-uploader-model.php:134
+msgid "Url or File required"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/views/_extend_form.php:13
+msgid "Add"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/views/_extend_form.php:26
+#: private-messaging/app/components/ig-uploader/app/views/show_media.php:26
+msgid "No sample file."
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:14
+msgid "Choose File"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:19
 msgid "File attached, upload new file will replace the current file."
 msgstr ""
 
-#: app/components/ig-uploader/app/views/_uploader_form.php:40
+#: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:26
+#: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:27
+msgid "Url"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:33
+#: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:34
+#: private-messaging/app/views/bar/_compose_form.php:48
+#: private-messaging/app/views/shortcode/_compose_form.php:48
+msgid "Content"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:43
 msgid "Cancel"
 msgstr ""
 
-#: app/components/ig-uploader/app/views/_uploader_form.php:41
+#: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:44
 msgid "Submit"
 msgstr ""
 
-#: app/components/mm-addon-table.php:35
-msgid "Name"
-msgstr ""
-
-#: app/components/mm-addon-table.php:36
-msgid "Description"
-msgstr ""
-
-#: app/components/mm-addon-table.php:61
-#: app/controllers/backend/mmessage-backend-controller.php:37
-#: app/controllers/backend/mmessage-backend-controller.php:46
-msgid "Deactivate"
-msgstr ""
-
-#: app/components/mm-addon-table.php:63
-msgid "Activate"
-msgstr ""
-
-#: app/components/mm-addon-table.php:71
-msgid "Created by: "
-msgstr ""
-
-#: app/components/mm-messages-table.php:35
-msgid "Last Message"
-msgstr ""
-
-#: app/components/mm-messages-table.php:36
-msgid "Users"
-msgstr ""
-
-#: app/components/mm-messages-table.php:37
-msgid "Total Messages"
-msgstr ""
-
-#: app/components/mm-messages-table.php:140 app/views/shortcode/inbox.php:18
-msgid "Search"
-msgstr ""
-
-#: app/controllers/backend/mmessage-backend-controller.php:54
-#: app/controllers/mm-upgrade-controller.php:86
-msgid "Messaging"
-msgstr ""
-
-#: app/controllers/backend/mmessage-backend-controller.php:55
-msgid "View Messages"
-msgstr ""
-
-#: app/controllers/backend/mmessage-backend-controller.php:56
-#: app/views/backend/setting.php:3 app/views/layout/main.php:31
-#: app/views/layout/main.php:44
-msgid "Settings"
-msgstr ""
-
-#: app/controllers/backend/mmessage-backend-controller.php:73
-msgid "Your settings have been successfully updated."
-msgstr ""
-
-#: app/controllers/backend/mmessage-backend-controller.php:92
-msgid "Conversation not found!"
-msgstr ""
-
-#: app/controllers/inbox-shortcode-controller.php:38
-msgid "Your settings have been successfully updated"
-msgstr ""
-
-#: app/controllers/inbox-shortcode-controller.php:204
-msgid "Re:"
-msgstr ""
-
-#: app/controllers/inbox-shortcode-controller.php:273
-msgid "Username"
-msgstr ""
-
-#: app/controllers/inbox-shortcode-controller.php:274
-msgid "Password"
-msgstr ""
-
-#: app/controllers/inbox-shortcode-controller.php:275
-msgid "Remember Me"
-msgstr ""
-
-#: app/controllers/inbox-shortcode-controller.php:276
-msgid "Sign In"
-msgstr ""
-
-#: app/controllers/inbox-shortcode-controller.php:347
-msgid "Forgot password?"
-msgstr ""
-
-#: app/controllers/message-me-shortcode-controller.php:18
-msgid "Message me"
-msgstr ""
-
-#: app/controllers/message-me-shortcode-controller.php:20
-msgid "You have new message!"
-msgstr ""
-
-#: app/views/backend/main.php:7
-msgid "Messages"
-msgstr ""
-
-#: app/views/backend/setting.php:16
-msgid "General Settings"
-msgstr ""
-
-#: app/views/backend/setting.php:20 app/views/backend/setting/email.php:3
-#: app/views/shortcode/setting.php:23
-msgid "Email Settings"
-msgstr ""
-
-#: app/views/backend/setting.php:24
-msgid "Shortcode"
-msgstr ""
-
-#: app/views/backend/setting/general.php:3
-msgid "General Options"
-msgstr ""
-
-#: app/views/backend/setting/general.php:9
-msgid "Enable Receipt"
-msgstr ""
-
-#: app/views/backend/setting/general.php:16
-msgid "This will enable the receipt globally"
-msgstr ""
-
-#: app/views/backend/setting/general.php:23
-msgid "User can on/off receipt"
-msgstr ""
-
-#: app/views/backend/setting/general.php:30
-msgid "This will let the user turn off or on"
-msgstr ""
-
-#: app/views/backend/setting/general.php:37
-#: app/views/backend/setting/general.php:55
-#: app/views/backend/setting/general.php:117
-msgid "Create Page"
-msgstr ""
-
-#: app/views/backend/setting/general.php:40
-#: app/views/backend/setting/shortcode.php:6
-msgid "Inbox Page"
-msgstr ""
-
-#: app/views/backend/setting/general.php:49
-msgid "--Choose--"
-msgstr ""
-
-#: app/views/backend/setting/general.php:63
-msgid "Add-ons"
-msgstr ""
-
-#: app/views/backend/setting/general.php:108
-msgid "Creating..."
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:2
-msgid "Shortcodes"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:13
-msgid "This shortcode will display the inbox page. No parameters for this"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:19
-msgid "Message Me"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:26
-msgid "user_id"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:27
-msgid "This is the id of the user this message form will send email too"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:30
-msgid "text"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:31
-msgid "The text display, default is \"Message me\""
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:34
-msgid "class"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:35
-msgid "Class of the message me button"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:38
-msgid "subject"
-msgstr ""
-
-#: app/views/backend/setting/shortcode.php:39
-msgid "Subject of the email people send to this user via the button"
-msgstr ""
-
-#: app/views/backend/upgrade.php:5
-#, php-format
-msgid "Migrate Tools, found %d conversations"
-msgstr ""
-
-#: app/views/backend/upgrade.php:10
-msgid "Please click here to import the data to new messaging system"
-msgstr ""
-
-#: app/views/backend/upgrade.php:12
-msgid "Import All"
-msgstr ""
-
-#: app/views/backend/upgrade.php:15
-msgid "If the import go wrong, please click here to clean up"
-msgstr ""
-
-#: app/views/backend/upgrade.php:17
-msgid "Clean up"
-msgstr ""
-
-#: app/views/backend/view.php:5
-msgid "Message #"
-msgstr ""
-
-#: app/views/layout/main.php:9 app/views/layout/main.php:16
-#: app/views/layout/main.php:23
-msgid "message(s)"
-msgstr ""
-
-#: app/views/layout/main.php:10
-msgid "Inbox"
-msgstr ""
-
-#: app/views/layout/main.php:17
-msgid "Unread"
-msgstr ""
-
-#: app/views/layout/main.php:24
-msgid "Read"
-msgstr ""
-
-#: app/views/layout/main.php:28
-msgid "Sent"
-msgstr ""
-
-#: app/views/layout/main.php:37 app/views/layout/main.php:47
-msgid "Compose"
-msgstr ""
-
-#: app/views/shortcode/_inbox_message.php:39
-msgid "me"
-msgstr ""
-
-#: app/views/shortcode/_inbox_message.php:101
+#: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:32
+#: private-messaging/app/views/shortcode/_inbox_message.php:124
+#: private-messaging/app/views/shortcode/_inbox_message.php:256
 msgid "Size"
 msgstr ""
 
-#: app/views/shortcode/_inbox_message.php:109
+#: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:40
+#: private-messaging/app/views/shortcode/_inbox_message.php:132
+#: private-messaging/app/views/shortcode/_inbox_message.php:264
+msgid "N/A"
+msgstr ""
+
+#: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:46
+#: private-messaging/app/views/shortcode/_inbox_message.php:138
+#: private-messaging/app/views/shortcode/_inbox_message.php:270
 msgid "Type"
 msgstr ""
 
-#: app/views/shortcode/_inbox_message.php:131
+#: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:68
+#: private-messaging/app/views/shortcode/_inbox_message.php:160
+#: private-messaging/app/views/shortcode/_inbox_message.php:292
 msgid "Visit Link"
 msgstr ""
 
-#: app/views/shortcode/_inbox_message.php:136
+#: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:73
+#: private-messaging/app/views/shortcode/_inbox_message.php:165
+#: private-messaging/app/views/shortcode/_inbox_message.php:297
 msgid "Download File"
 msgstr ""
 
-#: app/views/shortcode/_inbox_message.php:197
-msgid "Reply: "
+#: private-messaging/app/components/mm-addon-table.php:35
+msgid "Name"
 msgstr ""
 
-#: app/views/shortcode/_reply_form.php:11
-msgid "Reply"
+#: private-messaging/app/components/mm-addon-table.php:36
+msgid "Description"
 msgstr ""
 
-#: app/views/shortcode/inbox.php:109
-msgid "No message found!"
+#: private-messaging/app/components/mm-addon-table.php:61
+msgid ""
+"Deactivate <i class=\"fa fa-circle-o-notch fa-spin loader-ani hide\"></i>"
 msgstr ""
 
-#: app/views/shortcode/login.php:6
-msgid "Sign in"
+#: private-messaging/app/components/mm-addon-table.php:63
+msgid "Activate <i class=\"fa fa-circle-o-notch fa-spin loader-ani hide\"></i>"
 msgstr ""
 
-#: app/views/shortcode/login.php:14
-msgid "Sign Up"
+#: private-messaging/app/components/mm-addon-table.php:71
+msgid "Created by: "
 msgstr ""
 
-#: app/views/shortcode/login.php:16
-msgid "Sign up to become a registered member of the site"
+#: private-messaging/app/components/mm-messages-table.php:35
+msgid "Last Message"
 msgstr ""
 
-#: app/views/shortcode/login.php:17
-msgid "Create Account"
+#: private-messaging/app/components/mm-messages-table.php:36
+msgid "Users"
 msgstr ""
 
-#: app/views/shortcode/message_me.php:31
+#: private-messaging/app/components/mm-messages-table.php:37
+msgid "Total Messages"
+msgstr ""
+
+#: private-messaging/app/components/mm-messages-table.php:132
+#: private-messaging/app/views/shortcode/inbox.php:24
+msgid "Search"
+msgstr ""
+
+#: private-messaging/app/controllers/admin-bar-notification-controller.php:28
+msgid ""
+"<div class=\"ig-container mm-admin-bar\"><i class=\"fa fa-envelope\"></"
+"i>&nbsp;<span>"
+msgstr ""
+
+#: private-messaging/app/controllers/admin-bar-notification-controller.php:43
+msgid "Send New Message"
+msgstr ""
+
+#: private-messaging/app/controllers/admin-bar-notification-controller.php:54
+msgid "View Inbox"
+msgstr ""
+
+#: private-messaging/app/controllers/backend/mmessage-backend-controller.php:22
+msgid ""
+"Please visit settings > messaging to choose your inbox page and complete "
+"setup"
+msgstr ""
+
+#: private-messaging/app/controllers/backend/mmessage-backend-controller.php:76
+msgid "Deactivate"
+msgstr ""
+
+#: private-messaging/app/controllers/backend/mmessage-backend-controller.php:85
+msgid "Activate"
+msgstr ""
+
+#: private-messaging/app/controllers/backend/mmessage-backend-controller.php:93
+#: private-messaging/app/controllers/mm-upgrade-controller.php:210
+msgid "Messaging"
+msgstr ""
+
+#: private-messaging/app/controllers/backend/mmessage-backend-controller.php:94
+msgid "View Messages"
+msgstr ""
+
+#: private-messaging/app/controllers/backend/mmessage-backend-controller.php:95
+#: private-messaging/app/views/backend/setting.php:4
+#: private-messaging/app/views/layout/main.php:38
+#: private-messaging/app/views/layout/main.php:54
+msgid "Settings"
+msgstr ""
+
+#: private-messaging/app/controllers/backend/mmessage-backend-controller.php:115
+msgid "Your settings have been successfully updated."
+msgstr ""
+
+#: private-messaging/app/controllers/backend/mmessage-backend-controller.php:130
+msgid "Conversation not found!"
+msgstr ""
+
+#: private-messaging/app/controllers/inbox-shortcode-controller.php:66
+msgid "Your settings have been successfully updated"
+msgstr ""
+
+#: private-messaging/app/controllers/inbox-shortcode-controller.php:260
+#: private-messaging/app/controllers/inbox-shortcode-controller.php:284
+msgid "Your message has been sent."
+msgstr ""
+
+#: private-messaging/app/controllers/message-me-shortcode-controller.php:21
+msgid "Message me"
+msgstr ""
+
+#: private-messaging/app/controllers/message-me-shortcode-controller.php:23
+msgid "You have new message!"
+msgstr ""
+
+#: private-messaging/app/models/mm-message-model.php:117
+msgid "Re:"
+msgstr ""
+
+#: private-messaging/app/views/backend/main.php:8
+msgid "Messages"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting.php:17
+msgid "General Settings"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting.php:22
+#: private-messaging/app/views/backend/setting/email.php:3
+#: private-messaging/app/views/shortcode/setting.php:29
+msgid "Email Settings"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting.php:27
+#: private-messaging/app/views/backend/setting/shortcode.php:2
+msgid "Shortcodes"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting.php:31
+msgid "Attachments"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/attachment.php:1
+msgid "Which roles can upload attachments"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/attachment.php:8
+msgid "Role name"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/attachment.php:9
+msgid "Can upload"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:3
+msgid "General Options"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:9
+msgid "Enable Message Receipt"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:16
+msgid "Tick this box to enable email notifications of read messages."
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:23
+msgid "Allow the user to disable read message receipts?"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:30
+msgid "This will allow the user to enable or disable read receipts."
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:37
+#: private-messaging/app/views/backend/setting/general.php:55
+#: private-messaging/app/views/backend/setting/general.php:121
+msgid "Create Page"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:40
+#: private-messaging/app/views/backend/setting/shortcode.php:6
+msgid "Inbox Page"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:49
+msgid "--Choose--"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:64
+msgid "Add-ons"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/general.php:113
+msgid "Creating..."
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:14
+msgid ""
+"This shortcode will display the private message interface.There are no "
+"parameters for this shortcode."
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:20
+msgid "PM User"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:28
+msgid "user_id"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:29
+msgid "The id of the user who is the message recipient."
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:32
+msgid "user_name"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:33
+msgid ""
+"The user name of the message recipient. User ID will be given higher "
+"priority than user_name."
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:36
+msgid "in_the_loop"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:37
+msgid ""
+"Use 1 for true, 0 for false. This shortcode is used for case when there is "
+"no user ID or user_name. This shortcode will pull the author user_ID if the "
+"shortcode is inside the loop."
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:40
+msgid "text"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:41
+msgid "The button text to display, default is \"Message me.\""
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:44
+msgid "class"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:45
+msgid ""
+"If you want to style the message button, use this shortcodes parameter to "
+"define the class of the message button. "
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:48
+msgid "subject"
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:49
+msgid ""
+"This will define the subject of the message sent, if one is not added by the "
+"user. "
+msgstr ""
+
+#: private-messaging/app/views/backend/setting/shortcode.php:52
+msgid ""
+"Please note that <strong>user_id</strong> or <strong>user_name</strong> or "
+"<strong>in_the_loop</strong> must be defined."
+msgstr ""
+
+#: private-messaging/app/views/backend/upgrade.php:8
+msgid "Diagnose Center"
+msgstr ""
+
+#: private-messaging/app/views/backend/upgrade.php:20
+msgid "Table"
+msgstr ""
+
+#: private-messaging/app/views/backend/upgrade.php:21
+msgid "Status"
+msgstr ""
+
+#: private-messaging/app/views/backend/upgrade.php:31
+#: private-messaging/app/views/backend/upgrade.php:51
+msgid "Healthy"
+msgstr ""
+
+#: private-messaging/app/views/backend/upgrade.php:35
+#: private-messaging/app/views/backend/upgrade.php:55
+msgid "Fail"
+msgstr ""
+
+#: private-messaging/app/views/backend/upgrade.php:42
+#: private-messaging/app/views/backend/upgrade.php:62
+msgid "Fix"
+msgstr ""
+
+#: private-messaging/app/views/backend/upgrade.php:73
+msgid "Note:"
+msgstr ""
+
+#: private-messaging/app/views/backend/upgrade.php:79
+msgid ""
+"If the diagnose tool cannot create table, that means the database user "
+"doesn't have enough permission to do that, you will need to copy the below "
+"sql code to create the tables."
+msgstr ""
+
+#: private-messaging/app/views/backend/view.php:6
+msgid "Message #"
+msgstr ""
+
+#: private-messaging/app/views/bar/_compose_form.php:10
+#: private-messaging/app/views/message_me/modal.php:21
+#: private-messaging/app/views/shortcode/_compose_form.php:10
+#: private-messaging/app/views/shortcode/message_me.php:51
+msgid "Compose Message"
+msgstr ""
+
+#: private-messaging/app/views/bar/_compose_form.php:19
+#: private-messaging/app/views/shortcode/_compose_form.php:18
+msgid "Send To"
+msgstr ""
+
+#: private-messaging/app/views/bar/_compose_form.php:35
+#: private-messaging/app/views/shortcode/_compose_form.php:34
+msgid "Subject"
+msgstr ""
+
+#: private-messaging/app/views/bar/_compose_form.php:70
+#: private-messaging/app/views/message_me/modal.php:57
+#: private-messaging/app/views/shortcode/_compose_form.php:71
+#: private-messaging/app/views/shortcode/_reply_form.php:55
+msgid "Attach media or other files."
+msgstr ""
+
+#: private-messaging/app/views/bar/_compose_form.php:76
+#: private-messaging/app/views/message_me/modal.php:64
+#: private-messaging/app/views/shortcode/_compose_form.php:77
+#: private-messaging/app/views/shortcode/_reply_form.php:62
+#: private-messaging/app/views/shortcode/message_me.php:87
+msgid "Close"
+msgstr ""
+
+#: private-messaging/app/views/bar/_compose_form.php:78
+#: private-messaging/app/views/message_me/modal.php:66
+#: private-messaging/app/views/shortcode/_compose_form.php:79
+#: private-messaging/app/views/shortcode/_reply_form.php:64
+#: private-messaging/app/views/shortcode/message_me.php:89
+msgid "Send"
+msgstr ""
+
+#: private-messaging/app/views/layout/main.php:10
+#: private-messaging/app/views/layout/main.php:16
+#: private-messaging/app/views/layout/main.php:17
+#: private-messaging/app/views/layout/main.php:23
+#: private-messaging/app/views/layout/main.php:24
+msgid "message(s)"
+msgstr ""
+
+#: private-messaging/app/views/layout/main.php:11
+msgid "Inbox"
+msgstr ""
+
+#: private-messaging/app/views/layout/main.php:18
+msgid "Unread"
+msgstr ""
+
+#: private-messaging/app/views/layout/main.php:25
+msgid "Read"
+msgstr ""
+
+#: private-messaging/app/views/layout/main.php:30
+msgid "Sent"
+msgstr ""
+
+#: private-messaging/app/views/layout/main.php:34
+#: private-messaging/app/views/shortcode/_inbox_message.php:36
+msgid "Archive"
+msgstr ""
+
+#: private-messaging/app/views/layout/main.php:45
+#: private-messaging/app/views/layout/main.php:57
+msgid "Compose"
+msgstr ""
+
+#: private-messaging/app/views/message_me/modal.php:25
+#: private-messaging/app/views/shortcode/message_me.php:55
 msgid "Your message has been sent"
 msgstr ""
 
-#: app/views/shortcode/setting.php:13
-msgid "This feature has been disabled by admin"
+#: private-messaging/app/views/shortcode/_inbox_message.php:20
+msgid "Unarchive"
 msgstr ""
 
-#: app/views/shortcode/setting.php:31
-msgid "Email me when receiver read my message"
-msgstr ""
-
-#: app/views/shortcode/setting.php:32
-msgid ""
-"An email will be sent to you when receiver read your message,\n"
-"                                                but this function will not "
-"work if they turn the tracking off"
-msgstr ""
-
-#: app/views/shortcode/setting.php:41
-msgid "Prevent others tracking my message"
-msgstr ""
-
-#: app/views/shortcode/setting.php:43
-msgid ""
-"When you open a message, there won't be an email back to the send to inform "
-"them you've read it."
-msgstr ""
-
-#: framework/database/ig-grid.php:42 framework/database/ig-grid.php:116
+#: private-messaging/app/views/shortcode/_inbox_message.php:24
+#: private-messaging/framework/database/ig-grid.php:42
+#: private-messaging/framework/database/ig-grid.php:116
 msgid "Delete"
 msgstr ""
 
-#: framework/database/ig-grid.php:116
+#: private-messaging/app/views/shortcode/_inbox_message.php:65
+msgid "me"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/_reply_form.php:20
+msgid "Reply"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/inbox.php:94
+#: private-messaging/app/views/shortcode/inbox.php:97
+msgid "Previous"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/inbox.php:101
+#: private-messaging/app/views/shortcode/inbox.php:104
+msgid "Next"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/inbox.php:207
+msgid "No message found!"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/login.php:6
+msgid "Sign in"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/login.php:14
+msgid "Sign Up"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/login.php:16
+msgid "Sign up to become a registered member of the site"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/login.php:17
+msgid "Create Account"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/setting.php:17
+msgid "This feature has been disabled by admin"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/setting.php:37
+msgid "Email me when my sent messages are read"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/setting.php:39
+msgid ""
+"An email will be sent to you when a user reads your message, this "
+"functionality won?t work, if they have disabled tracking within their "
+"account."
+msgstr ""
+
+#: private-messaging/app/views/shortcode/setting.php:47
+msgid "Prevent others tracking my message"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/setting.php:49
+msgid ""
+"When you open a message, there won't be an email back to the sender to "
+"inform them you've read the message."
+msgstr ""
+
+#: private-messaging/framework/database/ig-grid.php:116
 msgid "Edit"
 msgstr ""
 
-#: framework/request/ig-request.php:61
+#: private-messaging/framework/request/ig-request.php:74
 msgid "View not found!"
+msgstr ""
+
+#: private-messaging/functions.php:94
+msgid "Username"
+msgstr ""
+
+#: private-messaging/functions.php:95
+msgid "Password"
+msgstr ""
+
+#: private-messaging/functions.php:96
+msgid "Remember Me"
+msgstr ""
+
+#: private-messaging/functions.php:97
+msgid "Sign In"
+msgstr ""
+
+#: private-messaging/functions.php:169
+msgid "Forgot password?"
+msgstr ""
+
+#: private-messaging/node_modules/grunt-pot/test/fixtures/some-file.php:3
+msgid "I'm a translatable string."
+msgstr ""
+
+#: private-messaging/node_modules/grunt-pot/test/fixtures/some-other-file.php:4
+msgid "Me too"
+msgstr ""
+
+#: private-messaging/node_modules/grunt-pot/test/fixtures/some-other-file.php:7
+#, php-format
+msgid "I have %d apple"
+msgid_plural "I have %d apples"
+msgstr[0] ""
+msgstr[1] ""
+
+#: private-messaging/node_modules/grunt-pot/test/fixtures/some-other-file.php:16
+msgid "yyyy-mm-dd"
 msgstr ""
