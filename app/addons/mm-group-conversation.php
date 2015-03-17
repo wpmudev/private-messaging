@@ -246,7 +246,7 @@ class MM_Group_Conversation
         ?>
         <div class="form-group">
             <label class="col-md-12 hidden-xs hidden-sm">
-                <?php _e("Include more:", mmg()->domain) ?>
+                <?php _e("Cc Users:", mmg()->domain) ?>
             </label>
 
             <div class="col-md-12 col-xs-12 col-sm-12">
