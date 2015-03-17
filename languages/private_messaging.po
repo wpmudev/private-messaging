@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Private Messaging\n"
-"POT-Creation-Date: 2015-03-15 13:57+0700\n"
-"PO-Revision-Date: 2015-03-15 13:57+0700\n"
+"POT-Creation-Date: 2015-03-17 22:00+0700\n"
+"PO-Revision-Date: 2015-03-17 22:00+0700\n"
 "Last-Translator: \n"
 "Language-Team: WPMU DEV\n"
 "Language: en\n"
@@ -55,11 +55,11 @@ msgid "Cc"
 msgstr ""
 
 #: private-messaging/app/addons/mm-group-conversation.php:249
-msgid "Include more:"
+msgid "Cc Users:"
 msgstr ""
 
 #: private-messaging/app/addons/mm-group-conversation.php:292
-#: private-messaging/app/views/shortcode/inbox.php:150
+#: private-messaging/app/views/shortcode/inbox.php:151
 msgid "Are you sure?"
 msgstr ""
 
@@ -795,7 +795,7 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: private-messaging/app/views/shortcode/inbox.php:207
+#: private-messaging/app/views/shortcode/inbox.php:208
 msgid "No message found!"
 msgstr ""
 
