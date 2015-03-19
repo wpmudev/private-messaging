@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Private Messaging\n"
-"POT-Creation-Date: 2015-03-19 20:06+0700\n"
-"PO-Revision-Date: 2015-03-19 20:06+0700\n"
+"POT-Creation-Date: 2015-03-19 20:17+0700\n"
+"PO-Revision-Date: 2015-03-19 20:18+0700\n"
 "Last-Translator: \n"
 "Language-Team: WPMU DEV\n"
 "Language: en\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Generator: Poedit 1.6.9\n"
 "X-Poedit-Basepath: /Users/hoangngo/Work/WPMUDEV/wp-content/plugins\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-KeywordsList: __;_e;esc_attr_e;esc_attr__\n"
 "X-Poedit-SearchPath-0: private-messaging\n"
 
 #: private-messaging/app/addons/block-list.php:102
@@ -52,6 +52,11 @@ msgstr ""
 #: private-messaging/app/addons/mm-group-conversation.php:99
 #: private-messaging/app/addons/mm-group-conversation.php:144
 msgid "Cc"
+msgstr ""
+
+#: private-messaging/app/addons/mm-group-conversation.php:103
+#: private-messaging/app/addons/mm-group-conversation.php:148
+msgid "Cc users"
 msgstr ""
 
 #: private-messaging/app/addons/mm-group-conversation.php:249
