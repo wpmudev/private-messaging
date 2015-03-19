@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Private Messaging\n"
-"POT-Creation-Date: 2015-03-17 22:00+0700\n"
-"PO-Revision-Date: 2015-03-17 22:00+0700\n"
+"POT-Creation-Date: 2015-03-19 20:06+0700\n"
+"PO-Revision-Date: 2015-03-19 20:06+0700\n"
 "Last-Translator: \n"
 "Language-Team: WPMU DEV\n"
 "Language: en\n"
@@ -342,7 +342,9 @@ msgstr ""
 #: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:33
 #: private-messaging/app/components/ig-uploader/app/views/_uploader_form.php:34
 #: private-messaging/app/views/bar/_compose_form.php:48
+#: private-messaging/app/views/bar/_compose_form.php:55
 #: private-messaging/app/views/shortcode/_compose_form.php:48
+#: private-messaging/app/views/shortcode/_compose_form.php:55
 msgid "Content"
 msgstr ""
 
@@ -689,7 +691,7 @@ msgid "Message #"
 msgstr ""
 
 #: private-messaging/app/views/bar/_compose_form.php:10
-#: private-messaging/app/views/message_me/modal.php:21
+#: private-messaging/app/views/message_me/modal.php:23
 #: private-messaging/app/views/shortcode/_compose_form.php:10
 #: private-messaging/app/views/shortcode/message_me.php:51
 msgid "Compose Message"
@@ -700,20 +702,28 @@ msgstr ""
 msgid "Send To"
 msgstr ""
 
+#: private-messaging/app/views/bar/_compose_form.php:23
+#: private-messaging/app/views/shortcode/_compose_form.php:22
+msgid "Send to"
+msgstr ""
+
 #: private-messaging/app/views/bar/_compose_form.php:35
+#: private-messaging/app/views/bar/_compose_form.php:39
+#: private-messaging/app/views/message_me/modal.php:34
 #: private-messaging/app/views/shortcode/_compose_form.php:34
+#: private-messaging/app/views/shortcode/_compose_form.php:38
 msgid "Subject"
 msgstr ""
 
 #: private-messaging/app/views/bar/_compose_form.php:70
-#: private-messaging/app/views/message_me/modal.php:57
+#: private-messaging/app/views/message_me/modal.php:59
 #: private-messaging/app/views/shortcode/_compose_form.php:71
 #: private-messaging/app/views/shortcode/_reply_form.php:55
 msgid "Attach media or other files."
 msgstr ""
 
 #: private-messaging/app/views/bar/_compose_form.php:76
-#: private-messaging/app/views/message_me/modal.php:64
+#: private-messaging/app/views/message_me/modal.php:66
 #: private-messaging/app/views/shortcode/_compose_form.php:77
 #: private-messaging/app/views/shortcode/_reply_form.php:62
 #: private-messaging/app/views/shortcode/message_me.php:87
@@ -721,7 +731,7 @@ msgid "Close"
 msgstr ""
 
 #: private-messaging/app/views/bar/_compose_form.php:78
-#: private-messaging/app/views/message_me/modal.php:66
+#: private-messaging/app/views/message_me/modal.php:68
 #: private-messaging/app/views/shortcode/_compose_form.php:79
 #: private-messaging/app/views/shortcode/_reply_form.php:64
 #: private-messaging/app/views/shortcode/message_me.php:89
@@ -762,7 +772,7 @@ msgstr ""
 msgid "Compose"
 msgstr ""
 
-#: private-messaging/app/views/message_me/modal.php:25
+#: private-messaging/app/views/message_me/modal.php:27
 #: private-messaging/app/views/shortcode/message_me.php:55
 msgid "Your message has been sent"
 msgstr ""

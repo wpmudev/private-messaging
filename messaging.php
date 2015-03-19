@@ -289,7 +289,7 @@ if (!class_exists('MMessaging')) {
                 $addons = array();
             }
             foreach ($addons as $addon) {
-                if (file_exists($addon)) {
+                if (file_exists($addon) && stristr($addon, $this->plugin_path)) {
                     include_once $addon;
                 }
             }

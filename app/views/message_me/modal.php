@@ -5,7 +5,9 @@
                 <div class="modal-content">
                     <?php if (!is_user_logged_in()) {
                         ?>
-                        <button type="button" class="compose-close btn btn-xs" style="position: absolute;top:5px;right:5px;z-index:999">x</button>
+                        <button type="button" class="compose-close btn btn-xs"
+                                style="position: absolute;top:5px;right:5px;z-index:999">x
+                        </button>
                         <div class="modal-body text-left">
                             <?php $this->render_partial('shortcode/login') ?>
                         </div>
@@ -29,7 +31,7 @@
                             </div>
                             <div class="message-me-no-subject hide">
                                 <div class="form-group <?php echo $model->has_error("subject") ? "has-error" : null ?>">
-                                    <?php $form->label("subject", array("text" => "Subject", "attributes" => array("class" => "col-lg-2 control-label"))) ?>
+                                    <?php $form->label("subject", array("text" => __("Subject", mmg()->domain), "attributes" => array("class" => "col-lg-2 control-label"))) ?>
                                     <div class="col-lg-10">
                                         <?php $form->text("subject", array("attributes" => array("class" => "form-control", "disabled" => "disabled"))) ?>
                                         <span

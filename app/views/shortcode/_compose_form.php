@@ -19,7 +19,7 @@
                                         "attributes" => array("class" => "control-label col-sm-2 hidden-xs hidden-sm")
                                     )) ?>
                                     <div class="col-md-10 col-sm-12 col-xs-12">
-                                        <?php $form->text("send_to", array("attributes" => array("class" => "form-control", "placeholder" => "Send to"))) ?>
+                                        <?php $form->text("send_to", array("attributes" => array("class" => "form-control", "placeholder" => __("Send to", mmg()->domain)))) ?>
                                         <?php do_action('mm_compose_form_after_send_to', $form, $model) ?>
                                         <span class="help-block m-b-none error-send_to">
                                         <?php $form->error("send_to") ?>
@@ -35,7 +35,7 @@
                                         "attributes" => array("class" => "control-label col-sm-2 hidden-xs hidden-sm")
                                     )) ?>
                                     <div class="col-md-10 col-sm-12 col-xs-12">
-                                        <?php $form->text("subject", array("attributes" => array("class" => "form-control", "placeholder" => "Subject"))) ?>
+                                        <?php $form->text("subject", array("attributes" => array("class" => "form-control", "placeholder" => __("Subject", mmg()->domain)))) ?>
                                         <?php do_action('mm_compose_form_after_subject', $form, $model) ?>
                                         <span
                                             class="help-block m-b-none error-subject"><?php $form->error("subject") ?></span>
@@ -52,7 +52,7 @@
                                         <?php $form->text_area("content", array(
                                             "attributes" => array(
                                                 "class" => "form-control mm_wsysiwyg",
-                                                "placeholder" => "Content",
+                                                "placeholder" => __("Content", mmg()->domain),
                                                 "style" => "height:100px",
                                                 "id" => "mm_compose_content"
                                             )
