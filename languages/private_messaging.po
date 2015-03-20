@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Private Messaging\n"
-"POT-Creation-Date: 2015-03-19 20:17+0700\n"
-"PO-Revision-Date: 2015-03-19 20:18+0700\n"
+"POT-Creation-Date: 2015-03-20 20:48+0700\n"
+"PO-Revision-Date: 2015-03-20 20:48+0700\n"
 "Last-Translator: \n"
 "Language-Team: WPMU DEV\n"
 "Language: en\n"
@@ -312,8 +312,8 @@ msgstr ""
 
 #: private-messaging/app/components/ig-uploader/app/models/ig-uploader-model.php:123
 #: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:56
-#: private-messaging/app/views/shortcode/_inbox_message.php:148
-#: private-messaging/app/views/shortcode/_inbox_message.php:280
+#: private-messaging/app/views/shortcode/_inbox_message.php:152
+#: private-messaging/app/views/shortcode/_inbox_message.php:288
 msgid "Link"
 msgstr ""
 
@@ -362,32 +362,32 @@ msgid "Submit"
 msgstr ""
 
 #: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:32
-#: private-messaging/app/views/shortcode/_inbox_message.php:124
-#: private-messaging/app/views/shortcode/_inbox_message.php:256
+#: private-messaging/app/views/shortcode/_inbox_message.php:128
+#: private-messaging/app/views/shortcode/_inbox_message.php:264
 msgid "Size"
 msgstr ""
 
 #: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:40
-#: private-messaging/app/views/shortcode/_inbox_message.php:132
-#: private-messaging/app/views/shortcode/_inbox_message.php:264
+#: private-messaging/app/views/shortcode/_inbox_message.php:136
+#: private-messaging/app/views/shortcode/_inbox_message.php:272
 msgid "N/A"
 msgstr ""
 
 #: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:46
-#: private-messaging/app/views/shortcode/_inbox_message.php:138
-#: private-messaging/app/views/shortcode/_inbox_message.php:270
+#: private-messaging/app/views/shortcode/_inbox_message.php:142
+#: private-messaging/app/views/shortcode/_inbox_message.php:278
 msgid "Type"
 msgstr ""
 
 #: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:68
-#: private-messaging/app/views/shortcode/_inbox_message.php:160
-#: private-messaging/app/views/shortcode/_inbox_message.php:292
+#: private-messaging/app/views/shortcode/_inbox_message.php:164
+#: private-messaging/app/views/shortcode/_inbox_message.php:300
 msgid "Visit Link"
 msgstr ""
 
 #: private-messaging/app/components/ig-uploader/app/views/footer_modal.php:73
-#: private-messaging/app/views/shortcode/_inbox_message.php:165
-#: private-messaging/app/views/shortcode/_inbox_message.php:297
+#: private-messaging/app/views/shortcode/_inbox_message.php:169
+#: private-messaging/app/views/shortcode/_inbox_message.php:305
 msgid "Download File"
 msgstr ""
 
@@ -794,6 +794,11 @@ msgstr ""
 
 #: private-messaging/app/views/shortcode/_inbox_message.php:65
 msgid "me"
+msgstr ""
+
+#: private-messaging/app/views/shortcode/_inbox_message.php:73
+#: private-messaging/app/views/shortcode/_inbox_message.php:208
+msgid "To:"
 msgstr ""
 
 #: private-messaging/app/views/shortcode/_reply_form.php:20
