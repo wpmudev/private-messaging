@@ -114,7 +114,7 @@
                 var that = $(this);
                 $.ajax({
                     type: 'POST',
-                    url: '<?php echo admin_url('admin-ajax.php') ?>',
+                    url: '<?php echo admin_url('admin-ajax.php?box='.mmg()->get('box')) ?>',
                     data: {
                         action: 'mm_load_conversation',
                         id: $(this).data('id'),

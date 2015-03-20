@@ -66,8 +66,12 @@ if (!isset($render_reply)) {
                                 } else {
                                     echo $message->get_name($message->send_from);
                                 } ?></strong>
-
-                            <p><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></p>
+                            <div class="clearfix"></div>
+                            <span><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></span>
+                            <div class="clearfix"></div>
+                            <?php if(mmg()->get('box')=='sent'): ?>
+                            <small><?php _e("To:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to); ?></small>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -197,8 +201,12 @@ if (!isset($render_reply)) {
                                     </div>
                                     <div class="col-md-9">
                                         <strong><?php echo $message->get_name($message->send_from) ?></strong>
-
-                                        <p><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></p>
+                                        <div class="clearfix"></div>
+                                        <span><?php echo date('F j, Y, g:i a', strtotime($message->date)) ?></span>
+                                        <div class="clearfix"></div>
+                                        <?php if(mmg()->get('box')=='sent'): ?>
+                                        <small><?php _e("To:", mmg()->domain) ?> <?php echo $message->get_name($message->send_to) ?></small>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
