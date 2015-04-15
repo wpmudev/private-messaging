@@ -98,7 +98,7 @@ class Notify_Controller extends IG_Request
             'SITE_NAME' => get_bloginfo('name'),
             'FROM_NAME' => $model->get_name($model->send_from),
             'POST_LINK' => $link,
-            'FROM_MESSAGE' => $model->content
+            'FROM_MESSAGE' => apply_filters('mm_message_content', $model->content)
         );
         $data = apply_filters('message_notification_params', $data, $this);
 

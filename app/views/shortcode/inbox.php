@@ -59,7 +59,7 @@
                                         <div>
                                             <strong><?php
                                                 $fmessage = $model->get_first_message();
-                                                $subject = trim(strip_tags($fmessage->subject), "\n");
+                                                $subject = trim(strip_tags(apply_filters('mm_message_subject', $fmessage->subject)), "\n");
 
                                                 echo mmg()->mb_word_wrap($subject, 50) ?></strong>
                                         </div>
@@ -67,7 +67,7 @@
                                     <div class="clearfix"></div>
                                     <div class="col-md-12">
                                         <p class="text-muted"><?php
-                                            $content = trim(strip_tags($message->content), "\n");
+                                            $content = trim(strip_tags(apply_filters('mm_message_content', $message->content)), "\n");
                                             echo mmg()->mb_word_wrap($content, 150) ?></p>
                                     </div>
                                     <div class="clearfix"></div>

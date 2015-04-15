@@ -89,72 +89,72 @@
 <!-- /.modal -->
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
-
-        $(".mm-compose-admin-bar a").leanModal({
-            closeButton: ".compose-close",
-            top: '5%',
-            width: '90%',
-            maxWidth: 659
-        });
-
-        $('body').on('submit', '#compose-form-admin-bar', function () {
-            var that = $(this);
-            $.ajax({
-                type: 'POST',
-                url: '<?php echo admin_url('admin-ajax.php') ?>',
-                data: $(that).find(":input").serialize(),
-                beforeSend: function () {
-                    that.parent().parent().find('button').attr('disabled', 'disabled');
-                },
-                success: function (data) {
-                    that.find('.form-group').removeClass('has-error has-success');
-                    that.parent().parent().find('button').removeAttr('disabled');
-                    if (data.status == 'success') {
-                        that.find('.form-control').val('');
-                        $('.compose-admin-bar-alert').removeClass('hide');
-                        location.reload();
-                    } else {
-                        $.each(data.errors, function (i, v) {
-                            var element = that.find('.error-' + i);
-                            element.parent().parent().addClass('has-error');
-                            element.html(v);
-                        });
-                        that.find('.form-group').each(function () {
-                            if (!$(this).hasClass('has-error')) {
-                                $(this).addClass('has-success');
-                            }
-                        })
-                    }
-                }
-            })
-            return false;
-        });
-
-        var admin_bar_seletize = $('#admin-bar-mm-send-to').selectize({
-            valueField: 'name',
-            labelField: 'name',
-            searchField: 'name',
-            options: [],
-            create: false,
-            load: function (query, callback) {
-                if (!query.length) return callback();
-                var instance = admin_bar_seletize[0].selectize;
+        if($(".mm-compose-admin-bar a").size() > 0) {
+            $(".mm-compose-admin-bar a").leanModal({
+                closeButton: ".compose-close",
+                top: '5%',
+                width: '90%',
+                maxWidth: 659
+            });
+            $('body').on('submit', '#compose-form-admin-bar', function () {
+                var that = $(this);
                 $.ajax({
                     type: 'POST',
-                    url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_users&_wpnonce='.wp_create_nonce('mm_suggest_users')) ?>',
-                    data: {
-                        'query': query
-                    },
+                    url: '<?php echo admin_url('admin-ajax.php') ?>',
+                    data: $(that).find(":input").serialize(),
                     beforeSend: function () {
-                        instance.$control.append('<i style="position: absolute;right: 10px;" class="fa fa-circle-o-notch fa-spin"></i>');
+                        that.parent().parent().find('button').attr('disabled', 'disabled');
                     },
                     success: function (data) {
-                        instance.$control.find('i').remove();
-                        callback(data);
+                        that.find('.form-group').removeClass('has-error has-success');
+                        that.parent().parent().find('button').removeAttr('disabled');
+                        if (data.status == 'success') {
+                            that.find('.form-control').val('');
+                            $('.compose-admin-bar-alert').removeClass('hide');
+                            location.reload();
+                        } else {
+                            $.each(data.errors, function (i, v) {
+                                var element = that.find('.error-' + i);
+                                element.parent().parent().addClass('has-error');
+                                element.html(v);
+                            });
+                            that.find('.form-group').each(function () {
+                                if (!$(this).hasClass('has-error')) {
+                                    $(this).addClass('has-success');
+                                }
+                            })
+                        }
                     }
-                });
-            }
-        });
+                })
+                return false;
+            });
+
+            var admin_bar_seletize = $('#admin-bar-mm-send-to').selectize({
+                valueField: 'name',
+                labelField: 'name',
+                searchField: 'name',
+                options: [],
+                create: false,
+                load: function (query, callback) {
+                    if (!query.length) return callback();
+                    var instance = admin_bar_seletize[0].selectize;
+                    $.ajax({
+                        type: 'POST',
+                        url: '<?php echo admin_url('admin-ajax.php?action=mm_suggest_users&_wpnonce='.wp_create_nonce('mm_suggest_users')) ?>',
+                        data: {
+                            'query': query
+                        },
+                        beforeSend: function () {
+                            instance.$control.append('<i style="position: absolute;right: 10px;" class="fa fa-circle-o-notch fa-spin"></i>');
+                        },
+                        success: function (data) {
+                            instance.$control.find('i').remove();
+                            callback(data);
+                        }
+                    });
+                }
+            });
+        }
     })
 </script>
 
