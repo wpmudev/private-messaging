@@ -194,7 +194,7 @@ if (!class_exists('IG_Uploader_Controller')) {
                 'add_url' => admin_url('admin-ajax.php?action=iup_load_upload_form&is_admin=' . $is_admin . '&_wpnonce=' . wp_create_nonce('iup_load_upload_form')),
                 'edit_url' => admin_url('admin-ajax.php?action=iup_load_upload_form&is_admin=' . $is_admin . '&_wpnonce=' . wp_create_nonce('iup_load_upload_form')) . '&id=',
                 'instance' => '',
-                'form_submit_url' => add_query_arg('igu_uploading', 1),
+                'form_submit_url' => esc_url(add_query_arg('igu_uploading', 1)),
                 'target_id' => $this->build_id($target_model, $attribute),
                 'c_id' => $c_id,
                 'ajax_url' => admin_url('admin-ajax.php'),

@@ -226,7 +226,7 @@ if (!class_exists('MM_User_Capability')) {
         {
             ?>
             <li class="<?php echo mmg()->get('tab') == 'cap' ? 'active' : null ?>">
-                <a href="<?php echo add_query_arg('tab', 'cap') ?>">
+                <a href="<?php echo esc_url(add_query_arg('tab', 'cap')) ?>">
                     <i class="fa fa-binoculars"></i> <?php _e("Capability Settings", mmg()->domain) ?></a>
             </li>
         <?php

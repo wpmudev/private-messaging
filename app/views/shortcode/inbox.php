@@ -93,14 +93,14 @@
                     <a disabled href="#"
                        class="btn btn-default btn-sm pull-left"><?php _e("Previous", mmg()->domain) ?></a>
                 <?php else: ?>
-                    <a href="<?php echo add_query_arg('mpaged', $paged - 1) ?>"
+                    <a href="<?php echo esc_url(add_query_arg('mpaged', $paged - 1)) ?>"
                        class="btn btn-default btn-sm pull-left"><?php _e("Previous", mmg()->domain) ?></a>
                 <?php endif; ?>
                 <?php if ($paged >= $total_pages): ?>
                     <a disabled href="#"
                        class="btn btn-default btn-sm pull-right"><?php _e("Next", mmg()->domain) ?></a>
                 <?php else: ?>
-                    <a href="<?php echo add_query_arg('mpaged', $paged + 1) ?>"
+                    <a href="<?php echo esc_url(add_query_arg('mpaged', $paged + 1)) ?>"
                        class="btn btn-default btn-sm pull-right"><?php _e("Next", mmg()->domain) ?></a>
                 <?php endif; ?>
                 <div class="clearfix"></div>

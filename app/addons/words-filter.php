@@ -149,7 +149,7 @@ if (!class_exists('MM_Words_Filter')) {
         {
             ?>
             <li class="<?php echo mmg()->get('tab') == 'filter' ? 'active' : null ?>">
-                <a href="<?php echo add_query_arg('tab', 'filter') ?>">
+                <a href="<?php echo esc_url(add_query_arg('tab', 'filter')) ?>">
                     <i class="fa fa-filter"></i> <?php _e("Words Filter", mmg()->domain) ?></a>
             </li>
         <?php
