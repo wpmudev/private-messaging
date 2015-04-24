@@ -20,3 +20,5 @@ Change Log:
 - Fix bug: wrong message attachment file name
 - Fix bug: Capability add-on not sending message same role
 - New add-on: group conversation
+1.0.1.2
+- New add-on: Words Filter
