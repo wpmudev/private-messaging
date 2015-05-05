@@ -130,7 +130,7 @@
             });
 
             var admin_bar_seletize = $('#admin-bar-mm-send-to').selectize({
-                valueField: 'name',
+                valueField: 'id',
                 labelField: 'name',
                 searchField: 'name',
                 options: [],
