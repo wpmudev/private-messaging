@@ -11250,7 +11250,7 @@ button.ig-container .close {
 }
 .ig-container .ui-widget-content {
   border: 1px solid #777777;
-  background: #ffffff url("../css/custom-theme/images/ui-bg_glass_75_ffffff_1x400.png") 50% 50% repeat-x;
+  background: #ffffff url("images/ui-bg_glass_75_ffffff_1x400.png") 50% 50% repeat-x;
   color: #333333;
 }
 .ig-container .ui-widget-header {
@@ -11376,30 +11376,30 @@ button.ig-container .close {
 .ig-container .ui-icon {
   width: 16px;
   height: 16px;
-  background-image: url("../css/custom-theme/images/ui-icons_222222_256x240.png");
+  background-image: url("images/ui-icons_222222_256x240.png");
 }
 .ig-container .ui-widget-content .ui-icon {
-  background-image: url("../css/custom-theme/images/ui-icons_222222_256x240.png");
+  background-image: url("images/ui-icons_222222_256x240.png");
 }
 .ig-container .ui-widget-header .ui-icon {
-  background-image: url("../css/custom-theme/images/ui-icons_222222_256x240.png");
+  background-image: url("images/ui-icons_222222_256x240.png");
 }
 .ig-container .ui-state-default .ui-icon {
-  background-image: url("../css/custom-theme/images/ui-icons_999999_256x240.png");
+  background-image: url("images/ui-icons_999999_256x240.png");
 }
 .ig-container .ui-state-hover .ui-icon,
 .ig-container .ui-state-focus .ui-icon {
-  background-image: url("../css/custom-theme/images/ui-icons_555555_256x240.png");
+  background-image: url("images/ui-icons_555555_256x240.png");
 }
 .ig-container .ui-state-active .ui-icon {
-  background-image: url("../css/custom-theme/images/ui-icons_555555_256x240.png");
+  background-image: url("images/ui-icons_555555_256x240.png");
 }
 .ig-container .ui-state-highlight .ui-icon {
-  background-image: url("../css/custom-theme/images/ui-icons_428bca_256x240.png");
+  background-image: url("images/ui-icons_428bca_256x240.png");
 }
 .ig-container .ui-state-error .ui-icon,
 .ig-container .ui-state-error-text .ui-icon {
-  background-image: url("../css/custom-theme/images/ui-icons_f0ad4e_256x240.png");
+  background-image: url("images/ui-icons_f0ad4e_256x240.png");
 }
 .ig-container .ui-icon-carat-1-n {
   background-position: 0 0;
@@ -11947,14 +11947,14 @@ button.ig-container .close {
   border-bottom-right-radius: 4px;
 }
 .ig-container .ui-widget-overlay {
-  background: #777777 url("../css/custom-theme/images/ui-bg_flat_0_999999_40x100.png") 50% 50% repeat-x;
+  background: #777777 url("images/ui-bg_flat_0_999999_40x100.png") 50% 50% repeat-x;
   opacity: 0.3;
   filter: alpha(opacity=30);
 }
 .ig-container .ui-widget-shadow {
   margin: -8px 0 0 -8px;
   padding: 8px;
-  background: #777777 url("../css/custom-theme/images/ui-bg_flat_0_999999_40x100.png") 50% 50% repeat-x;
+  background: #777777 url("images/ui-bg_flat_0_999999_40x100.png") 50% 50% repeat-x;
   opacity: 0.3;
   filter: alpha(opacity=30);
   border-radius: 8px ;
