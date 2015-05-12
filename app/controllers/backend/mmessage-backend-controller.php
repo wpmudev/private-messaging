@@ -97,6 +97,7 @@ class MMessage_Backend_Controller extends IG_Request
 
     public function main()
     {
+        wp_enqueue_style('mm_style_admin');
         include mmg()->plugin_path . 'app/components/mm-messages-table.php';
         $this->render('backend/main');
     }
@@ -120,6 +121,8 @@ class MMessage_Backend_Controller extends IG_Request
 
     function view()
     {
+        wp_enqueue_style('mm_style_admin');
+        wp_enqueue_script('ig-packed');
         $id = mmg()->get('id', 0);
         $model = MM_Conversation_Model::model()->find($id);
         if (is_object($model)) {

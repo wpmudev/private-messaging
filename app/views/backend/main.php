@@ -7,11 +7,15 @@
                     <div class="page-heading">
                         <h2><?php _e("Messages", mmg()->domain) ?></h2>
                     </div>
-                    <?php
-                    $table = new MM_Messages_Table();
-                    $table->prepare_items();
-                    $table->display();
-                    ?>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <?php
+                            $table = new MM_Messages_Table();
+                            $table->prepare_items();
+                            $table->display();
+                            ?>
+                        </div>
+                    </div>
                     <div class="clearfix"></div>
                 </div>
             </div>
