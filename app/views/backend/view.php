@@ -29,12 +29,18 @@ $messages = $model->get_messages();
                                         <td><?php echo date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($message->date)); ?></td>
                                         <td><?php echo wpautop($message->content) ?></td>
                                         <td>
-                                            <a href="#message-<?php echo $message->id ?>"
+                                            <a id="target-message-<?php echo $message->id ?>"
+                                               href="#message-<?php echo $message->id ?>"
                                                class="button button-small leanmodal-trigger"><i class="fa fa-edit"></i>
                                             </a>
                                             &nbsp;
-                                            <button type="button" class="button button-small"><i
-                                                    class="fa fa-trash"></i></button>
+                                            <form method="post" style="display: inline" class="delete-message-frm">
+                                                <input type="hidden" name="id" value="<?php echo $message->id ?>">
+                                                <input type="hidden" name="action" value="mm_delete_user_message">
+
+                                                <button type="submit" class="button button-small"><i
+                                                        class="fa fa-trash"></i></button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -46,7 +52,7 @@ $messages = $model->get_messages();
                 <div class="clearfix"></div>
             </div>
             <?php foreach ($messages as $message): ?>
-                <div class="modal" id="message-<?php echo $message->id ?>">
+                <div class="modal" data-id="<?php echo $message->id ?>" id="message-<?php echo $message->id ?>">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form method="post" class="message-save-form" data-id="<?php echo $message->id ?>">
@@ -54,6 +60,7 @@ $messages = $model->get_messages();
                                     <h4 class="modal-title"><?php _e("Edit Message", mmg()->domain) ?></h4>
                                 </div>
                                 <div class="modal-body">
+                                    <div class="alert alert-danger hide"></div>
                                     <input type="hidden" name="id" value="<?php echo $message->id ?>">
 
                                     <div class="form-group">
@@ -67,7 +74,9 @@ $messages = $model->get_messages();
                                         <label class="label-control">
                                             <?php _e("Content", mmg()->domain) ?>
                                         </label>
-                                        <?php wp_editor(stripslashes($message->content), 'message-content-' . $message->id) ?>
+                                        <?php wp_editor(stripslashes($message->content), 'message-content-' . $message->id, array(
+                                            'textarea_name' => 'content'
+                                        )) ?>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default compose-close"
@@ -94,20 +103,55 @@ $messages = $model->get_messages();
         });
         $('.message-save-form').submit(function () {
             var that = $(this);
+            var send = that.serializeAssoc();
+            var editor_id = 'message-content-' + send['id'];
+            var editor = tinymce.editors[editor_id];
+            if (editor) {
+                send['content'] = editor.getContent();
+            }
             $.ajax({
                 type: 'POST',
                 data: {
                     action: 'mmg_message_edit',
-                    data: that.serializeAssoc()
+                    data: send
                 },
                 url: ajaxurl,
                 beforeSend: function () {
-
+                    that.find('button').attr('disabled');
                 },
-                success: function () {
-                
+                success: function (data) {
+                    that.find('button').removeAttr('disabled');
+                    if (data.status == 0) {
+                        that.parent().find('.alert').html(data.errors).removeClass('hide');
+                    } else {
+                        that.parent().find('.alert').html('').addClass('hide');
+                        that.find('.compose-close').trigger('click');
+                        var tr = $('#target-message-' + send['id']).closest('tr');
+                        tr.find('td:eq(2)').html(data.model['content']);
+                        tr.addClass('animated flash');
+                        tr.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+                            tr.removeClass('animated flash');
+                        });
+                    }
                 }
             })
+            return false;
+        });
+        $('.delete-message-frm').submit(function () {
+            if (confirm('<?php __("Are you sure",mmg()->domain) ?>')) {
+                var that = $(this);
+                $.ajax({
+                    type: 'POST',
+                    data: $(this).serializeAssoc(),
+                    url: ajaxurl,
+                    beforeSend: function () {
+                        that.find('button').attr('disabled');
+                    },
+                    success: function () {
+                        that.closest('tr').remove();
+                    }
+                })
+            }
             return false;
         })
     })

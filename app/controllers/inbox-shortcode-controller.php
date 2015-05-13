@@ -354,7 +354,6 @@ class Inbox_Shortcode_Controller extends IG_Request
                 }
             }
         }
-
         return apply_filters('mm_send_to_this_users', $data);
     }
 

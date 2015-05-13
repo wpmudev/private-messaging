@@ -11,6 +11,50 @@ class MM_Backend
         add_action('wp_ajax_mm_create_message_page', array(&$this, 'create_page'));
         add_filter('user_has_cap', array(&$this, 'update_cap'), 10, 4);
         add_filter('ajax_query_attachments_args', array(&$this, 'restrict_user'));
+        add_action('wp_ajax_mmg_message_edit', array(&$this, 'edit_user_message'));
+        add_action('wp_ajax_mm_delete_user_message', array(&$this, 'delete_user_message'));
+    }
+
+    function delete_user_message()
+    {
+        if (!current_user_can('manage_options')) {
+            return '';
+        }
+        $message_id = mmg()->post('id');
+        $model = MM_Message_Model::model()->find($message_id);
+        $conversation = MM_Conversation_Model::model()->find($model->conversation_id);
+        if (is_object($model)) {
+            $model->delete();
+            $conversation->update_index($message_id);
+        }
+    }
+
+    function edit_user_message()
+    {
+        if (!current_user_can('manage_options')) {
+            return '';
+        }
+        $message_id = mmg()->post('data[id]');
+        $model = MM_Message_Model::model()->find($message_id);
+        if (is_object($model)) {
+            $subject = mmg()->post('data[subject]');
+            $content = mmg()->post('data[content]');
+
+            $model->subject = trim($subject);
+            $model->content = trim(wp_unslash($content));
+            if ($model->validate()) {
+                $model->save();
+                wp_send_json(array(
+                    'status' => 1,
+                    'model' => $model->export()
+                ));
+            } else {
+                wp_send_json(array(
+                    'status' => 0,
+                    'errors' => implode('<br/>', $model->get_errors())
+                ));
+            }
+        }
     }
 
     function restrict_user($args)
@@ -55,6 +99,7 @@ class MM_Backend
         //die;
         return $allcaps;
     }
+
     function create_page()
     {
         if (isset($_POST['m_type'])) {

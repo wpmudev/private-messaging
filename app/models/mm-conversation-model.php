@@ -143,11 +143,15 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
         }
     }
 
-    public function update_index($id)
+    public function update_index($id, $remove = false)
     {
         $index = explode(',', $this->message_index);
         $index = array_filter($index);
-        $index[] = $id;
+        if ($remove == false) {
+            $index[] = $id;
+        } else {
+            unset($index[array_search($id, $index)]);
+        }
         $this->message_index = implode(',', $index);
 
         //update users
