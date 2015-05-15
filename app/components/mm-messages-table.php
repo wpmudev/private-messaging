@@ -43,9 +43,9 @@ class MM_Messages_Table extends WP_List_Table
     public function column_col_action(MM_Conversation_Model $item)
     {
         $text = sprintf('<a class="button button-small" href="%s"><i class="fa fa-eye"></i> ' . __("View", mmg()->domain) . '</a>&nbsp;
-                <a class="button button-small" href="#"><i class="fa fa-lock"></i> ' . __("Lock", mmg()->domain) . '</a>&nbsp;
+                <a class="button button-small lock-conv" data-type="' . ($item->is_lock() ? 'unlock' : 'lock') . '" data-id="' . $item->id . '" href="#">%s</a>&nbsp;
                 <a class="button button-small" href="#"><i class="fa fa-trash"></i> ' . __("Delete", mmg()->domain) . '</a>',
-            admin_url('admin.php?page=mm_view&id=' . $item->id));
+            admin_url('admin.php?page=mm_view&id=' . $item->id), ($item->is_lock()) ? '<i class="fa fa-unlock"></i> ' . __("Unlock", mmg()->domain) : '<i class="fa fa-lock"></i> ' . __("Lock", mmg()->domain));
         return $text;
     }
 
@@ -91,7 +91,7 @@ class MM_Messages_Table extends WP_List_Table
         $totals = $wpdb->get_var($wpdb->prepare('SELECT COUNT(id) from ' . $wpdb->base_prefix . 'mm_conversation WHERE site_id =%d', get_current_blog_id()));
 
         //How many to display per page?
-        $perpage = apply_filters('mmg_message_table_perpage',10);
+        $perpage = apply_filters('mmg_message_table_perpage', 10);
         //Which page is this?
         $paged = !empty($_GET["paged"]) ? mysql_real_escape_string($_GET["paged"]) : '';
         //Page Number

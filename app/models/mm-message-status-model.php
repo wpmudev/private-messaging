@@ -5,7 +5,7 @@
  */
 class MM_Message_Status_Model extends IG_DB_Model_Ex
 {
-    const STATUS_UNREAD = 0, STATUS_READ = 1, STATUS_ARCHIVE = -1, STATUS_DELETE = -2;
+    const STATUS_UNREAD = 0, STATUS_READ = 1, STATUS_ARCHIVE = -1, STATUS_DELETE = -2, STATUS_LOCK = -3;
     const TYPE_MESSAGE = 1, TYPE_CONVERSATION = 2;
 
     protected $table = "mm_status";

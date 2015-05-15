@@ -22,3 +22,28 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    jQuery(function ($) {
+        $('.lock-conv').click(function (e) {
+            e.preventDefault();
+            var that = $(this);
+            $.ajax({
+                type: 'POST',
+                url: ajaxurl,
+                data: {
+                    action: 'mm_lock_conversation',
+                    type: that.data('type'),
+                    id: that.data('id')
+                },
+                beforeSend: function () {
+                    that.attr('disabled', 'disabled')
+                },
+                success: function (data) {
+                    that.removeAttr('disabled');
+                    that.data('type', data.type);
+                    that.html(data.text)
+                }
+            })
+        })
+    })
+</script>

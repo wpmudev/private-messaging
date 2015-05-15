@@ -78,17 +78,19 @@ class Inbox_Shortcode_Controller extends IG_Request
         $id = mmg()->decrypt(mmg()->post('id'));
         $model = MM_Conversation_Model::model()->find($id);
         $html = $this->render_inbox_message($model);
-
         if (!$model->is_archive()) {
             $model->mark_as_read();
             do_action('mm_conversation_read', $model);
         }
         $messages = $model->get_messages();
         //update replace form
-        $reply_form = $this->render_partial('shortcode/_reply_form', array(
-            'message' => array_shift($messages)
-        ), false);
-
+        if ($model->is_lock() == false) {
+            $reply_form = $this->render_partial('shortcode/_reply_form', array(
+                'message' => array_shift($messages)
+            ), false);
+        } else {
+            $reply_form = '';
+        }
         wp_send_json(array(
             'html' => $html,
             'reply_form' => $reply_form,

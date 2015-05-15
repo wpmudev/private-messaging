@@ -5,6 +5,8 @@
  */
 class MM_Conversation_Model extends IG_DB_Model_Ex
 {
+    const LOCK = -1, UNLOCK = 1;
+
     public $table = 'mm_conversation';
 
     /**
@@ -106,6 +108,11 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
     {
         $status = $this->get_current_status();
         return $status->status == MM_Message_Status_Model::STATUS_ARCHIVE;
+    }
+
+    public function is_lock()
+    {
+        return $this->status == self::LOCK;
     }
 
     private static function upgrade()

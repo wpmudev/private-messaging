@@ -13,6 +13,37 @@ class MM_Backend
         add_filter('ajax_query_attachments_args', array(&$this, 'restrict_user'));
         add_action('wp_ajax_mmg_message_edit', array(&$this, 'edit_user_message'));
         add_action('wp_ajax_mm_delete_user_message', array(&$this, 'delete_user_message'));
+        add_action('wp_ajax_mm_lock_conversation', array(&$this, 'lock_conversation'));
+    }
+
+    function lock_conversation()
+    {
+        if (!current_user_can('manage_options')) {
+            return '';
+        }
+
+        $model = MM_Conversation_Model::model()->find(mmg()->post('id'));
+        if (!is_object($model)) {
+            return '';
+        }
+        $type = mmg()->post('type');
+        $users = explode(',', $model->user_index);
+        $users = array_filter($users);
+        if ($type == 'lock') {
+            $model->status = MM_Conversation_Model::LOCK;
+            $model->save();
+            wp_send_json(array(
+                'text' => '<i class="fa fa-unlock"></i> ' . __('Unlock', mmg()->domain),
+                'type' => 'unlock'
+            ));
+        } else {
+            $model->status = MM_Conversation_Model::UNLOCK;
+            $model->save();
+            wp_send_json(array(
+                'text' => '<i class="fa fa-lock"></i> ' . __('Lock', mmg()->domain),
+                'type' => 'lock'
+            ));
+        }
     }
 
     function delete_user_message()
@@ -25,7 +56,7 @@ class MM_Backend
         $conversation = MM_Conversation_Model::model()->find($model->conversation_id);
         if (is_object($model)) {
             $model->delete();
-            $conversation->update_index($message_id);
+            $conversation->update_index($message_id, true);
         }
     }
 
