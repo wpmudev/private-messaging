@@ -11,6 +11,12 @@ $messages = $model->get_messages();
             <div class="row">
                 <div class="clearfix"></div>
                 <div class="col-md-12">
+                    <a class="button button-default inject-message"
+                       href="#inject-message"><?php _e("Send a message to this conversation", mmg()->domain) ?></a>
+
+                    <div class="clearfix"></div>
+                    <br/>
+
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <table class="table table-striped table-condensed">
@@ -93,6 +99,53 @@ $messages = $model->get_messages();
         </div>
     </div>
 </div>
+<?php $this->render_partial('backend/message/modal', array(
+    'conversation_id' => $model->id
+)) ?>
+<!-- /.modal -->
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $(".inject-message").leanModal({
+            closeButton: ".compose-close",
+            top: '5%',
+            width: '90%',
+            maxWidth: 659
+        });
+        $('body').on('submit', '#inject-message-form', function () {
+            var that = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo admin_url('admin-ajax.php') ?>',
+                data: $(that).find(":input").serialize(),
+                beforeSend: function () {
+                    that.parent().parent().find('button').attr('disabled', 'disabled');
+                },
+                success: function (data) {
+                    that.find('.form-group').removeClass('has-error has-success');
+                    that.parent().parent().find('button').removeAttr('disabled');
+                    if (data.status == 'success') {
+                        that.find('.form-control').val('');
+                        $('.compose-admin-bar-alert').removeClass('hide');
+                        location.reload();
+                    } else {
+                        $.each(data.errors, function (i, v) {
+                            var element = that.find('.error-' + i);
+                            element.parent().parent().addClass('has-error');
+                            element.html(v);
+                        });
+                        that.find('.form-group').each(function () {
+                            if (!$(this).hasClass('has-error')) {
+                                $(this).addClass('has-success');
+                            }
+                        })
+                    }
+                }
+            })
+            return false;
+        });
+    })
+</script>
+
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
         $(".leanmodal-trigger").leanModal({

@@ -14,6 +14,37 @@ class MM_Backend
         add_action('wp_ajax_mmg_message_edit', array(&$this, 'edit_user_message'));
         add_action('wp_ajax_mm_delete_user_message', array(&$this, 'delete_user_message'));
         add_action('wp_ajax_mm_lock_conversation', array(&$this, 'lock_conversation'));
+        add_action('wp_ajax_mm_inject_message', array(&$this, 'mm_inject_message'));
+    }
+
+    function mm_inject_message()
+    {
+        if (!current_user_can('manage_options')) {
+            return '';
+        }
+
+        $conversation_id = mmg()->post('conversation_id');
+        $conversation = MM_Conversation_Model::model()->find($conversation_id);
+        if (is_object($conversation)) {
+            $model = new MM_Message_Model();
+            $model->import(mmg()->post('MM_Message_Model'));
+            $model->conversation_id = $conversation->id;
+            $model->send_from = get_current_user_id();
+            //send to = 1 for by pass the validation
+            $model->send_to = 1;
+            if ($model->validate()) {
+                $model->save();
+                $conversation->update_index($model->id);
+                wp_send_json(array(
+                    'status' => 'success'
+                ));
+            } else {
+                wp_send_json(array(
+                    'status' => 'fail',
+                    'errors' => $model->get_errors()
+                ));
+            }
+        }
     }
 
     function lock_conversation()
