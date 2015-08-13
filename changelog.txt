@@ -22,3 +22,5 @@ Change Log:
 - New add-on: group conversation
 1.0.1.2
 - New add-on: Words Filter
+- Backend improvement
+- Some minor bugs fixed
