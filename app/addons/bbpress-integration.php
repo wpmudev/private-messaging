@@ -1,7 +1,7 @@
 <?php
 /**
  * Author: WPMU DEV
- * Name: BBPress integration
+ * Name: bbPress integration
  * Description: Flawless integration with BBpress.
  */
 

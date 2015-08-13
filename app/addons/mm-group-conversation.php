@@ -3,7 +3,7 @@
 /**
  * Author: WPMU DEV
  * Name: Group Conversation (Beta)
- * Description: Enable include more people to a conversation
+ * Description: Enable group conversations and invitations to join a group conversation.
  */
 class MM_Group_Conversation
 {

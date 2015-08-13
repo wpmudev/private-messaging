@@ -2,7 +2,7 @@
 
 /**
  * Author: WPMU DEV
- * Name: Capability
+ * Name: Capabilities
  * Description: Limit sending capabilities to specific WordPress roles.
  */
 if (!class_exists('MM_User_Capability')) {

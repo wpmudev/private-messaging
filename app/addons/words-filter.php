@@ -2,8 +2,8 @@
 
 /**
  * Author: WPMU DEV
- * Name: Message filters
- * Description:
+ * Name: Message Filters
+ * Description: Allow users to filter messages by (whatever parameters they can use to filter)
  * Icon:fa-user-secret
  */
 if (!class_exists('MM_Words_Filter')) {
