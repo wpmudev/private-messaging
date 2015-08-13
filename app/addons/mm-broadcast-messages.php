@@ -3,7 +3,7 @@
 /**
  * Author: WPMU DEV
  * Name: Broadcast
- * Description: As the administrator send a message to all users at the same time.
+ * Description: Create and send messages to all users from the admin.
  */
 class MM_BroadCast_Messages
 {

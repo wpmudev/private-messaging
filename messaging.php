@@ -236,10 +236,12 @@ if (!class_exists('MMessaging')) {
 
         function can_compress()
         {
+            return false;
+
             $runtime_path = $this->plugin_path . 'framework/runtime';
             if (!is_dir($runtime_path)) {
                 //try to create
-                mkdir($runtime_path);
+                @mkdir($runtime_path);
             }
             if (!is_dir($runtime_path))
                 return false;
@@ -256,6 +258,7 @@ if (!class_exists('MMessaging')) {
         function scripts()
         {
             wp_register_style('mm_style', $this->plugin_url . 'assets/main.min.css', array('ig-packed'), $this->version);
+            wp_register_style('mm_style_admin', $this->plugin_url . 'assets/admin.css', array('ig-packed'), $this->version);
             wp_register_style('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.css', array(), $this->version);
             wp_register_script('mm_scroll', $this->plugin_url . 'assets/perfect-scrollbar.min.js', array('jquery'), $this->version);
 
@@ -613,7 +616,7 @@ CREATE TABLE IF NOT EXISTS `{$wpdb->base_prefix}mm_conversation` (
             'admin_page_mm_view'
         )
     );
-    include_once(plugin_dir_path(__FILE__) . 'lib/dash-notices/wpmudev-dash-notification.php');
+    //include_once(plugin_dir_path(__FILE__) . 'lib/dash-notices/wpmudev-dash-notification.php');
 
     function mmg()
     {

@@ -3,11 +3,16 @@ $message = array_shift($messages);
 if (!isset($render_reply)) {
     $render_reply = true;
 }
+$conversation = MM_Conversation_Model::model()->find($message->conversation_id);
 ?>
 <div class="ig-container">
     <section class="message-content">
         <div class="message-content-meta pull-left">
             <?php do_action('message_content_meta', $message) ?>
+            <?php if ($conversation->is_lock()): ?>
+                <div class="clearfix"></div>
+                <span><?php _e("This conversation has been locked", mmg()->domain) ?></span>
+            <?php endif; ?>
         </div>
         <div class="message-content-actions pull-right">
             <?php if (mmg()->get('box') != 'sent' && $render_reply == true): ?>
@@ -15,7 +20,6 @@ if (!isset($render_reply)) {
                 $from_data = get_userdata($message->send_from);
                 ?>
                 <div class="btn-group btn-group-sm">
-                    <?php $conversation = MM_Conversation_Model::model()->find($message->conversation_id); ?>
                     <?php if ($conversation->is_archive()): ?>
                         <a href="#" title="<?php echo esc_attr(__("Unarchive", mmg()->domain)) ?>"
                            data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
@@ -26,20 +30,25 @@ if (!isset($render_reply)) {
                            data-type="<?php echo MM_Message_Status_Model::STATUS_DELETE ?>"
                            class="btn btn-sm btn-danger mm-status"><i class="fa fa-trash"></i></a>
                     <?php else: ?>
-                        <a href="#reply-form-c"
-                           data-username="<?php echo esc_attr($from_data->user_login) ?>"
-                           data-parentid="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
-                           data-id="<?php echo esc_attr(mmg()->encrypt($message->id)) ?>" type="button"
-                           class="btn btn-info btn-sm mm-reply">
-                            <i class="fa fa-reply"></i>
-                        </a>
+                        <?php if ($conversation->is_lock()): ?>
+                            <button type="button" class="btn btn-info btn-sm" disabled>
+                                <i class="fa fa-reply"></i>
+                            </button>
+                        <?php else: ?>
+                            <a href="#reply-form-c"
+                               data-username="<?php echo esc_attr($from_data->user_login) ?>"
+                               data-parentid="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
+                               data-id="<?php echo esc_attr(mmg()->encrypt($message->id)) ?>" type="button"
+                               class="btn btn-info btn-sm mm-reply">
+                                <i class="fa fa-reply"></i>
+                            </a>
+                        <?php endif; ?>
                         <a href="#" title="<?php echo esc_attr(__("Archive", mmg()->domain)) ?>"
                            data-id="<?php echo esc_attr(mmg()->encrypt($message->conversation_id)) ?>"
                            data-type="<?php echo MM_Message_Status_Model::STATUS_ARCHIVE ?>"
                            class="btn btn-sm btn-default mm-status"><i class="fa fa-archive"></i></a>
                     <?php endif; ?>
                 </div>
-
             <?php endif; ?>
             <!--<button type="button" class="btn btn-danger btn-sm">
                 <i class="glyphicon glyphicon-trash"></i>
