@@ -24,3 +24,5 @@ Change Log:
 - New add-on: Words Filter
 - Backend improvement
 - Some minor bugs fixed
+1.0.1.3
+- Fix bug Capabilities add-on doesn't save when no checkbox checked
