@@ -316,7 +316,7 @@ if (!class_exists('MMessaging')) {
                 'can_export' => true,
                 'has_archive' => false,
                 'exclude_from_search' => false,
-                'publicly_queryable' => true,
+                'publicly_queryable' => false,
                 'capability_type' => 'page',
             );
             register_post_type('mm_message', $args);
