@@ -70,14 +70,14 @@ if ( ! class_exists( 'MM_User_Capability' ) ) {
 							'compare' => 'like'
 						);
 					};
-					if(apply_filters('pm_can_send_same_role',true)) {
+					if ( apply_filters( 'pm_can_send_same_role', true ) ) {
 						//include self role
 						$params[] = array(
 							'key'     => $wpdb->get_blog_prefix() . 'capabilities',
 							'value'   => $key,
 							'compare' => 'like'
 						);
-					}else{
+					} else {
 						$params[] = array(
 							'key'     => $wpdb->get_blog_prefix() . 'capabilities',
 							'value'   => $key,
@@ -87,6 +87,7 @@ if ( ! class_exists( 'MM_User_Capability' ) ) {
 				}
 			}
 			$args['meta_query'] = $params;
+
 			return $args;
 
 		}
