@@ -44,7 +44,16 @@ class MM_Messages_Table extends WP_List_Table
     {
         $text = sprintf('<a class="button button-small" href="%s"><i class="fa fa-eye"></i> ' . __("View", mmg()->domain) . '</a>&nbsp;
                 <a class="button button-small lock-conv" data-type="' . ($item->is_lock() ? 'unlock' : 'lock') . '" data-id="' . $item->id . '" href="#">%s</a>&nbsp;
-                <a class="button button-small" href="#"><i class="fa fa-trash"></i> ' . __("Delete", mmg()->domain) . '</a>',
+
+                <form method="post" style="display: inline" class="delete-message-frm">
+                                                <input type="hidden" name="id" value="'.$item->id.'">
+                                                <input type="hidden" name="action" value="mm_delete_user_conversation">
+
+                                                <button type="submit" class="button button-small"><i
+                                                        class="fa fa-trash"></i> '.__("Delete", mmg()->domain).'</button>
+                                            </form>
+                ',
+
             admin_url('admin.php?page=mm_view&id=' . $item->id), ($item->is_lock()) ? '<i class="fa fa-unlock"></i> ' . __("Unlock", mmg()->domain) : '<i class="fa fa-lock"></i> ' . __("Lock", mmg()->domain));
         return $text;
     }

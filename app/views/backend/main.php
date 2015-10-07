@@ -44,6 +44,23 @@
                     that.html(data.text)
                 }
             })
+        });
+        $('.delete-message-frm').submit(function () {
+            if (confirm('<?php echo __("Are you sure",mmg()->domain) ?>')) {
+                var that = $(this);
+                $.ajax({
+                    type: 'POST',
+                    data: $(this).serializeAssoc(),
+                    url: ajaxurl,
+                    beforeSend: function () {
+                        that.find('button').attr('disabled');
+                    },
+                    success: function () {
+                        that.closest('tr').remove();
+                    }
+                })
+            }
+            return false;
         })
     })
 </script>
