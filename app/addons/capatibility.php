@@ -70,16 +70,23 @@ if ( ! class_exists( 'MM_User_Capability' ) ) {
 							'compare' => 'like'
 						);
 					};
-					//include self role
-					$params[] = array(
-						'key'     => $wpdb->get_blog_prefix() . 'capabilities',
-						'value'   => $key,
-						'compare' => 'like'
-					);
+					if(apply_filters('pm_can_send_same_role',true)) {
+						//include self role
+						$params[] = array(
+							'key'     => $wpdb->get_blog_prefix() . 'capabilities',
+							'value'   => $key,
+							'compare' => 'like'
+						);
+					}else{
+						$params[] = array(
+							'key'     => $wpdb->get_blog_prefix() . 'capabilities',
+							'value'   => $key,
+							'compare' => 'NOT LIKE'
+						);
+					}
 				}
 			}
 			$args['meta_query'] = $params;
-
 			return $args;
 
 		}
