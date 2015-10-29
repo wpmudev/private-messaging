@@ -86,10 +86,10 @@ class MM_Message_Model extends IG_Post_Model
         $userdata = get_userdata($user_id);
         $name = $userdata->first_name . ' ' . $userdata->last_name;
         $name = trim($name);
-        if (!empty($name)) {
-            return $name;
+        if (empty($name)) {
+            $name = $userdata->user_login;
         }
-        return $userdata->user_login;
+        return apply_filters( 'mm_get_name', $name, $userdata);
     }
 
     public static function send($user_id, $conversation_id, $data)
