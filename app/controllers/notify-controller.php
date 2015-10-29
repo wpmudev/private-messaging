@@ -100,7 +100,7 @@ class Notify_Controller extends IG_Request
             'POST_LINK' => $link,
             'FROM_MESSAGE' => apply_filters('mm_message_content', $model->content)
         );
-        $data = apply_filters('message_notification_params', $data, $this);
+        $data = apply_filters('message_notification_params', $data, $this, $model);
 
         $subject = stripslashes($setting->noti_subject);
         $content = stripslashes($setting->noti_content);
