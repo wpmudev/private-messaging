@@ -42,6 +42,7 @@
                                     </div>
                                     <div class="clearfix"></div>
                                 </div>
+
                                 <div style="margin-bottom: 0"
                                      class="form-group <?php echo $model->has_error("content") ? "has-error" : null ?>">
                                     <?php $form->label("content", array(
