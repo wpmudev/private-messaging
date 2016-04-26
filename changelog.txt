@@ -26,3 +26,5 @@ Change Log:
 - Some minor bugs fixed
 1.0.1.3
 - Fix bug Capabilities add-on doesn't save when no checkbox checked
+- Fix bug broadcast checkbox doesn't show up in admin bar
+- Fix waring when activate bbpress add-on
