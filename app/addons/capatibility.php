@@ -13,6 +13,7 @@ if ( ! class_exists( 'MM_User_Capability' ) ) {
 			add_action( 'wp_loaded', array( &$this, 'process_request' ) );
 			if ( is_user_logged_in() ) {
 				add_filter( 'mm_suggest_users_args', array( &$this, 'filter_user_return' ) );
+				add_filter( 'mm_suggest_users_first_last_args', array( &$this, 'filter_user_return' ) );
 				add_filter( 'mm_send_to_this_users', array( &$this, 'filter_user_reply' ) );
 			}
 		}
@@ -78,11 +79,13 @@ if ( ! class_exists( 'MM_User_Capability' ) ) {
 							'compare' => 'like'
 						);
 					} else {
-						$params[] = array(
-							'key'     => $wpdb->get_blog_prefix() . 'capabilities',
-							'value'   => $key,
-							'compare' => 'NOT LIKE'
-						);
+						$excludes = get_users( array(
+							'role'   => $key,
+							'fields' => 'ID'
+						) );
+						if ( ! empty( $excludes ) ) {
+							$params['exclude'] = array_merge( $params['exclude'], $excludes );
+						}
 					}
 				}
 			}
