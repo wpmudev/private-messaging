@@ -63,7 +63,7 @@ if (!class_exists('IG_Uploader')) {
                     'show_in_admin_bar' => false,
                     'can_export' => true,
                     'has_archive' => false,
-                    'exclude_from_search' => false,
+                    'exclude_from_search' => true,
                     'publicly_queryable' => true,
                     'capability_type' => $this->prefix . 'media',
                 );
