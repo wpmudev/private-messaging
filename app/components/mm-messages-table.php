@@ -102,7 +102,7 @@ class MM_Messages_Table extends WP_List_Table
         //How many to display per page?
         $perpage = apply_filters('mmg_message_table_perpage', 10);
         //Which page is this?
-        $paged = !empty($_GET["paged"]) ? mysql_real_escape_string($_GET["paged"]) : '';
+        $paged = !empty($_GET["paged"]) ? mysqli_real_escape_string($_GET["paged"]) : '';
         //Page Number
         if (empty($paged) || !is_numeric($paged) || $paged <= 0) {
             $paged = 1;

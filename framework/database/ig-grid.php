@@ -148,15 +148,15 @@ if (!class_exists('IG_Grid')) {
             $args = array();
             $class = get_class($this->model);
             //getting items
-            $orderby = !empty($_GET["orderby"]) ? mysql_real_escape_string($_GET["orderby"]) : 'ASC';
-            $order = !empty($_GET["order"]) ? mysql_real_escape_string($_GET["order"]) : '';
+            $orderby = !empty($_GET["orderby"]) ? mysqli_real_escape_string($_GET["orderby"]) : 'ASC';
+            $order = !empty($_GET["order"]) ? mysqli_real_escape_string($_GET["order"]) : '';
             if (!empty($orderby) & !empty($order)) {
                 $args['orderby'] = $orderby;
                 $args['order'] = $order;
             }
             $totalitems = count($class::all());
             $perpage = $this->per_page;
-            $paged = !empty($_GET["paged"]) ? mysql_real_escape_string($_GET["paged"]) : '';
+            $paged = !empty($_GET["paged"]) ? mysqli_real_escape_string($_GET["paged"]) : '';
             if (empty($paged) || !is_numeric($paged) || $paged <= 0) {
                 $paged = 1;
             }
