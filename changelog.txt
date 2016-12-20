@@ -30,3 +30,5 @@ Change Log:
 - Fix waring when activate bbpress add-on
 1.0.1.4
 - Fix: Stop messages being disclosed in WordPress search results
+1.0.1.5
+- Fix: Inbox styling issues seen within Twenty Seventeen
