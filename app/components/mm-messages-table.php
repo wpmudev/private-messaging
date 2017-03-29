@@ -137,7 +137,7 @@ class MM_Messages_Table extends WP_List_Table
                 ));
             }
         } else {
-            $this->items = MM_Conversation_Model::model()->find_all('site_id =%d', array(
+            $this->items = MM_Conversation_Model::model()->find_all('site_id=%d', array(
                 get_current_blog_id()
             ), $perpage, $offset);
         }
@@ -147,7 +147,7 @@ class MM_Messages_Table extends WP_List_Table
     {
         $singular = $this->_args['singular'];
         ?>
-        <form method="get" action="<?php echo admin_url('admin . php') ?>">
+        <form method="get" action="<?php echo admin_url('admin.php') ?>">
             <input type="hidden" name="page" value="mm_main">
             <?php $this->search_box(__("Search", mmg()->domain), 'mm_conv_search'); ?>
         </form>
