@@ -102,7 +102,7 @@ class MM_Messages_Table extends WP_List_Table
         //How many to display per page?
         $perpage = apply_filters('mmg_message_table_perpage', 10);
         //Which page is this?
-        $paged = !empty($_GET["paged"]) ? mysql_real_escape_string($_GET["paged"]) : '';
+        $paged = !empty($_GET["paged"]) ? esc_sql($_GET["paged"]) : '';
         //Page Number
         if (empty($paged) || !is_numeric($paged) || $paged <= 0) {
             $paged = 1;
@@ -137,7 +137,7 @@ class MM_Messages_Table extends WP_List_Table
                 ));
             }
         } else {
-            $this->items = MM_Conversation_Model::model()->find_all('site_id =%d', array(
+            $this->items = MM_Conversation_Model::model()->find_all('site_id=%d', array(
                 get_current_blog_id()
             ), $perpage, $offset);
         }
@@ -147,7 +147,7 @@ class MM_Messages_Table extends WP_List_Table
     {
         $singular = $this->_args['singular'];
         ?>
-        <form method="get" action="<?php echo admin_url('admin . php') ?>">
+        <form method="get" action="<?php echo admin_url('admin.php') ?>">
             <input type="hidden" name="page" value="mm_main">
             <?php $this->search_box(__("Search", mmg()->domain), 'mm_conv_search'); ?>
         </form>

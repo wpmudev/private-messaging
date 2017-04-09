@@ -414,23 +414,23 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
             mmg()->global['conversation_total_pages'] = $total_pages;
 
             if (is_admin()) {
-                $sql = "SELECT conversation . id FROM wp_mm_conversation conversation
-                    INNER JOIN wp_mm_status mstat ON mstat . conversation_id = conversation . id
-                    INNER JOIN wp_postmeta meta ON meta . meta_key = '_conversation_id' AND meta . meta_value = conversation . id
-                    INNER JOIN wp_posts posts ON posts . ID = meta . post_id
-                    INNER JOIN wp_users users ON users . id = posts . post_author
-                    WHERE(posts . post_title LIKE % s OR posts . post_content LIKE % s OR users . user_login LIKE % s) AND site_id =%d
-                    GROUP BY conversation . id LIMIT % d,%d";
-                $sql = $wpdb->prepare($sql, " % $s % ", " % $s % ", " % $s % ", get_current_blog_id(), $offset, $per_page);
+                $sql = "SELECT conversation.id FROM wp_mm_conversation conversation
+                    INNER JOIN wp_mm_status mstat ON mstat.conversation_id = conversation.id
+                    INNER JOIN $wpdb->postmeta meta ON meta.meta_key = '_conversation_id' AND meta.meta_value = conversation.id
+                    INNER JOIN $wpdb->posts posts ON posts.ID = meta.post_id
+                    INNER JOIN $wpdb->users users ON users.id = posts.post_author
+                    WHERE ( posts.post_title LIKE %s OR posts.post_content LIKE %s OR users.user_login LIKE %s ) AND site_id = %d
+                    GROUP BY conversation.id LIMIT %d, %d";
+	            $sql = $wpdb->prepare($sql, "%$s%", "%$s%", "%$s%", get_current_blog_id(), $offset, $per_page);
             } else {
-                $sql = "SELECT conversation . id FROM wp_mm_conversation conversation
-                    INNER JOIN wp_mm_status mstat ON mstat . conversation_id = conversation . id
-                    INNER JOIN wp_postmeta meta ON meta . meta_key = '_conversation_id' AND meta . meta_value = conversation . id
-                    INNER JOIN wp_posts posts ON posts . ID = meta . post_id
-                    INNER JOIN wp_users users ON users . id = posts . post_author
-                    WHERE mstat . user_id = %d AND (posts . post_title LIKE % s OR posts . post_content LIKE % s OR users . user_login LIKE % s) AND site_id =%d
-                    GROUP BY conversation . id LIMIT % d,%d";
-                $sql = $wpdb->prepare($sql, get_current_user_id(), " % $s % ", " % $s % ", " % $s % ", get_current_blog_id(), $offset, $per_page);
+                $sql = "SELECT conversation.id FROM wp_mm_conversation conversation
+                    INNER JOIN wp_mm_status mstat ON mstat.conversation_id = conversation.id
+                    INNER JOIN $wpdb->postmeta meta ON meta.meta_key = '_conversation_id' AND meta.meta_value = conversation.id
+                    INNER JOIN $wpdb->posts posts ON posts.ID = meta.post_id
+                    INNER JOIN $wpdb->users users ON users.id = posts.post_author
+                    WHERE mstat.user_id = %d AND (posts.post_title LIKE %s OR posts.post_content LIKE %s OR users.user_login LIKE %s) AND site_id = %d
+                    GROUP BY conversation.id LIMIT %d, %d";
+	            $sql = $wpdb->prepare($sql, get_current_user_id(), "%$s%", "%$s%", "%$s%", get_current_blog_id(), $offset, $per_page);
             }
 
 
