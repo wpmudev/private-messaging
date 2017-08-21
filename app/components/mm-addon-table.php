@@ -54,6 +54,7 @@ if(!class_exists('MM_AddOn_Table')) {
             $setting = new MM_Setting_Model();
             $setting->load();
             $components = $setting->plugins;
+            $item['col_id'] = str_replace( "\\", "/", $item['col_id'] );
             if (!is_array($components)) {
                 $components = array();
             }
