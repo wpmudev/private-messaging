@@ -32,3 +32,8 @@ Change Log:
 - Fix: Stop messages being disclosed in WordPress search results
 1.0.1.5
 - Fix: Inbox styling issues seen within Twenty Seventeen
+1.0.1.6
+- Fix: Javascript error "TypeError: Cannot read property 'length' of undefined"
+- Fix: Error when enable the plugin on local site on Windows
+- Fix: Search pagination
+
