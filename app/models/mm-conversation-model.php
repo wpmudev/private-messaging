@@ -414,7 +414,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
             mmg()->global['conversation_total_pages'] = $total_pages;
 
             if (is_admin()) {
-                $sql = "SELECT conversation.id FROM wp_mm_conversation conversation
+                $sql = "SELECT conversation.id FROM ".$wpdb->base_prefix."mm_conversation conversation
                     INNER JOIN wp_mm_status mstat ON mstat.conversation_id = conversation.id
                     INNER JOIN $wpdb->postmeta meta ON meta.meta_key = '_conversation_id' AND meta.meta_value = conversation.id
                     INNER JOIN $wpdb->posts posts ON posts.ID = meta.post_id
@@ -423,7 +423,7 @@ class MM_Conversation_Model extends IG_DB_Model_Ex
                     GROUP BY conversation.id LIMIT %d, %d";
 	            $sql = $wpdb->prepare($sql, "%$s%", "%$s%", "%$s%", get_current_blog_id(), $offset, $per_page);
             } else {
-                $sql = "SELECT conversation.id FROM wp_mm_conversation conversation
+                $sql = "SELECT conversation.id FROM ".$wpdb->base_prefix."_mm_conversation conversation
                     INNER JOIN wp_mm_status mstat ON mstat.conversation_id = conversation.id
                     INNER JOIN $wpdb->postmeta meta ON meta.meta_key = '_conversation_id' AND meta.meta_value = conversation.id
                     INNER JOIN $wpdb->posts posts ON posts.ID = meta.post_id
