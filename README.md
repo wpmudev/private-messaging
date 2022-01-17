@@ -33,7 +33,7 @@ When it comes to setting up Private Messaging, there’s really nothing to it. J
 
 ## Usage
 
-Start by reading the [Installing Plugins](https://premium.wpmudev.org/wpmu-manual/installing-regular-plugins-on-wpmu/) section in our comprehensive [WordPress and WordPress Multisite Manual](https://premium.wpmudev.org/wpmu-manual/) if you are new to WordPress.
+Start by reading the [Installing Plugins](https://wpmudev.com/docs/using-wordpress/installing-wordpress-plugins/) section in our comprehensive [WordPress and WordPress Multisite Manual](https://premium.wpmudev.org/wpmu-manual/) if you are new to WordPress.
 
 *   On regular WordPress installs – visit Plugins and Activate the plugin.
 *   For WordPress Multisite installs – Activate it blog-by-blog (say if you wanted to make it a [Pro Sites](https://premium.wpmudev.org/project/pro-sites/ "WordPress Pro Sites Plugin - WPMU DEV") premium plugin), or visit Network Admin -> Plugins and Network Activate the plugin. Note that there are no network settings for this plugin.
